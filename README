@@ -1,4 +1,4 @@
-				emt-a00
+				emt-a01
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -80,10 +80,17 @@ and was initially created on Linux and pushed to Gitorious as follows:
 
 Librarian repo creation
 -----------------------
-    The emt.git repo was created to "track" the repo maintained at 
-    gitoroius.ti.com and was created as follows:
+The emt.git repo was created to "track" the repo maintained at 
+gitoroius.ti.com and was created as follows:
         git clone --bare git@gitorious.design.ti.com:emt/emt.git emt.git
+        cd emt.git/
         git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
+        git tag emt-a00
+        git push --tags
+
+Note: xlibrary must be given read/write access to the Gitorious repo cloning 
+of pushing any changes.  This must be done via the Gitoroius web interface 
+(blech!)
 
 Librarian releases
 ------------------
@@ -114,7 +121,7 @@ Librarian releases
 
 ADDITIONS
 
-initial import (with support for the MSP432 Launch Pad)
+added missing commits for initial tree (e.g., downloads)
 
 DELETIONS
 
