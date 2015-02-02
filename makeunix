@@ -1,0 +1,50 @@
+#
+#  ======== makeunix ========
+#  Makefile for this tree
+#
+
+include ./imports.mak
+
+MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/imports;$(CURDIR)/src;$(CATALOG);$(TIRTOS_REPOS)"
+
+JOBS = --jobs=4
+
+.all-files: imports.mak .imports .exports .generated_files
+
+# ======== .debug ========
+# Echo build state variables
+.debug:
+	@echo "XDC          =" $(MYXDC)
+	@echo "CATALOG      =" $(CATALOG)
+	@echo "TIRTOS       =" $(TIRTOS)
+	@echo "TIRTOS_REPOS =" "$(TIRTOS_REPOS)"
+
+# ======== .exports ========
+# Builds all packages and makes tar files 
+.exports: .local-release
+
+# ======== .local-release ========
+# Builds all packages and makes releases
+.local-release:
+	-@mkdir -p exports
+	@echo "Building platforms ..."
+	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
+	@echo "Building packages ..."
+	$(MYXDC) $(JOBS) release -Pr src
+	@echo making energia closures ...
+	-make -C src/bundles/energia all msp432LP/closure.zip
+
+# ======== .local-regress ========
+# Test all platforms from this tree and the ones from XDCDIST
+.regress: .local-regress
+.local-regress: .imports
+	$(MYXDC) test -Pr ./src
+
+# ======== cleaning ========
+.clean: .local-clean
+
+.local-clean::
+	-rm -rf .generated_files
+	-rm -rf exports/
+	-$(MYXDC) --jobs=4 clean -Pr ./src
+	-make -C src/bundles/energia clean

@@ -1,0 +1,71 @@
+## Build artifacts in the tree root directory
+/tdiff,*
+/Make.log
+/makelog
+/exports/
+/imports/
+/.tools-*
+/.gnu-*
+/.exports
+/.imports
+/.imports.xml
+/.reltree
+/.reltreerc
+/.generated_files
+/bin/
+/etc/
+
+## emacs backup files
+.#*
+.,*
+*~
+
+## RTSC package generated files & build goals
+package.mak
+package/
+java/
+.xdcenv.mak
+.javadoc
+doc-files
+.dlls
+.docs
+.executables
+.interfaces
+.libraries
+.libraries,*
+
+## Legacy build goals
+.src-files
+.include-files
+.etc-files
+.lib-files
+.bin-files,*
+.test-files
+
+## Generated package archives
+*.zip
+*.gz
+*.tar
+*.jar
+
+## Generated executables, libraries, objects, ...
+*.xem4
+*.x86U
+*.x86_64M
+*.xv7A
+*.vcproj
+*.xm4fg
+*.xem4f
+
+*.exe
+*.bin
+*.out
+*.obj
+*.lib
+
+## CCS/Eclipse/RTSC generated project files
+.config/
+.settings/
+.xdchelp
+.launches/
+Debug/

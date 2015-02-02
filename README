@@ -1,0 +1,124 @@
+				emt-a00
+
+		Energia Multi-Threaded (EMT) Wiring Support
+
+         	    https://gitorious.design.ti.com/emt
+
+This tree provide a multi-threaded Wiring lbrary implementation bases on 
+TI-RTOS.
+
+To Clone this Tree
+------------------
+    o you must already have a https://gitorious.design.ti.com account, then
+    o clone the tree using git:
+        git clone git@gitorious.design.ti.com:emt/emt.git ./emt
+
+To Contribute
+-------------
+If you haven't already done so, create a personal branch with your name, for
+example, "me":
+        git branch me
+        git checkout me
+
+The "normal" development cycle:
+    o make and test improvements
+        emacs Control.c
+	    :
+	
+    o commit changes to your local repo
+        git add src/apps/robot/Control.c ...
+        git commit -m "improved ..."
+
+	git add src/apps/robot/ti/drivers/wifi/WiFiTivaCC3000.c
+	git commit -m "fixed ..."
+
+    o push the changes from your local branch to the corresponding gitorious 
+      repo's branch
+        git push origin me:me
+
+    o to get copies of other's changes
+        git fetch
+
+Weekly integrations: Your contributions will be periodically reviewed and
+merged into the gitorious repo's master branch.  To ensure your contributions
+can be easily merged on the gitorious master branch, you must 
+
+    o get latest master branch from the gitorious repo
+        git fetch
+
+    o merge any changes into your branch
+        git merge origin/master
+
+    o push your local branch to the corresponding gitorious repo's branch
+        git push origin me:me
+
+To Create a Gitorious Account
+-----------------------------
+    o download the git command line tools (Windows http://msysgit.github.io/)
+
+    o create an SSH key:
+          ssh-keygen -t rsa
+      Just press 'Enter' in every question it asks and you will finally have
+      your pair of keys under the folder ".ssh". For example, type
+      "cat ~/.ssh/id_rsa.pub". That's the public key that you are required 
+      to copy and paste into your account on Gitorious. 
+
+    o browse to https://gitorious.design.ti.com and create an account using 
+      the public key you just created; copy the contents of ~/.ssh/id_rsa.pub
+      to the specified text box.
+
+To Create a Gitorous Project
+----------------------------
+This tree is hosted on the Gitorious server https://gitorious.design.ti.com
+and was initially created on Linux and pushed to Gitorious as follows:
+    cd <top of the initial tree>
+    git init
+    git add README src/
+    git commit -m "initial commit"
+    git remote add origin git@gitorious.design.ti.com:emt/emt.git
+    git push origin master
+
+Librarian repo creation
+-----------------------
+    The emt.git repo was created to "track" the repo maintained at 
+    gitoroius.ti.com and was created as follows:
+        git clone --bare git@gitorious.design.ti.com:emt/emt.git emt.git
+        git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
+
+Librarian releases
+------------------
+    Build this tree from Linux using standard ggentree/SM-MAKE/greltree except
+    for the addition of a step to update the local emt.repo with the content
+    from gitorious.
+    
+    # update local copy of the gitorous repo
+    cd emt.git; git fetch; cd ..
+
+    # clone the tree and merge/review user content
+    ggentree emt.git/
+    cd emt-a??
+    git merge origin/dr
+
+    # build the tree
+    SM-MAKE .clean
+    SM-MAKE .all-files >& Make.log 
+
+    # update README 
+    emacs README
+    git commit -a -m emt-a??
+
+    # release the tree
+    greltree -u dr -m "something brief and meaningful"
+
+========================================================================
+
+ADDITIONS
+
+initial import (with support for the MSP432 Launch Pad)
+
+DELETIONS
+
+CHANGES
+
+MRS
+

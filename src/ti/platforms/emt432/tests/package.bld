@@ -1,0 +1,32 @@
+/* add a "sanity" test for this platform and export pre-built executable */
+Pkg.attrs.exportAll = true;
+Pkg.attrs.profile = "release";
+
+Pkg.otherFiles = ["test.c", "test.cfg"];
+
+/* compute the name of the platform package we are testing from our name */
+var myPlatform = Pkg.name.replace(/\.tests$/,'');
+
+/* compute name of a platform include sub-directory */
+var myInclude = xdc.findFile(myPlatform.replace(/\./g, '/') + "/include");
+var includeDir = myInclude.replace(/\\/g, '/');
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+
+    if (targ.isa == "v7M4" && targ.model.codeModel == "thumb2" ) {
+	var targLopts;
+	if (targ.$name.match(/^gnu/)) {
+	    targLopts = "-L"+ includeDir + "_gnu -l MSP432P401R.lds";
+	}
+	else {
+	    targLopts = "--search_path='"+ includeDir + "' -l MSP432P401R.cmd";
+	    var prog1 = Pkg.addExecutable("test1", targ, myPlatform + ":MSP432P401R",
+					  {profile: "debug", cfgScript: "test.cfg",
+					   lopts: targLopts});
+            prog1.addObjects(["test"]);
+	}
+        Pkg.addExecutable("test2", targ, myPlatform + ":MSP432P401R:1",
+            {profile: "debug", cfgScript: "test.cfg"}).addObjects(["test"]);
+    }
+}

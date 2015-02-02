@@ -1,0 +1,32 @@
+#!/usr/bin/expect
+
+## connect to ftp server on energia.nu via the TI ftp proxy
+spawn ftp gate.ti.com
+
+## provide energia.nu ftp account & authentication
+expect "Name"
+send "energiamt@energia.nu\r"
+expect "Password"
+sleep 1
+send "LaunchPad432!\r"
+expect "Using binary mode to transfer files."
+
+## login to a TI ftp proxy account: energia, password: update
+send "passive\r"
+expect "Passive mode"
+send "quot auth energia\r"
+expect "password for energia"
+send "quot resp update\r"
+expect "authenticated to proxy"
+
+## set an infinite timeout (to avoid timeout during long put operations)
+set timeout -1
+
+## put closure.zip to energia.nu
+send "put msp432LP/closure.zip msp432_closure.zip\r"
+expect "successfully transferred"
+
+## exit ftp and expect
+set timeout 10
+send "quit\r"
+expect eof

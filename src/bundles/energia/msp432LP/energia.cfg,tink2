@@ -1,0 +1,71 @@
+/*
+ *  ======== energia.cfg ========
+ *  @fileOverview Energia (MSP432 LaunchPad)
+ */
+
+/* ================ General configuration ================ */
+var Defaults = xdc.useModule('xdc.runtime.Defaults');
+var Diags = xdc.useModule('xdc.runtime.Diags');
+var Error = xdc.useModule('xdc.runtime.Error');
+var Log = xdc.useModule('xdc.runtime.Log');
+var Main = xdc.useModule('xdc.runtime.Main');
+var Memory = xdc.useModule('xdc.runtime.Memory');
+var System = xdc.useModule('xdc.runtime.System');
+var Text = xdc.useModule('xdc.runtime.Text');
+
+var BIOS = xdc.useModule('ti.sysbios.BIOS');
+var Clock = xdc.useModule('ti.sysbios.knl.Clock');
+var Swi = xdc.useModule('ti.sysbios.knl.Swi');
+var Task = xdc.useModule('ti.sysbios.knl.Task');
+var Semaphore = xdc.useModule('ti.sysbios.knl.Semaphore');
+var Hwi = xdc.useModule('ti.sysbios.hal.Hwi');
+var HeapMem = xdc.useModule('ti.sysbios.heaps.HeapMem');
+var Load = xdc.useModule('ti.sysbios.utils.Load');
+var Mailbox = xdc.useModule('ti.sysbios.knl.Mailbox');
+
+/* HACK!! we must configure family-specific Hwi module */
+var Settings = xdc.module("ti.sysbios.family.Settings");
+var hwiDelegate = Settings.getDefaultHwiDelegate();
+xdc.module(hwiDelegate).isTiva = true;
+
+/* HACK!! memset bug workaround */
+Hwi.initStackFlag = false;
+
+/* create board.[ch] and pinmux.c to support Wiring APIs */
+var Platform = xdc.useModule('ti.platforms.tink2.Platform');
+Platform.dynamicPinSetup = true;
+Platform.addSDKLibs = false;
+Platform.pinMapName = "launchPad";
+
+xdc.loadPackage("tink.runtime.wiring");
+
+/* ================ System configuration ================ */
+var SysMin = xdc.useModule('xdc.runtime.SysMin');
+SysMin.bufSize = 1024;
+System.SupportProxy = SysMin;
+
+/* add %f System_printf format support */
+System.extendedFormats = "%$L%$S%$F%f";
+
+/* move all log/error strings off the target (let the host do the display) */
+Text.isLoaded = false;
+
+/* ================ Driver configuration ================ */
+var TIRTOS = xdc.useModule('ti.tirtos.TIRTOS');
+TIRTOS.useGPIO = true;
+TIRTOS.usePWM = true;
+TIRTOS.useUART = true;
+TIRTOS.useI2C = true;
+TIRTOS.useSPI = true;
+
+/* ================ SYS/BIOS configuration =============== */
+BIOS.libType = BIOS.LibType_Custom;
+BIOS.assertsEnabled = false;
+BIOS.logsEnabled = false;
+BIOS.heapSize = 32768;
+Program.stack = 1024;
+
+Task.idleTaskStackSize = 1024;
+Task.defaultStackSize = 1024 + 512;
+Task.numPriorities = 4;            /* Reduce the number of task priorities to save space */
+Task.common$.namedInstance = true; /* Enable instance names for debug monitor */
