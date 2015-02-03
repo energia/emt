@@ -23,7 +23,7 @@ expect "authenticated to proxy"
 set timeout -1
 
 ## put closure.zip to energia.nu
-send "put msp432LP/closure.zip msp432_closure.zip\r"
+send "put msp432LP/closure.zip MSP-EXP432P401R-closure.zip\r"
 expect "successfully transferred"
 
 ## exit ftp and expect
