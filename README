@@ -1,4 +1,4 @@
-				emt-a01
+				emt-a02
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,11 +121,13 @@ Librarian releases
 
 ADDITIONS
 
-added missing commits for initial tree (e.g., downloads)
+second attempt at adding missing commits for initial tree (e.g., downloads)
 
 DELETIONS
 
 CHANGES
 
-MRS
+bundles/energia
+	fixed closure name for MSP4322 pushed to energia.nu
 
+MRS

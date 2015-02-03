@@ -1,5 +1,4 @@
 ## Build artifacts in the tree root directory
-/tdiff,*
 /Make.log
 /makelog
 /exports/
@@ -10,7 +9,6 @@
 /.imports
 /.imports.xml
 /.reltree
-/.reltreerc
 /.generated_files
 /bin/
 /etc/
