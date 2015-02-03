@@ -1,0 +1,7 @@
+#!/bin/ksh
+
+echo "pushing to gitorious ..."
+cd ../emt.git
+git push --all
+git push --tags 
+echo "done."
