@@ -50,7 +50,7 @@
 #include <dma.h>
 #include <gpio.h>
 #include <i2c.h>
-#include <spi.h>
+#include <driverlib/MSP432P4xx/spi.h>
 #include <timer_a.h>
 #include <uart.h>
 #include <wdt_a.h>

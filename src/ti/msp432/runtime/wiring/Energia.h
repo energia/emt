@@ -8,17 +8,6 @@
 
 #include "binary.h"
 
-#include <msp432.h>
-#include <rom.h>
-#include <rom_map.h>
-#include <dma.h>
-#include <gpio.h>
-#include <i2c.h>
-#include <spi.h>
-#include <timer_a.h>
-#include <uart.h>
-#include <wdt_a.h>
-
 #include <xdc/runtime/System.h>
 
 #include <ti/sysbios/BIOS.h>
@@ -32,6 +21,17 @@
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/PWM.h>
+
+#include <msp432.h>
+#include <rom.h>
+#include <rom_map.h>
+#include <dma.h>
+#include <gpio.h>
+#include <i2c.h>
+#include <spi.h>
+#include <timer_a.h>
+#include <uart.h>
+#include <wdt_a.h>
 
 #include <ti/drivers/bsp/Board.h>
 #include <stdbool.h>
