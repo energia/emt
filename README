@@ -1,4 +1,4 @@
-				emt-a03
+				emt-a04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,14 +121,15 @@ Librarian releases
 
 ADDITIONS
 
-./src
-	firs t cut at a CCS project to build the tree
-
 DELETIONS
 
 CHANGES
 
-*
-	moved to latest TI-RTOS for MSP432
+./src/.*project files
+	cleanup to enable builds in CCS
+
+ti.platforms.emt432
+ti.msp432.runtime.wiring
+	temp fix for multiple spi.h headers
 
 MRS
