@@ -5,29 +5,39 @@
  *
  */
 
+/* initialize local vars with those set via XDCARGS */
+for (var arg = 0; arg < arguments.length; arg++) {
+    var pair = arguments[arg].split("=");
+    var name = pair[0];
+    var value = pair[1];
+
+    if (name.match(/^ti.targets/)) {
+        var targ = xdc.useModule(name);
+        targ.rootDir = value;
+    }
+}
+
 var vtools = environment["TOOLS"] + "/vendors";
 var os     = environment["xdc.hostOS"];
 
 var tiTargets = xdc.loadPackage('ti.targets.arm.elf');
-tiTargets.M4.rootDir         = vtools + "/ti/arm/5.2.2/" + os;
 tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi  --display_error_number ";
-tiTargets.M4F.rootDir        = tiTargets.M4.rootDir;
 tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi  --display_error_number ";
+if (tiTargets.M4F.rootDir == null) {
+    tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.2/" + os;
+}
+tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
 var gnuTargets = xdc.loadPackage('gnu.targets.arm');
-gnuTargets.M4.rootDir   = vtools + "/linaro/4.8-2014q3/" + os;
 gnuTargets.M4.LONGNAME  = "bin/arm-none-eabi-gcc";
-gnuTargets.M4F.rootDir  = gnuTargets.M4.rootDir;
 gnuTargets.M4F.LONGNAME = gnuTargets.M4.LONGNAME;
+if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
+    gnuTargets.M4F.rootDir = vtools + "/linaro/4.8-2014q3/" + os;
+}
+gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 
-var iarTargets = xdc.loadPackage('iar.targets.arm');
-iarTargets.M4.rootDir  = "/db/vendors/iar/arm/6.60a/" + os;
-iarTargets.M4F.rootDir = iarTargets.M4.rootDir;
-
-Build.targets = [
-    tiTargets.M4F,
-    gnuTargets.M4F
-];
+if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
+if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
 
 Pkg.releasePrefix = "^/../exports/";
 

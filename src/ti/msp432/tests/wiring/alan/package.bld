@@ -21,7 +21,7 @@ var DEFS = "-D__MSP432P401R__=1";
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '
        + '-I"' + DLIBROOT + '/inc/CMSIS" '
-       + '-I"' + DLIBROOT + '/driverlib/MSP432P4xx"';
+       + '-I"' + DLIBROOT + '/MSP432P4xx"';
 
 var SRCS = getSources(".");
 

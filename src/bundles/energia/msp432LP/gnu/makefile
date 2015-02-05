@@ -18,7 +18,7 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
 # if not already defined, define the macros to work in the emt repo
 CCROOT  ?= $(TOOLS)/vendors/linaro/4.8-2014q3/Linux
-SDKROOT ?= $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*)
+SDKROOT ?= $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*/msp430ware)
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t61/product/Linux/xdctools*)
 TIRTOS  ?= $(wildcard $(TREES)/zumaprod/zumaprod-f07/exports/tirtos_full_*/)
 EMTROOT ?= $(TREE_ROOT)/src
@@ -27,9 +27,9 @@ EMTROOT ?= $(TREE_ROOT)/src
 SYSBIOS = $(wildcard $(TIRTOS)/products/bios_*)
 UIA     = $(wildcard $(TIRTOS)/products/uia_*)
 ## HACK!!!
-SYSBIOS = $(wildcard $(TREES)/avalaprod/avalaprod-p40/exports/bios_6_*/packages/..)
+SYSBIOS = $(wildcard $(TREES)/avalaprod/avalaprod-p42/exports/bios_6_*/.)
 
-XDCPATH = "$(TIRTOS)/packages;$(SYSBIOS)/packages;$(UIA)/packages;$(EMTROOT);$(SDKROOT)/.." 
+XDCPATH = "$(TIRTOS)/packages;$(SYSBIOS)/packages;$(UIA)/packages;$(EMTROOT);$(SDKROOT)" 
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf

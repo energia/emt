@@ -193,7 +193,7 @@ function module$meta$init()
 
 function findDriverLib()
 {
-    var file = _wildcard("MSP432_DriverLib");
+    var file = _wildcard("driverlib");
     if (file == null) {
 	throw new Error("can't find MSP432 DriverLib along the path '"
 		       + xdc.curPath() + "'");

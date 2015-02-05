@@ -28,7 +28,7 @@ endif
 
 # define locations of all prerequisites
 CCROOT  = $(CCROOT.$(TOOLCHAIN))
-SDKROOT = $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*)
 XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_00_19_core_eng/Linux
-TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f07/exports/tirtos_full_*)
+TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f09/exports/tirtos_full_*)
+SDKROOT = $(wildcard $(TIRTOS)/products/MSP430Ware_*/msp430ware)
 EMTROOT = $(TREE_ROOT)/src

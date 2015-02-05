@@ -4,24 +4,24 @@
 XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_30_05_60/$(BUILD_HOST_OS)
 
 #
-#  trees containing imports
+# internal TISB trees containing imports
 #
-ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-f07
-PLATFORM_TREE = $(TREES)/platform/platform-o70
+ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-f09
 
 #
-# Specific imports
+# Specific required imports (referenced by makeunix, for example)
 #
-TIRTOS = $(wildcard $(ZUMAPROD_TREE)/exports/tirtos_full_*)
-CATALOG = $(PLATFORM_TREE)/src
-
+TIRTOS  = $(wildcard $(ZUMAPROD_TREE)/exports/tirtos_full_*)
+DRVLIB  = $(wildcard $(CURDIR)/imports/MSP43*)
+DRVLIB  = $(wildcard $(TIRTOS)/products/MSP43*/msp430ware)
 SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6*)
-## HACK:
-SYSBIOS = $(wildcard $(TREES)/avalaprod/avalaprod-p41/exports/bios_6_*/packages/..)
 
 TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
 
-IMPORT_ARCHIVES = $(CURDIR)/downloads/MSP432_DriverLib_01_03_00_18.zip
+#
+# SM-MAKE support
+#
+IMPORT_ARCHIVES = $(wildcard $(CURDIR)/downloads/MSP43*.zip)
 IMPORT_PACKAGES =
 
-REFERENCED_REPOS = $(CATALOG)
+REFERENCED_REPOS = $(TIRTOS) $(SYSBIOS)

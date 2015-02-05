@@ -18,7 +18,7 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
 # if not already defined, define the macros to work in the emt repo
 CLOSURE ?= ../../../gnu/closure
-SDKROOT ?= $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*)
+SDKROOT ?= $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*/msp430ware)
 CCROOT  ?= $(TOOLS)/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4
 
 # tell make where to find source files
@@ -28,9 +28,9 @@ vpath %.cpp $(CURDIR)/..
 # define MSP432 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(SDKROOT)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
 
-SDK_INCS = -I"$(SDKROOT)" \
-           -I"$(SDKROOT)/inc" \
-           -I"$(SDKROOT)/inc/CMSIS" \
+SDK_INCS = -I"$(SDKROOT)/driverlib" \
+           -I"$(SDKROOT)/driverlib/inc" \
+           -I"$(SDKROOT)/driverlib/inc/CMSIS" \
            -I"$(SDKROOT)/driverlib/MSP432P4xx"
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
