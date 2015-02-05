@@ -1,4 +1,4 @@
-				emt-a02
+				emt-a03
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,13 +121,14 @@ Librarian releases
 
 ADDITIONS
 
-second attempt at adding missing commits for initial tree (e.g., downloads)
+./src
+	firs t cut at a CCS project to build the tree
 
 DELETIONS
 
 CHANGES
 
-bundles/energia
-	fixed closure name for MSP4322 pushed to energia.nu
+*
+	moved to latest TI-RTOS for MSP432
 
 MRS
