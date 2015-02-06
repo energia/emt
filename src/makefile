@@ -45,13 +45,16 @@ export XDCPATH = $(SYSBIOS)/packages;$(TIRTOS)/packages;$(DRVLIB)
 	@echo "DRVLIB   = $(DRVLIB)"
 	@echo "XDCROOT  = $(XDCROOT)"
 	@echo "XDCARGS   = $(XDCARGS)"
+	@echo "CCSROOT   = $(CCSROOT)"
 	@echo "============================================"
+
+export CCSROOT := $(subst \,/,$(CCSROOT))
 
 all: .buildinfo
 	$(XDCROOT)/xdc --jobs=4 .interfaces -P ti/platforms/*
 	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v .libraries -Pr .
 
-release: .buildinfo
+release: .buildinfo all
 	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v DRVLIB=$(DRVLIB) $@ -Pr .
 	@echo making energia closures ...
 	-$(MAKE) -C bundles/energia all msp432LP/closure.zip

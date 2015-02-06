@@ -26,10 +26,8 @@ EMTROOT ?= $(TREE_ROOT)/src
 # define the XDC package path based on the settings above
 SYSBIOS = $(wildcard $(TIRTOS)/products/bios_*)
 UIA     = $(wildcard $(TIRTOS)/products/uia_*)
-## HACK!!!
-SYSBIOS = $(wildcard $(TREES)/avalaprod/avalaprod-p42/exports/bios_6_*/.)
 
-XDCPATH = "$(TIRTOS)/packages;$(SYSBIOS)/packages;$(UIA)/packages;$(EMTROOT);$(SDKROOT)" 
+XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(UIA)/packages;$(EMTROOT);$(SDKROOT)
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
@@ -46,9 +44,10 @@ all: .debug closure
 	@echo "    SDKROOT = $(SDKROOT)"
 	@echo "    XDCROOT = $(lastword $(subst /, ,$(XDCROOT)))"
 	@echo "    TIRTOS  = $(lastword $(subst /, ,$(TIRTOS)))"
-	@echo "    SYSBIOS = $(shell echo $(SYSBIOS) | egrep -o 'bios_6[^/]+')"
+	@echo "    SYSBIOS = $(SYSBIOS)"
 	@echo "    UIA     = $(lastword $(subst /, ,$(UIA)))"
 	@echo "    EMTROOT = $(EMTROOT)"
+	@echo "    XDCPATH = $(XDCPATH)"
 	@echo "  -----------------"
 	@echo
 
@@ -56,12 +55,12 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	@$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
 
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: ../energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
-	@$(XDCROOT)/xs --xdcpath=$(XDCPATH) xdc.tools.configuro -o $@ -t gnu.targets.arm.M4F -p ti.platforms.emt432:MSP432P401R:true -r release -c $(CCROOT) $<
+	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t gnu.targets.arm.M4F -p ti.platforms.emt432:MSP432P401R:true -r release -c $(CCROOT) $<
 
 # remove all generated files/directories
 clean:

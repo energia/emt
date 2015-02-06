@@ -4,7 +4,7 @@
 		<cconfiguration id="0.690435417">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.690435417" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<macros>
-					<stringMacro name="COMPILER_ROOT" type="VALUE_PATH_ANY" value="${ccs_base_root}/../tools/compiler/ti-cgt-arm_5.2.2"/>
+					<stringMacro name="COMPILER_ROOT" type="VALUE_TEXT" value="${ccs_install_root}/tools/compiler/ti-cgt-arm_5.2.2"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
@@ -94,11 +94,12 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="null.devicePreference"/>
+	<storageModule moduleId="cpuFamily"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets>
 			<target name="product" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>C:/Users/dr/tools/ccs6_0_1_39/xdctools_3_30_03_47_core/gmake</buildCommand>
-				<buildArguments/>
 				<buildTarget>product</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
@@ -106,7 +107,6 @@
 			</target>
 			<target name="clean" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>C:/Users/dr/tools/ccs6_0_1_39/xdctools_3_30_03_47_core/gmake</buildCommand>
-				<buildArguments/>
 				<buildTarget>clean</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
@@ -114,14 +114,19 @@
 			</target>
 			<target name="all" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>C:/Users/dr/tools/ccs6_0_1_39/xdctools_3_30_03_47_core/gmake</buildCommand>
-				<buildArguments/>
 				<buildTarget>all</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="release" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>C:/Users/dr/tools/ccs6_1_0_95/xdctools_3_31_00_22_core_eng/gmake</buildCommand>
+				<buildArguments/>
+				<buildTarget>release</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
 		</buildTargets>
 	</storageModule>
-	<storageModule moduleId="null.devicePreference"/>
-	<storageModule moduleId="cpuFamily"/>
 </cproject>
