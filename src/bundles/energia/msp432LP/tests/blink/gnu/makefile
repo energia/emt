@@ -81,7 +81,7 @@ blink.out: blink.obj main.obj
 	$(BINIFY) $< $@
 
 %.size: %.out makefile
-	-@$(OBJTOOL) $<
+	-@$(OBJTOOL) -x $(CCROOT)/bin/arm-none-eabi-objdump $<
 	-@$(MAPTOOL) $*.map
 
 clean:

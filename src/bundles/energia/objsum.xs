@@ -2,12 +2,13 @@
  *  ======== objsum.xs ========
  */
 
-var usage = "usage: xs -c objsum.xs [-p <objdump_path>] [-v] object_file";
+var usage = "usage: xs -c objsum.xs [-x <objdump_tool>] [-p <objdump_path>] [-v] object_file";
 
 function main(arguments)
 {
     var verbose = 0;
     var objdumpPath = "";
+    var objdumpName = "objdump";
     
     for (;;) {
         var arg = arguments[0];
@@ -26,6 +27,15 @@ function main(arguments)
                     return;
                 }
                 objdumpPath += arguments[1] + java.io.File.pathSeparator;
+                arguments.shift();
+                break;
+            }
+	    case 'x': {
+                if (arguments[1] == null) {
+                    print(usage);
+                    return;
+                }
+                objdumpName = arguments[1];
                 arguments.shift();
                 break;
             }
@@ -48,7 +58,7 @@ function main(arguments)
 
     /* run objdump */
     var result = {};
-    xdc.exec(["objdump", "-h", arguments[0]], options, result);
+    xdc.exec([objdumpName, "-h", arguments[0]], options, result);
     if (result.exitStatus != 0) {
 	print(result.output);
         java.lang.System.exit(result.exitStatus);
