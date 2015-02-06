@@ -14,7 +14,7 @@ VERS_UNDER ?= 1_00_00_00
 PRODUCT = $(TOP)/src/bundles/emt_$(VERS_UNDER)
 
 ifneq (sh.exe,$(SHELL))
-XDCROOT := $(subst \,/,$(XDCROOT))
+    XDCROOT := $(subst \,/,$(XDCROOT))
 endif
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
@@ -35,27 +35,34 @@ SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_6*)
 export XDCARGS = ti.targets.arm.elf.M4F=$(ti.targets.arm.elf.M4F)
 export XDCPATH = $(SYSBIOS)/packages;$(TIRTOS)/packages;$(DRVLIB)
 
+## find all packages provided by this tree
+ALLPKGS := $(shell "$(XDCROOT)/bin/xdcpkg" -r $(TOP)/src)
+
+## categorize packages
+NONTESTPKGS := $(patsubst ~%,,$(patsubst %~,,$(subst /tests,~ ~,$(ALLPKGS))))
+TESTPKGS    := $(filter-out $(NONTESTPKGS),$(ALLPKGS))
+
 .PHONY: all clean release product .buildinfo
 
 .buildinfo:
 	@echo "=============== Dependencies ==============="
-	@echo "CURDIR   = $(CURDIR)"
-	@echo "TIRTOS   = $(TIRTOS)"
-	@echo "SYSBIOS  = $(SYSBIOS)"
-	@echo "DRVLIB   = $(DRVLIB)"
-	@echo "XDCROOT  = $(XDCROOT)"
-	@echo "XDCARGS   = $(XDCARGS)"
-	@echo "CCSROOT   = $(CCSROOT)"
+	@echo "    CURDIR   = $(CURDIR)"
+	@echo "    TIRTOS   = $(TIRTOS)"
+	@echo "    SYSBIOS  = $(SYSBIOS)"
+	@echo "    DRVLIB   = $(DRVLIB)"
+	@echo "    XDCROOT  = $(XDCROOT)"
+	@echo "    XDCARGS  = $(XDCARGS)"
+	@echo "    CCSROOT  = $(CCSROOT)"
 	@echo "============================================"
 
 export CCSROOT := $(subst \,/,$(CCSROOT))
 
 all: .buildinfo
 	$(XDCROOT)/xdc --jobs=4 .interfaces -P ti/platforms/*
-	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v .libraries -Pr .
+	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v .libraries -P $(NONTESTPKGS)
 
 release: .buildinfo all
-	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v DRVLIB=$(DRVLIB) $@ -Pr .
+	$(XDCROOT)/xdc --jobs=4 XDCOPTIONS=v DRVLIB=$(DRVLIB) $@ -P $(NONTESTPKGS)
 	@echo making energia closures ...
 	-$(MAKE) -C bundles/energia all msp432LP/closure.zip
 

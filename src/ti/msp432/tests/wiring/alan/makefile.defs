@@ -8,8 +8,10 @@ else
     TOUCH = touch $@
 endif
 
+ifeq (0,$(MAKELEVEL))
 # include Config generated top-level makefile
 -include $(CFG_SRCDIR)/makefile.libs
+endif
 
 ifneq (clean,$(MAKECMDGOALS))
 # ensure this file is reloaded when .cfg files change but after config runs
