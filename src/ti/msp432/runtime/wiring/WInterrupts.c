@@ -33,51 +33,9 @@
   Modified for MSP430 by Robert Wessels
  */
 
+
 #include "Energia.h"
-#include "ti/drivers/GPIO.h"
-
-extern GPIO_Config GPIO_config[];
-extern GPIO_HWAttrs gpioHWAttrs[];
-
-extern GPIO_Callbacks Board_gpioPort1Callbacks;
-extern GPIO_Callbacks Board_gpioPort2Callbacks;
-extern GPIO_Callbacks Board_gpioPort3Callbacks;
-extern GPIO_Callbacks Board_gpioPort4Callbacks;
-extern GPIO_Callbacks Board_gpioPort5Callbacks;
-extern GPIO_Callbacks Board_gpioPort6Callbacks;
-
-static GPIO_Callbacks *gpioCallbacks[6] =
-{
-    &Board_gpioPort1Callbacks,
-    &Board_gpioPort2Callbacks,
-    &Board_gpioPort3Callbacks,
-    &Board_gpioPort4Callbacks,
-    &Board_gpioPort5Callbacks,
-    &Board_gpioPort6Callbacks
-};
-
-void Wiring_GPIO_hwiIntFxn(UArg callbacks)
-{
-    uint32_t        pins;
-    unsigned int    i;
-    GPIO_Callbacks *portCallback;
-
-    portCallback = (GPIO_Callbacks*)callbacks;
-
-    /* Find out which pins have their interrupt flags set */
-    pins = MAP_GPIO_getEnabledInterruptStatus(portCallback->port);
-
-    /* Match the interrupt to its corresponding callback function */
-    for (i = 0; pins; i++) {
-        if (pins & 0x1) {
-        	MAP_GPIO_clearInterruptFlag(portCallback->port, (1 << i));
-            if (portCallback->callbackFxn[i] != NULL) {
-                portCallback->callbackFxn[i]();
-            }
-        }
-        pins = pins >> 1;
-    }
-}
+#include "GPIO2.h"
 
 void interrupts(void)
 {
@@ -91,77 +49,32 @@ void noInterrupts(void)
 
 void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 {
-    volatile uint32_t portNum;
-    GPIO_IntType intType;
-    uint8_t bitNum, i;
+    GPIO2_IntType intType;
 
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
-
-    if (hwAttrIndex == NOT_A_PORT) return;
-
-    portNum = (uint32_t) gpioHWAttrs[hwAttrIndex].port;
-
-    i = digitalPinToBitMask(pin);
-
-    bitNum = 0;
-
-    /* derive bitNum from bit mask */
-    while (i >>= 1) {
-        bitNum++;
-    }
-
-    /* 
-     * find the callback structure with matching port and 
-     * place userFunc in the bitNum respective callbackFxn
-     */
-    for (i = 0; i < 6; i++) {
-        if (portNum == gpioCallbacks[i]->port) {
-            gpioCallbacks[i]->callbackFxn[bitNum] = userFunc;
-        }
-    }
+    GPIO2_setCallback(pin, (GPIO2_CallbackFxn)userFunc);
 
     switch(mode) {
-    case LOW:
-        intType = GPIO_INT_LOW;
-        break;
-    case CHANGE:
-        intType = GPIO_INT_BOTH_EDGES;
-        break;
-    case RISING:
-        intType = GPIO_INT_RISING;
-        break;
-    case FALLING:
-        intType = GPIO_INT_FALLING;
-        break;
-    case HIGH:
-        intType = GPIO_INT_HIGH;
-        break;
+        case LOW:
+            intType = GPIO2_INT_LOW;
+            break;
+        case CHANGE:
+            intType = GPIO2_INT_BOTH_EDGES;
+            break;
+        case RISING:
+            intType = GPIO2_INT_RISING;
+            break;
+        case FALLING:
+            intType = GPIO2_INT_FALLING;
+            break;
+        case HIGH:
+            intType = GPIO2_INT_HIGH;
+            break;
     }
 
-    GPIO_enableInt(hwAttrIndex, intType);
+    GPIO2_setConfig(pin, intType);
+    GPIO2_enableInt(pin);
 }
 
 void detachInterrupt(uint8_t pin) {
-    uint8_t bitNum, i;
-    volatile uint32_t portNum;
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
-
-    if (hwAttrIndex == NOT_A_PORT) return;
-
-    GPIO_disableInt(hwAttrIndex);
-    GPIO_clearInt(hwAttrIndex);
-
-    i = digitalPinToBitMask(pin);
-
-    portNum = (uint32_t) gpioHWAttrs[hwAttrIndex].port;
-
-    while (i >>= 1) {
-        bitNum++;
-    }
-
-    for (i = 0; i < 6; i++) {
-        if (portNum == gpioCallbacks[i]->port) {
-            gpioCallbacks[i]->callbackFxn[bitNum] = 0;
-        }
-    }
+    GPIO2_setCallback(pin, NULL);
 }

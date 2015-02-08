@@ -49,19 +49,9 @@
 extern "C" {
 #endif
 
-#include <ti/drivers/GPIO.h>
-
 /* LEDs on MSP_EXP432P401R Launch Pad are active high. */
 #define Board_LED_OFF (0)
 #define Board_LED_ON  (~0)
-
-/* GPIO_Callbacks structure for GPIO interrupts */
-extern GPIO_Callbacks Board_gpioPort1Callbacks;
-extern GPIO_Callbacks Board_gpioPort2Callbacks;
-extern GPIO_Callbacks Board_gpioPort3Callbacks;
-extern GPIO_Callbacks Board_gpioPort4Callbacks;
-extern GPIO_Callbacks Board_gpioPort5Callbacks;
-extern GPIO_Callbacks Board_gpioPort6Callbacks;
 
 /*!
  *  @def    Board_GPIOName

@@ -30,51 +30,44 @@
  */
 
 #include "wiring_private.h"
-#include <rom.h>
-#include <rom_map.h>
+#include "GPIO2.h"
 
-extern GPIO_HWAttrs gpioHWAttrs[];
+/* device specific routine */
+GPIO2_PinConfig mode2gpioConfig(uint8_t mode)
+{
+   switch (mode) {
+        case INPUT:
+        case INPUT_PULLUP:
+            return (GPIO2_INPUT_PULLUP);
+
+        case INPUT_PULLDOWN:
+            return (GPIO2_INPUT_PULLDOWN);
+
+        case OUTPUT:
+            return (GPIO2_OUTPUT_HIGH_STRENGTH);
+    }
+
+    /* unknown mode */
+    return (GPIO2_DO_NOT_CONFIG);
+}
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
+    GPIO2_PinConfig gpioConfig = mode2gpioConfig(mode);
 
-    if (hwAttrIndex == NOT_A_PORT) return;
-
-    uint32_t pinMask = gpioHWAttrs[hwAttrIndex].pin;
-    uint32_t portNum = (uint32_t) gpioHWAttrs[hwAttrIndex].port;
-
-    gpioHWAttrs[hwAttrIndex].direction = GPIO_INPUT;
-    digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
-
-    if (mode == INPUT) {
-        MAP_GPIO_setAsInputPinWithPullUpResistor(portNum, pinMask);
-    } else if (mode == INPUT_PULLUP) {
-        MAP_GPIO_setAsInputPinWithPullUpResistor(portNum, pinMask);
-    } else if (mode == INPUT_PULLDOWN) {
-        MAP_GPIO_setAsInputPinWithPullUpResistor(portNum, pinMask);
-    } else {//mode == OUTPUT
-        MAP_GPIO_setAsOutputPin(portNum, pinMask);
-        MAP_GPIO_setDriveStrengthHigh(portNum, pinMask);
-        MAP_GPIO_setOutputLowOnPin(portNum, pinMask);
-        gpioHWAttrs[hwAttrIndex].direction = GPIO_OUTPUT;
-        digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_OUTPUT;
+    if (gpioConfig != GPIO2_DO_NOT_CONFIG) {
+        digital_pin_to_pin_function[pin] = mode;
+        GPIO2_setConfig(pin, gpioConfig);
     }
 }
 
 int digitalRead(uint8_t pin)
 {
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
-
-    if (hwAttrIndex == NOT_A_PORT) {
-        return (LOW);
-    }
-
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_INPUT) {
+    if (digital_pin_to_pin_function[pin] == OUTPUT) {
         pinMode(pin, INPUT);
     }
 
-    if (GPIO_read(hwAttrIndex)) {
+    if (GPIO2_read(pin)) {
         return (HIGH);
     }
 
@@ -83,15 +76,9 @@ int digitalRead(uint8_t pin)
 
 void digitalWrite(uint8_t pin, uint8_t val)
 {
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
-
-    if (hwAttrIndex == NOT_A_PORT) {
-        return;
-    }
-
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != OUTPUT) {
         pinMode(pin, OUTPUT);
     }
 
-    GPIO_write(hwAttrIndex, val ? 0xff : 0);
+    GPIO2_write(pin, val ? 0xff : 0);
 }

@@ -44,8 +44,8 @@ void buttonFxn1()
 
 void setup7()
 {
-    pinMode(41, INPUT_PULLDOWN);
-    pinMode(42, INPUT_PULLDOWN);
+    pinMode(41, INPUT_PULLUP);
+    pinMode(42, INPUT_PULLUP);
 
     attachInterrupt(41, buttonFxn0, RISING);
     attachInterrupt(42, buttonFxn1, RISING);
