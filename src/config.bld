@@ -5,29 +5,33 @@
  *
  */
 
-/* initialize local vars with those set via XDCARGS */
+/* initialize target rootDirs with those set via XDCARGS */
 for (var arg = 0; arg < arguments.length; arg++) {
     var pair = arguments[arg].split("=");
     var name = pair[0];
     var value = pair[1];
 
-    if (name.match(/^ti.targets/)) {
+    if (name.match(/^(ti|gnu)\.targets/)) {
         var targ = xdc.useModule(name);
         targ.rootDir = value;
+	print(name + ".rootDir = " + value);
     }
 }
 
+/* configure default target options */
 var vtools = environment["TOOLS"] + "/vendors";
 var os     = environment["xdc.hostOS"];
 
+/* TI compiler configuration settings */
 var tiTargets = xdc.loadPackage('ti.targets.arm.elf');
-tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi  --display_error_number ";
-tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi  --display_error_number ";
+tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
+tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi --display_error_number ";
 if (tiTargets.M4F.rootDir == null) {
     tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.2/" + os;
 }
 tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
+/* Gnu compiler configuration settings */
 var gnuTargets = xdc.loadPackage('gnu.targets.arm');
 gnuTargets.M4.LONGNAME  = "bin/arm-none-eabi-gcc";
 gnuTargets.M4F.LONGNAME = gnuTargets.M4.LONGNAME;
@@ -36,21 +40,13 @@ if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
 }
 gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 
+/* define the set of targets for which to build */
 if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
 if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
 
-Pkg.releasePrefix = "^/../exports/";
+/* For now, the default is to export everthing */
+Pkg.attrs.exportAll = true;
 
-/* For now, the default is not to export executables. Any platform package that
- * can execute programs should export executables in its package.bld, so the
- * program execution can be tested.
- */     
-Pkg.attrs.exportExe = false;
-
-/* include source files in the release package */
-Pkg.attrs.exportSrc = true;
-Pkg.attrs.exportCfg = true;
-
-Pkg.attrs.archiver = "zip"; 
-
-Pkg.producerId = xdc.csd();
+Pkg.releasePrefix = "^/../exports/"; /* export to the exports directoy */
+Pkg.attrs.archiver = "zip";          /* export .zip files (not .tar) */
+Pkg.producerId = xdc.csd();          /* tag pkgs as coming from this dir */

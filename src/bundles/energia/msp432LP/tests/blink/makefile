@@ -13,17 +13,15 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 #    CCROOT  - installation directory of the TI Arm compiler
 #
 
-# (if present) include definitions of the macros described above
--include ../../../tools.mak
+# include definitions of the macros described above
+include ../../tools.mak
 
 # if not already defined, define the macros to work in the emt repo
-CLOSURE ?= ../../../gnu/closure
-SDKROOT ?= $(wildcard $(TREE_ROOT)/imports/MSP432_DriverLib_*/msp430ware)
-CCROOT  ?= $(TOOLS)/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4
+CLOSURE ?= ../../closure
 
 # tell make where to find source files
-vpath %.c   $(CURDIR)/..
-vpath %.cpp $(CURDIR)/..
+vpath %.c   $(CURDIR)
+vpath %.cpp $(CURDIR)
 
 # define MSP432 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(SDKROOT)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
@@ -70,7 +68,7 @@ blink.out: blink.obj main.obj
 
 %.obj: %.cpp makefile
 	@echo armcl $*.cpp ...
-	$(CC) $(CCOPTS) -I "$(CCROOT)/include"  $(CFG_INCS) $(SDK_INCS) $< -o $@
+	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $(SDK_INCS) $< -o $@
 
 %.out: %.obj main.obj makefile
 	@echo armlink $*.obj ...

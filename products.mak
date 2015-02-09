@@ -7,7 +7,7 @@ CCSROOT ?= c:/Users/dr/tools/ccs6_0_1_39
 
 ti.targets.arm.elf.M4F = $(wildcard $(CCSROOT)/ccsv6/tools/compiler/*arm_5.*)
 
-TIRTOS   = c:/ti/tirtos_msp430_2_12_00_09_eng
+TIRTOS  = c:/ti/tirtos_msp430_2_12_00_09_eng
 XDCROOT = $(lastword $(sort $(wildcard $(CCSROOT)/xdctools_*/.)))
 DRVLIB  = $(wildcard $(TIRTOS)/products/MSP43*)
 

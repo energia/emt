@@ -25,6 +25,8 @@ function getLibs(prog)
 
 function validate()
 {
+    return;
+
     if ("ti.tirtos.Package" in xdc.om) {
 	var pkgType = xdc.om["ti.tirtos.Package"];
         pkgType.$patch('getLibs', newGetLibs);

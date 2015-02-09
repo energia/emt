@@ -19,18 +19,8 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 CCSROOT ?= c:/Users/dr/tools/ccs6_1_0_95
 CCSROOT := $(subst \,/,$(CCSROOT))
 
-# define multiple toolchains to support side-by-side builds
-CCROOT.ti  = $(lastword $(wildcard $(CCSROOT)/ccsv6/tools/compiler/ti-cgt-arm_5.2*))
-CCROOT.gnu = $(lastword $(wildcard $(CCSROOT)/ccsv6/tools/compiler/gcc-arm-none-eabi*))
-
-# set CCROOT based on the current directory's name
-TOOLCHAIN = $(notdir $(CURDIR))
-ifeq (,$(CCROOT.$(TOOLCHAIN)))
-    $(error The $(TOOLCHAIN) compiler is not configured on this host)
-endif
-
 # define locations of all prerequisites
-CCROOT  = $(CCROOT.$(TOOLCHAIN))
+CCROOT = $(lastword $(wildcard $(CCSROOT)/ccsv6/tools/compiler/gcc-arm-none-eabi*))
 XDCROOT = $(lastword $(wildcard $(CCSROOT)/xdctools_3_*))
 TIRTOS  = $(lastword $(wildcard c:/ti/tirtos_msp430*))
 SDKROOT = $(wildcard $(TIRTOS)/products/MSP430Ware_*)
