@@ -33,7 +33,7 @@
 #include <rom.h>
 #include <rom_map.h>
 
-extern GPIO_HWAttrs gpioHWAttrs[];
+#include <GPIO2.h>
 
 /* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
  * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
@@ -42,12 +42,10 @@ extern GPIO_HWAttrs gpioHWAttrs[];
 
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
 {
-    uint8_t hwAttrIndex = digital_pin_to_hwAttrs_index[pin];
-
-    uint32_t pinMask = gpioHWAttrs[hwAttrIndex].pin;
-    uint32_t portNum = (uint32_t) gpioHWAttrs[hwAttrIndex].port;
-
-    uint8_t stateMask = (state ? pinMask : 0);
+    uint8_t stateMask;
+    uint32_t start, end, result;
+   
+    stateMask = state ? 1 : 0;
 
     // convert the timeout from microseconds to a number of times through
     // the initial loop; it takes 11 clock cycles per iteration.
@@ -55,27 +53,27 @@ unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
     unsigned long maxloops = microsecondsToClockCycles(timeout) / 11;
 
     // wait for any previous pulse to end
-    while (MAP_GPIO_getInputPinValue(portNum, pinMask) == stateMask)
+    while (GPIO2_read(pin) == stateMask)
         if (numloops++ == maxloops) {
             return (0);
         }
 
     // wait for the pulse to start
-    while (MAP_GPIO_getInputPinValue(portNum, pinMask) != stateMask)
+    while (GPIO2_read(pin) != stateMask)
         if (numloops++ == maxloops) {
             return (0);
         }
 
     // wait for the pulse to stop
-    unsigned long start = micros();
+    start = micros();
 
-    while (MAP_GPIO_getInputPinValue(portNum, pinMask) == stateMask) {
+    while (GPIO2_read(pin) == stateMask) {
         if (numloops++ == maxloops) {
             return (0);
         }
     }
-    unsigned long end = micros();
-    unsigned long result = end - start;
+    end = micros();
+    result = end - start;
     
     return (result);
     // convert the reading to microseconds. The loop has been determined

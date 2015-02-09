@@ -19,26 +19,48 @@ void setup1()
 {
 	Wire.begin(0);
     lcd.init();
+    delay(100);
+	lcd.setColor(BLACK);
+	lcd.clear();
+    delay(100);
+	lcd.fontType(FONT_LARGE);
+	delay(2000);
 }
 
 void loop1()
 {
-	lcd.setColor(BLACK);
-	lcd.clear();
-	lcd.fontType(FONT_LARGE);
+	static int sw1 = 0;
+	static int sw2 = 0;
+
+	delay(10);
+
 	lcd.setColor(WHITE);
 	lcd.cursor(5,15);
-	lcd.print("Sw0 = ");
-//	lcd.fontType(FONT_BIG);
-	lcd.setColor(GREEN);
-//	lcd.cursor(20,35);
-	lcd.print(digitalRead(41));
-	lcd.cursor(5,40);
-	lcd.setColor(WHITE);
 	lcd.print("Sw1 = ");
-//	lcd.fontType(FONT_BIG);
+	lcd.setColor(BLACK);
+	lcd.print(sw1);
+
+	delay(10);
+
+	lcd.setColor(WHITE);
+	lcd.cursor(5,15);
+	lcd.print("Sw1 = ");
 	lcd.setColor(GREEN);
-//	lcd.cursor(20,35);
-	lcd.print(digitalRead(42));
-	delay(500);
+	lcd.print(sw1 = digitalRead(41));
+
+	delay(10);
+
+	lcd.setColor(WHITE);
+	lcd.cursor(5,40);
+	lcd.print("Sw2 = ");
+	lcd.setColor(BLACK);
+	lcd.print(sw2);
+
+	delay(10);
+
+	lcd.setColor(WHITE);
+	lcd.cursor(5,40);
+	lcd.print("Sw2 = ");
+	lcd.setColor(GREEN);
+	lcd.print(sw2 = digitalRead(42));
 }

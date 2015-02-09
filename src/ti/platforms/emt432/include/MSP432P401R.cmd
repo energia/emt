@@ -65,6 +65,7 @@ SECTIONS
     .const  :   > FLASH
     .cinit  :   > FLASH
     .pinit  :   > FLASH
+    .init_array : > FLASH
 
     .flashMailbox : > 0x00202000
 
