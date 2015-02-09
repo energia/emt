@@ -33,7 +33,7 @@
 #include <rom.h>
 #include <rom_map.h>
 
-#include <GPIO2.h>
+#include "GPIO2.h"
 
 /* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
  * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
