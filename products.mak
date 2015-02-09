@@ -4,6 +4,7 @@
 #  DRVLIB
 #
 CCSROOT ?= c:/Users/dr/tools/ccs6_0_1_39
+CCSROOT := $(subst \,/,$(CCSROOT))
 
 ti.targets.arm.elf.M4F = $(wildcard $(CCSROOT)/ccsv6/tools/compiler/*arm_5.*)
 
