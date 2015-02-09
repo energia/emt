@@ -1,4 +1,4 @@
-				emt-a04
+				emt-a05
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,11 +125,16 @@ DELETIONS
 
 CHANGES
 
-./src/.*project files
-	cleanup to enable builds in CCS
+*
+	simplify makefiles to get ready for integration of CC3200
 
 ti.platforms.emt432
+	fix linker command files to place .init_array
+
+	fix Board* files to use GPIO2 + minimize final link size
+
 ti.msp432.runtime.wiring
-	temp fix for multiple spi.h headers
+	cleanup of header references to remove unnecessary references
+	to driverlib
 
 MRS
