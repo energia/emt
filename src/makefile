@@ -60,15 +60,14 @@ BASEPKGS    := $(NONTESTPKGS)
 .PHONY: all clean release product .buildinfo
 
 .buildinfo:
-	@echo "--------------- Dependencies ---------------"
-	@echo "    CURDIR   = $(CURDIR)"
+	@echo "  --------------- Dependencies ---------------"
 	@echo "    TIRTOS   = $(TIRTOS)"
 	@echo "    SYSBIOS  = $(SYSBIOS)"
 	@echo "    DRVLIB   = $(DRVLIB)"
 	@echo "    XDCROOT  = $(XDCROOT)"
 	@echo "    XDCARGS  = $(XDCARGS)"
 	@echo "    CCSROOT  = $(CCSROOT)"
-	@echo "--------------------------------------------"
+	@echo "  --------------------------------------------"
 
 export CCSROOT := $(subst \,/,$(CCSROOT))
 

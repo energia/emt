@@ -21,10 +21,10 @@ $(error $(CURDIR)/products.mak does not exist)
 #    gnu.targets.arm.M4F    - TI Arm compiler
 #
 #  The settings below can be used if you're are using CCS and
-#      o CCSROOT, defined below, points to the folder where CCS6 is installed
+#      o CCSROOT points to the folder where CCS6 is installed
 #      o TI-RTOS is installed in the same folder (typically c:/ti)
 #
-CCSROOT ?= c:/Users/dr/tools/ccs6_0_1_39
+CCSROOT ?= c:/ti
 
 latest = $(lastword $(sort $(wildcard $1)))
 
@@ -32,9 +32,11 @@ XDCROOT = $(latest $(CCSROOT)/xdctools_*)
 TIRTOS  = $(latest $(CCSROOT)/tirtos_msp430_2_12*)
 DRVLIB  = $(latest $(TIRTOS)/products/MSP43*/msp430ware)
 
-#
-# Options product installation macro definitions
-#    SYSBIOS - MSP432 Driver Lib
-#
 ti.targets.arm.elf.M4F = $(latest $(CCSROOT)/ccsv6/tools/compiler/ti-*-arm_5.*)
 gnu.targets.arm.M4F    = $(latest $(CCSROOT)/ccsv6/tools/compiler/gcc-arm-*)
+
+#
+# Optional product installation macro definitions
+#    SYSBIOS - if defined, overrides the version in $(TIRTOS)/products
+#
+#SYSBIOS = $(latest $(CCSROOT)/bios_6*)
