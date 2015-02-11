@@ -1,4 +1,4 @@
-				emt-a05
+				emt-a06
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -124,17 +124,12 @@ ADDITIONS
 DELETIONS
 
 CHANGES
-
-*
-	simplify makefiles to get ready for integration of CC3200
-
-ti.platforms.emt432
-	fix linker command files to place .init_array
-
-	fix Board* files to use GPIO2 + minimize final link size
+ti.msp432.runtime.wiring
+    minor change to eliminate last driverlib reference from headers
 
 ti.msp432.runtime.wiring
-	cleanup of header references to remove unnecessary references
-	to driverlib
+    leverage clean wiring headers to eliminate now unncessary -I build opts
+
+    white space cleanup of test
 
 MRS
