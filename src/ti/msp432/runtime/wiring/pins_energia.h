@@ -39,6 +39,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+static const uint8_t RED_LED = 43;
+static const uint8_t GREEN_LED = 44;
+static const uint8_t YELLOW_LED = 44; /* closest to yellow */
+static const uint8_t BLUE_LED = 45;
+static const uint8_t PUSH1 = 41;
+static const uint8_t PUSH2 = 42;
+
+#ifdef ARDUINO_MAIN
 #include <msp432.h>
 #include <rom.h>
 #include <rom_map.h>
@@ -50,14 +58,6 @@
 #include <uart.h>
 #include <wdt_a.h>
 
-static const uint8_t RED_LED = 43;
-static const uint8_t GREEN_LED = 44;
-static const uint8_t YELLOW_LED = 44; /* closest to yellow */
-static const uint8_t BLUE_LED = 45;
-static const uint8_t PUSH1 = 41;
-static const uint8_t PUSH2 = 42;
-
-#ifdef ARDUINO_MAIN
 const uint32_t port_to_base[] = {
 	NOT_A_PORT,
 	(uint32_t) NOT_A_PORT,
