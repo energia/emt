@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////
   #include "GLCDI2C.h"
 
-  #include "Wire.h"
+  #include <Wire.h>
   #include <stdio.h>
   #include <string.h>
   #include <inttypes.h>
-  #include "Energia.h"
+  #include <Energia.h>
   
 
 //--------------------------------------------------------

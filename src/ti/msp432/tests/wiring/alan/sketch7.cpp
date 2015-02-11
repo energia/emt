@@ -1,8 +1,8 @@
-#include "Energia.h"
+#include <Energia.h>
 
 void buttonFxn0()
 {
-	static bool off = true;
+    static bool off = true;
 
     if (off) {
     	off = false;
@@ -16,30 +16,30 @@ void buttonFxn0()
 
 void buttonFxn1()
 {
-	static int state = 0;
+    static int state = 0;
 
-	state = (state + 1) & 0x7;
+    state = (state + 1) & 0x7;
 
-	if (state & 0x1) {
+    if (state & 0x1) {
     	digitalWrite(43, 1);
-	}
-	else {
+    }
+    else {
     	digitalWrite(43, 0);
-	}
+    }
 
-	if (state & 0x2) {
+    if (state & 0x2) {
     	digitalWrite(44, 1);
-	}
-	else {
+    }
+    else {
     	digitalWrite(44, 0);
-	}
+    }
 
-	if (state & 0x4) {
+    if (state & 0x4) {
     	digitalWrite(45, 1);
-	}
-	else {
+    }
+    else {
     	digitalWrite(45, 0);
-	}
+    }
 }
 
 void setup7()
@@ -53,5 +53,5 @@ void setup7()
 
 void loop7()
 {
-	delay(1000);
+    delay(1000);
 }

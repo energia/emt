@@ -1,4 +1,4 @@
-#include "Energia.h"
+#include <Energia.h>
 
 #include <xdc/std.h>
 
@@ -84,7 +84,6 @@ static char clear[] = "\e[2J";
 /*
  *  ======== command table ========
  */
-
 #define GEN_COMMTABLE_ENTRY(name, desc, detail) {   #name,  consoleHandler_##name,  desc,   detail  }
 
 static const struct {
@@ -599,7 +598,7 @@ static int consoleHandler_wm(const char *line)
 
 static int consoleHandler_spi(const char *line)
 {
-	static bool spiBegun = false;
+    static bool spiBegun = false;
 
     if (*line++ != ' ') {
         return RETURN_FAIL_PRINT_USAGE;
@@ -609,8 +608,8 @@ static int consoleHandler_spi(const char *line)
     uint32_t cs = 0;
 
     if (spiBegun == false) {
-    	SPI.begin();
-    	spiBegun = true;
+        SPI.begin();
+        spiBegun = true;
     }
 
     data = strtol(line, &endptr, 10);
@@ -735,7 +734,6 @@ static int consoleHandler_stats(const char *line)
     }
     return RETURN_SUCCESS;
 }
-
 
 #endif /* STATS_CMD */
 

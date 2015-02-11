@@ -13,8 +13,6 @@
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <xdc/runtime/System.h>
 
-/* Board Support Header files (from configuration closure) */
-//#include <Board.h>
 #include <Energia.h>
 
 /* magic insertion point 769d20fcd7a0eedaf64270f591438b01 */
@@ -56,51 +54,51 @@ const char *taskNames[] = {
  */
 Void the_task(UArg _task_setup, UArg _task_loop)
 {
-	/* Call setup once */
-	(*(void(*)()) _task_setup)();
+    /* Call setup once */
+    (*(void(*)()) _task_setup)();
 
-	/* Call loop repeatedly */
-	for(;;) {
-		(*(void(*)()) _task_loop)();
-		System_flush();
-		Task_yield();
-	}
+    /* Call loop repeatedly */
+    for(;;) {
+        (*(void(*)()) _task_loop)();
+        System_flush();
+        Task_yield();
+    }
 }
+
 /*
  *  ======== main ========
  */
 int main()
 {
-	/* initialize all device/board specific peripherals */
-	Board_init();  /* this function is generated as part of TI-RTOS config */
+    /* initialize all device/board specific peripherals */
+    Board_init();  /* this function is generated as part of TI-RTOS config */
 
-	Task_Params taskParams;
+    Task_Params taskParams;
 
-	System_printf("Startup\n");
-	System_flush();
+    System_printf("Startup\n");
+    System_flush();
 
-	/* initialize taskParams and set to default */
-	Task_Params_init(&taskParams);
+    /* initialize taskParams and set to default */
+    Task_Params_init(&taskParams);
 
-	/* All tasks have the same priority */
-	taskParams.priority = Task_numPriorities - 1;
-	taskParams.stackSize = 0x800;
+    /* All tasks have the same priority */
+    taskParams.priority = Task_numPriorities - 1;
+    taskParams.stackSize = 0x800;
 
-	uint8_t i = 0;
-	for(i = 0; i < NUM_SKETCHES; i++) {
-		/* Set arg0 to setup() */
-		taskParams.arg0 = (xdc_UArg)func_ptr[i][0];
-		/* Set ar1 to loop */
-		taskParams.arg1 = (xdc_UArg)func_ptr[i][1];
-		/* Set the task name */
-		taskParams.instance->name = (xdc_String) taskNames[i];
-		/* Create the task */
-		Task_create(the_task, &taskParams, NULL);
-	}
+    uint8_t i = 0;
+    for(i = 0; i < NUM_SKETCHES; i++) {
+        /* Set arg0 to setup() */
+        taskParams.arg0 = (xdc_UArg)func_ptr[i][0];
+        /* Set ar1 to loop */
+        taskParams.arg1 = (xdc_UArg)func_ptr[i][1];
+        /* Set the task name */
+        taskParams.instance->name = (xdc_String) taskNames[i];
+        /* Create the task */
+        Task_create(the_task, &taskParams, NULL);
+    }
 
-	/* does not return */
-	BIOS_start();
+    /* does not return */
+    BIOS_start();
 
-	return (0); /* should never get here, but just in case ... */
+    return (0); /* should never get here, but just in case ... */
 }
-

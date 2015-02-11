@@ -2,9 +2,9 @@
 #ifndef GLCDI2C_h
 #define GLCDI2C_h
 
-#include "Wire.h"
+#include <Wire.h>
 #include <inttypes.h>
-#include "Print.h"
+#include <Print.h>
 
 //////////////////// Command List ///////////////////////////////////////
 #define GLCDI2C_RESET                   0x01

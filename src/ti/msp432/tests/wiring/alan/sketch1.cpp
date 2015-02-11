@@ -1,9 +1,9 @@
-#include "Energia.h"
+#include <Energia.h>
 
 #include <xdc/runtime/System.h>
 
 #include "GLCDI2C.h"
-#include "Wire.h"
+#include <Wire.h>
 
 #define	BLACK           0x0000
 #define	GREEN           0x07E0
@@ -17,50 +17,50 @@ GLCDI2C lcd = GLCDI2C(maxX, maxY, i2cAddress);
 
 void setup1()
 {
-	Wire.begin(0);
+    Wire.begin(0);
     lcd.init();
     delay(100);
-	lcd.setColor(BLACK);
-	lcd.clear();
+    lcd.setColor(BLACK);
+    lcd.clear();
     delay(100);
-	lcd.fontType(FONT_LARGE);
-	delay(2000);
+    lcd.fontType(FONT_LARGE);
+    delay(2000);
 }
 
 void loop1()
 {
-	static int sw1 = 0;
-	static int sw2 = 0;
+    static int sw1 = 0;
+    static int sw2 = 0;
 
-	delay(10);
+    delay(10);
 
-	lcd.setColor(WHITE);
-	lcd.cursor(5,15);
-	lcd.print("Sw1 = ");
-	lcd.setColor(BLACK);
-	lcd.print(sw1);
+    lcd.setColor(WHITE);
+    lcd.cursor(5,15);
+    lcd.print("Sw1 = ");
+    lcd.setColor(BLACK);
+    lcd.print(sw1);
 
-	delay(10);
+    delay(10);
 
-	lcd.setColor(WHITE);
-	lcd.cursor(5,15);
-	lcd.print("Sw1 = ");
-	lcd.setColor(GREEN);
-	lcd.print(sw1 = digitalRead(41));
+    lcd.setColor(WHITE);
+    lcd.cursor(5,15);
+    lcd.print("Sw1 = ");
+    lcd.setColor(GREEN);
+    lcd.print(sw1 = digitalRead(41));
 
-	delay(10);
+    delay(10);
 
-	lcd.setColor(WHITE);
-	lcd.cursor(5,40);
-	lcd.print("Sw2 = ");
-	lcd.setColor(BLACK);
-	lcd.print(sw2);
+    lcd.setColor(WHITE);
+    lcd.cursor(5,40);
+    lcd.print("Sw2 = ");
+    lcd.setColor(BLACK);
+    lcd.print(sw2);
 
-	delay(10);
+    delay(10);
 
-	lcd.setColor(WHITE);
-	lcd.cursor(5,40);
-	lcd.print("Sw2 = ");
-	lcd.setColor(GREEN);
-	lcd.print(sw2 = digitalRead(42));
+    lcd.setColor(WHITE);
+    lcd.cursor(5,40);
+    lcd.print("Sw2 = ");
+    lcd.setColor(GREEN);
+    lcd.print(sw2 = digitalRead(42));
 }
