@@ -11,7 +11,6 @@
 #      TIRTOS  - TI-RTOS for MSP432
 #      EMTROOT - the EMT packages repo
 #
-TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
 # include definitions of the macros described above
 include tools.mak

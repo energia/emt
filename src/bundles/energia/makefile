@@ -21,7 +21,7 @@ endef
 all: makefile
 
 msp432LP/closure.zip: | all
-	@echo making $@ from gnu build ...
+	@echo making $@ ...
 	@cd msp432LP && $(XDCROOT)/bin/zip -rq closure.zip closure
 
 # rule to build the specified goal for all platforms, compilers, and tests
