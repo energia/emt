@@ -1,4 +1,4 @@
-				emt-a06
+				emt-a07
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,11 +125,9 @@ DELETIONS
 
 CHANGES
 ti.msp432.runtime.wiring
-    minor change to eliminate last driverlib reference from headers
+    fixed to build under gcc
 
-ti.msp432.runtime.wiring
-    leverage clean wiring headers to eliminate now unncessary -I build opts
-
-    white space cleanup of test
+*
+    makefile cleanup/simplification(?)
 
 MRS
