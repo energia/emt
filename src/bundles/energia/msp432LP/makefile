@@ -34,13 +34,13 @@ all: .debug closure
 	@echo "  ---- imports ----"
 	@echo "    CCROOT  = $(CCROOT)"
 	@echo "    DRVLIB  = $(DRVLIB)"
-	@echo "    XDCROOT = $(lastword $(subst /, ,$(XDCROOT)))"
+	@echo "    XDCROOT = $(XDCROOT)"
 	@echo "    TIRTOS  = $(lastword $(subst /, ,$(TIRTOS)))"
 	@echo "    SYSBIOS = $(SYSBIOS)"
 	@echo "    EMTROOT = $(EMTROOT)"
 	@echo "    XDCPATH = $(XDCPATH)"
 	@echo "  -----------------"
-	@echo
+	@echo ""
 
 # create a single directory containing _everything_ referenced by configPkg
 closure: configPkg
