@@ -9,7 +9,7 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 # external pre-requisites (modify these to suit your environment):
 #    CLOSURE - location of the output of the "closure" tool applied
 #              to some configuration of TI-RTOS
-#    SDKROOT - the MSP432 DriverLib product installation folder
+#    DRVLIB  - the MSP432 DriverLib product installation folder
 #    CCROOT  - installation directory of the TI Arm compiler
 #
 
@@ -24,12 +24,12 @@ vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
 
 # define MSP432 DriverLib libs and headers based on definitions above
-SDK_LIBS = $(SDKROOT)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
+SDK_LIBS = $(DRVLIB)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
 
-SDK_INCS = -I"$(SDKROOT)/driverlib" \
-           -I"$(SDKROOT)/driverlib/inc" \
-           -I"$(SDKROOT)/driverlib/inc/CMSIS" \
-           -I"$(SDKROOT)/driverlib/MSP432P4xx"
+SDK_INCS = -I"$(DRVLIB)/driverlib" \
+           -I"$(DRVLIB)/driverlib/inc" \
+           -I"$(DRVLIB)/driverlib/inc/CMSIS" \
+           -I"$(DRVLIB)/driverlib/MSP432P4xx"
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
