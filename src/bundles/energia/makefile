@@ -2,8 +2,6 @@
 PLATFORMS ?= msp432LP
 TESTS     ?= blink
 
-COMPILERS = gnu
-
 # define (optional) tools to run on output files to summarize footprint
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 OBJTOOL  = $(if $(XDCROOT),$(XDCROOT)/xs -c $(CURDIR)/objsum.xs,:)
