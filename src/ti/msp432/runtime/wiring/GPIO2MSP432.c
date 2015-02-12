@@ -63,13 +63,13 @@
 #endif
 
 __STATIC_INLINE uint32_t GPIOMSP432_getPinNumber(uint32_t x) {
-#if defined(codered) || defined(gcc) || defined(sourcerygxx)
+#if defined(__TI_COMPILER_VERSION__)
+    return __clz(__rbit(x));
+#elif defined(codered) || defined(__GNUC__) || defined(sourcerygxx)
     return __builtin_ctz(x);
 #elif defined(__IAR_SYSTEMS_ICC__) || defined(DOXYGEN)
     return __CLZ(__RBIT(x));
 #elif defined(rvmdk) || defined(__ARMCC_VERSION)
-    return __clz(__rbit(x));
-#elif defined(__TI_COMPILER_VERSION__)
     return __clz(__rbit(x));
 #else
     #error "Unsupported compiler used"
