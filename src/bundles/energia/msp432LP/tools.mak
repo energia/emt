@@ -16,11 +16,7 @@
 
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
-ifneq (,$(wildcard $(TREE_ROOT)/src/products.mak))
-    include $(TREE_ROOT)/src/products.mak
-    CCROOT  = $(gnu.targets.arm.M4F)
-else
-    include tools-tisb.mak
-endif
+include $(firstword $(wildcard $(TREE_ROOT)/src/products.mak $(TREE_ROOT)/products.mak))
 
+CCROOT  = $(gnu.targets.arm.M4F)
 EMTROOT ?= $(TREE_ROOT)/src
