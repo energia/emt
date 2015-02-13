@@ -64,7 +64,7 @@
     var file = java.io.FileWriter(outputDir + "/.exclude");
     file.close()
 %%}
-%if (Program.build.target.$name.match(/^gnu\.targets/) &&
-%    (Program.build.target.name == "M4F")) {
-UChar ti_platforms_msp432_stack[`Program.stack`] __attribute__ ((aligned(8), section (".stack")));
+%if (Program.build.target.$name.match(/^gnu\.targets/)) {
+%    var prefix = this.$package.$name.replace(/\./g, '_');
+UChar `prefix`_stack[`Program.stack`] __attribute__ ((aligned(8), section (".stack")));
 % }
