@@ -28,15 +28,15 @@ CCSROOT ?= c:/ti
 
 latest = $(lastword $(sort $(wildcard $1)))
 
-XDCROOT = $(latest $(CCSROOT)/xdctools_*)
-TIRTOS  = $(latest $(CCSROOT)/tirtos_msp430_2_12*)
-DRVLIB  = $(latest $(TIRTOS)/products/MSP43*/msp430ware)
+XDCROOT = $(call latest, $(CCSROOT)/xdctools_*)
+TIRTOS  = $(call latest, $(CCSROOT)/tirtos_msp430_2_12*)
+DRVLIB  = $(call latest, $(TIRTOS)/products/MSP43*/msp430ware)
 
-ti.targets.arm.elf.M4F = $(latest $(CCSROOT)/ccsv6/tools/compiler/ti-*-arm_5.*)
-gnu.targets.arm.M4F    = $(latest $(CCSROOT)/ccsv6/tools/compiler/gcc-arm-*)
+ti.targets.arm.elf.M4F = $(call latest, $(CCSROOT)/ccsv6/tools/compiler/ti-*-arm_5.*)
+gnu.targets.arm.M4F    = $(call latest, $(CCSROOT)/ccsv6/tools/compiler/gcc-arm-*)
 
 #
 # Optional product installation macro definitions
 #    SYSBIOS - if defined, overrides the version in $(TIRTOS)/products
 #
-#SYSBIOS = $(latest $(CCSROOT)/bios_6*)
+#SYSBIOS = $(call latest, $(CCSROOT)/bios_6*)
