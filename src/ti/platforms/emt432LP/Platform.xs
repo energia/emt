@@ -20,21 +20,20 @@
  */
 function instance$meta$init(name)
 {
-    this.deviceName = "MSP432P401R";
-
     this.includeLinkCmdFile = true;
+
+    /* We use 'revision' to pass 'the real device name' to the generic
+     * MSP432 device.
+     */
+    this.deviceName = "MSP432P401R";
+    this.CPU.revision = this.deviceName;
+    this.CPU.catalogName = "ti.catalog.arm.cortexm4";
+    this.CPU.clockRate = 48;
 
     if (Program.build.target.$name.match(/gnu/)) {
         this.codeMemory = "REGION_TEXT";
         this.dataMemory = "REGION_DATA";
         this.stackMemory = "REGION_STACK";
     }
-
-    /* We use 'revision' to pass 'the real device name' to the generic
-     * MSP432 device.
-     */
-    this.CPU.revision = this.deviceName;
-    this.CPU.catalogName = "ti.catalog.arm.cortexm4";
-    this.CPU.clockRate = 48;
 }
 
