@@ -86,16 +86,19 @@ function getExecCmd(prog, packagePath)
  */
 function getLinkTemplate(prog)
 {
-    var pname = prog.platform.$package.$name.replace(/\./g, '/');
+    /* hack to get inherited Platform package name */
+    var tname = this.$super.$type;
+    var iname = tname.substring(0, tname.lastIndexOf('.'));
+    var prefix = xdc.om[iname].$package.$name.replace(/\./g, '/');
 
     if (prog.build.target.$name.match(/gnu/)) {
-        return (pname + "/linkcmd_gnu.xdt");
+        return (prefix + "/linkcmd_gnu.xdt");
     }
     else if (prog.build.target.$name.match(/iar/)) {
-        return (pname + "/linkcmd_iar.xdt");
+        return (prefix + "/linkcmd_iar.xdt");
     }
     else {
-        return (pname + "/linkcmd.xdt");
+        return (prefix + "/linkcmd.xdt");
     }
 }
 
@@ -183,12 +186,9 @@ function instance$meta$init(name)
  */
 function module$meta$init()
 {
-    var Platform = this;
-    
     /* get source directory for generated files */
     var SourceDir = xdc.useModule("xdc.cfg.SourceDir");
     this.$private.src = SourceDir.create("platform");
-
 }
 
 function findDriverLib()
