@@ -1,0 +1,38 @@
+%%{
+    /* get the input template directory and the output directory */
+    var inputDir  = this.$package.$name.replace(/\./g, '/') + "/templates";
+    var outputDir = this.$private.src.getGenSourceDir();
+    
+    /* generate makefile from makefile.xdt 
+     *    $args[0] = the RTSC target, so the makefile knows how to run the
+     *               compiler and archiver
+     */
+    //print("generating platform make files ... (" + outputDir + ")");
+    var tfile = inputDir + "/makefile.xdt";
+    var tplt = xdc.loadTemplate(tfile);
+    tplt.genFile(outputDir + "/makefile", this,
+                 [tfile, Program.build.target]);
+
+    /* generate top-level Board_init.c function */
+    //print("generating Platform init files ... ");
+    tfile = inputDir + "/Board_init.c.xdt";
+    tplt = xdc.loadTemplate(tfile);
+    tplt.genFile(outputDir + "/Board_init.c", this,
+                 [tfile, Program.build.target]);
+
+    /* generate top-level Board.h header */
+    tfile = inputDir + "/Board.h.xdt";
+    tplt = xdc.loadTemplate(tfile);
+    tplt.genFile(outputDir + "/Board.h", this,
+                 [tfile, Program.build.target]);
+
+    /* generate "marker" file that tells CDT to *NOT* add the sources in
+     * this directory to the project
+     */
+    var file = java.io.FileWriter(outputDir + "/.exclude");
+    file.close()
+%%}
+%if (Program.build.target.$name.match(/^gnu\.targets/)) {
+%    var prefix = this.$package.$name.replace(/\./g, '_');
+UChar `prefix`_stack[`Program.stack`] __attribute__ ((aligned(8), section (".stack")));
+% }

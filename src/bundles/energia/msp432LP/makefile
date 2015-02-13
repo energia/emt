@@ -20,6 +20,9 @@ SYSBIOS = $(wildcard $(TIRTOS)/products/bios_*)
 
 XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT);$(DRVLIB)
 
+PLATFORM = ti.platforms.emt432LP
+TARGET   = gnu.targets.arm.M4F
+
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
 else
@@ -50,7 +53,7 @@ closure: configPkg
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
-	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t gnu.targets.arm.M4F -p ti.platforms.emt432:MSP432P401R:true -r release -c $(CCROOT) $<
+	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) -p $(PLATFORM) -r release -c $(CCROOT) $<
 
 # remove all generated files/directories
 clean:

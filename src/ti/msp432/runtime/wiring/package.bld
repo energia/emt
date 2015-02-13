@@ -1,7 +1,7 @@
 /*
  *  ======== package.bld ========
  */
-var Platform = xdc.module("ti.platforms.emt432.Platform");
+var Platform = xdc.module("ti.platforms.emt432LP.Platform");
 var DLIBROOT = Platform.findDriverLib();
 print("  using DriverLib: " + DLIBROOT);
 

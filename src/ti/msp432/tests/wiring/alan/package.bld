@@ -7,16 +7,14 @@ Pkg.attrs.exportAll = true;
 Pkg.uses = ["ti/msp432/runtime/wiring"];
 
 var TARGET   = "ti.targets.arm.elf.M4F";
-var PLATFORM = "ti.platforms.emt432";
-var DEVICE   = "MSP432P401R";
+var PLATFORM = "ti.platforms.emt432LP";
 
 var SRCS = getSources(".");
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
     if (targ.$name == TARGET) {
-        Pkg.addExecutable("energia", targ, 
-			  PLATFORM + ":" + DEVICE + ":1").addObjects(SRCS);
+        Pkg.addExecutable("energia", targ, PLATFORM).addObjects(SRCS);
     }
     else {
 	print("skipping " + targ.$name);
