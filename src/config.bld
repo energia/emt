@@ -40,9 +40,12 @@ if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
 }
 gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 
+gnuTargets.M4F.lnkOpts.suffix += " -lstdc++";
+gnuTargets.M4.lnkOpts.suffix += " -lstdc++";
+
 /* define the set of targets for which to build */
-if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
 if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
+if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
 
 /* For now, the default is to export everthing */
 Pkg.attrs.exportAll = true;
