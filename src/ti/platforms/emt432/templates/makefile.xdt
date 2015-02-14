@@ -29,7 +29,7 @@
     
     /* find device headers */
     var DLIB = Platform.findDriverLib();
-    var DLIBI = DLIB ? ('-I "' + DLIB + '/inc" -I "' + DLIB + '/inc/CMSIS" -I "' + DLIB + '/MSP432P4xx"') : "";
+    var DLIBI = DLIB ? ('-I "' + DLIB + '/inc" -I "' + DLIB + '" -I "' + DLIB + '/inc/CMSIS"') : "";
     
     /* get location of the config script */
     var PROJ = java.io.File(Program.build.cfgScript).getParent();

@@ -23,17 +23,25 @@ function getLibs(prog)
     return ('!' + libs);
 }
 
+/*
+ *  ======== validate ========
+ */
 function validate()
 {
     return;
 
+    /* patch TI-RTOS getLibs() bug */
     if ("ti.tirtos.Package" in xdc.om) {
 	var pkgType = xdc.om["ti.tirtos.Package"];
-        pkgType.$patch('getLibs', newGetLibs);
+        pkgType.$patch('getLibs', _newGetLibs);
     }
 }
 
-function newGetLibs(prog)
+/*
+ *  ======== _newGetLibs ========
+ *  TI-RTOS getLibs patch
+ */
+function _newGetLibs(prog)
 {
     var libs = this.$oldFxn(prog); /* call previous getLibs() function */
     if (libs != null) {
