@@ -24,6 +24,26 @@ metaonly interface IPlatform inherits xdc.platform.IPlatform
     config xdc.platform.IPlatform.Board BOARD;
 
     /*!
+     *  ======== driverLibPattern ========
+     *  A pattern used to locate DriverLib along the package path
+     *
+     *  DriverLib is located by looking for a directory formed by
+     *  appending the pattern plus "/inc" to each directory of the
+     *  package path.
+     *
+     *  The pattern may contain a single '*' character which is used
+     *  to denote any sequence of characters except the directory
+     *  separation character '/'.
+     *
+     *  Suppose, For example, the directory /ti/msp430 on the
+     *  package path contains MSP430Ware_1_97_00_47b.  The pattern
+     *  "MSP43* /msp430ware/driverlib" will identify the directory
+     *  "/ti/msp430/MSP430Ware_1_97_00_47b/msp430ware/driverlib" as the 
+     *  location of DriverLib.
+     */
+    config String driverLibPattern;
+    
+    /*!
      *  ======== addDriverLibs ========
      *  Automatically add DriverLib libraries to linker command line.
      *

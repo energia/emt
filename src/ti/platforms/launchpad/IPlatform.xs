@@ -191,32 +191,62 @@ function module$meta$init()
     this.$private.src = SourceDir.create("platform");
 }
 
+/*
+ *  ======== findDriverLib ========
+ */
 function findDriverLib()
 {
-    var file = _wildcard("driverlib");
+    var file = _wildcard(this.driverLibPattern + "/inc");
     if (file == null) {
 	throw new Error("can't find MSP432 DriverLib along the path '"
 		       + xdc.curPath() + "'");
     }
+    file = file.substring(0, file.lastIndexOf('/inc'));
 
     return (file);
 }
 
+/*
+ *  ======== _wildcard ========
+ */
 function _wildcard(pat)
 {
     var dirs = xdc.curPath().split(';');
+    var pa = pat.split('*');
+
+    var k = pa[0].lastIndexOf('/');
+    var prefix;
+    var middle;
+    if (k >= 0) {
+        prefix = '/' + pa[0].substring(0, k);
+        middle = pa[0].substring(k + 1);
+    }
+    var suffix = pa[1] ? (pa[1] + '/') : null;
+    
     for (var i = 0; i < dirs.length; i++) {
-	if (dirs[i] != "") {
-	    var file = _find(dirs[i], pat);
+        var root = dirs[i];
+	if (root != "") {
+            root += prefix;
+	    var file = _find(root, middle);
 	    if (file != null) {
-		return file;
+                if (suffix == null) {
+                    return file;
+                }
+                file += suffix;
+                if (java.io.File(file).exists()) {
+                    return (file);
+                }
 	    }
 	}
     }
+
     return (null);
 }
 
-/* find the directory <dirName>/prefix* */
+/*
+ *  ======== _find ========
+ *  Find the directory <dirName>/prefix* 
+ */
 function _find(dirName, prefix) {
     //print("    looking for " + dirName + '/' + prefix + '*');
     /* create a file name filter */
