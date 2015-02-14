@@ -48,9 +48,6 @@
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/msp432.runtime.wiring}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ti.msp432.tests.wiring.alan}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/inc/CMSIS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/MSP432P4xx&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.LITTLE_ENDIAN.552037013" name="Little endian code [See 'General' page to edit] (--little_endian, -me)" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.LITTLE_ENDIAN" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL.1875710545" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>

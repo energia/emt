@@ -12,7 +12,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lib" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970" name="Debug" parent="com.ti.ccstudio.buildDefinitions.MSP432.Debug" postbuildStep="" prebuildStep="">
+				<configuration artifactExtension="lib" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970" name="Debug" parent="com.ti.ccstudio.buildDefinitions.MSP432.Debug" postbuildStep="${XDCROOT}/bin/cp msp432.runtime.wiring.lib ../lib/ti.msp432.runtime.wiring.lib" prebuildStep="">
 					<folderInfo id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970." name="/" resourcePath="">
 						<toolChain id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.libraryDebugToolchain.1942746637" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.libraryDebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.MSP432_5.2.library.librarianDebug.1892437785">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.1326012325" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
@@ -38,14 +38,14 @@
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.INCLUDE_PATH.1340455097" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/emt_tree}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/MSP432P4xx&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${XDCROOT}/packages&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/packages&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_1_97_00_47b/driverlib/inc/CMSIS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/bios_6_41_03_42_eng/packages&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${xdc_find:${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/bios_6_*/packages}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${xdc_find:${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_*/driverlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${xdc_find:${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_*/driverlib/MSP432P4xx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${xdc_find:${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_*/driverlib/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${xdc_find:${COM_TI_RTSC_TIRTOSMSP430_INSTALL_DIR}/products/MSP430Ware_*/driverlib/inc/CMSIS}&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL.374410210" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.ADVICE__POWER.1119780386" name="Enable checking of ULP power rules (--advice:power)" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.compilerID.ADVICE__POWER" value="" valueType="string"/>
