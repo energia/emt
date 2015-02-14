@@ -75,6 +75,9 @@ all: .buildinfo
 	$(XDCROOT)/xdc --jobs=4 .interfaces -P ti/platforms/*
 	$(XDCROOT)/xdc --jobs=4 .libraries -P $(BASEPKGS)
 
+test: all
+	$(XDCROOT)/xdc --jobs=4 -P $(TESTPKGS)
+
 release: .buildinfo all
 	$(XDCROOT)/xdc --jobs=4 $@ -P $(BASEPKGS)
 	@echo making energia closures ...
