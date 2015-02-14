@@ -1,8 +1,9 @@
 /* add a "sanity" test for this platform and export pre-built executable */
 Pkg.attrs.exportAll = true;
 Pkg.attrs.profile = "release";
-
 Pkg.otherFiles = ["test.c", "test.cfg"];
+
+Pkg.generatedFiles = ["src/"];
 
 /* compute the name of the platform package we are testing from our name */
 var myPlatform = Pkg.name.replace(/\.tests$/,'');
