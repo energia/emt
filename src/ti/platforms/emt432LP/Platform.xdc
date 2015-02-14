@@ -14,6 +14,21 @@ metaonly module Platform inherits ti.platforms.launchpad.IPlatform
         boardRevision:  "1.0"
     };
 
+    /*!
+     *  ======== driverLibPattern ========
+     *  The pattern used to locate MSP43x DriverLib
+     *
+     *  The default setting below locates driverLib relative to the TI-RTOS
+     *  repo which must be on the package path in order to access reentrant
+     *  SYS/BIOS peripheral drivers.
+     *
+     *  Note: this default may be dynamically changed in this module's
+     *  module$meta$init() startup function (defined in Platform.xs).
+     *
+     *  @see ti.platforms.launchpad.IPlatform#driverLibPattern
+     */
+    override config String driverLibPattern = "../products/MSP43*/driverlib";
+
 instance:
 
     /*

@@ -4,6 +4,15 @@
  */
 
 /*
+ * ======== module$meta$init ========
+ */
+function module$meta$init()
+{
+    this.$super.module$meta$init();
+    this.driverLibPattern = "../products/MSP43*/driverlib";
+}
+
+/*
  *  ======== Platform.instance$meta$init ========
  *  This function is called to initialize a newly created instance of a
  *  platform.  Platform instances are created just prior to running
@@ -14,9 +23,6 @@
  *  @param(name)        the name used to identify this instance (without
  *                      the package name prefix)
  *
- *  For this platform, 'name' must identify a device. Besides the catalog
- *  module, this parameter may encode values for other configuration
- *  parameters, as defined by `nameFormat`. The values are separated by ':'.
  */
 function instance$meta$init(name)
 {
