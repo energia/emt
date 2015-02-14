@@ -86,11 +86,11 @@ int main()
     taskParams.stackSize = 0x800;
 
     uint8_t i = 0;
-    for(i = 0; i < NUM_SKETCHES; i++) {
+    for (i = 0; i < NUM_SKETCHES; i++) {
         /* Set arg0 to setup() */
-        taskParams.arg0 = (xdc_UArg)func_ptr[i][0];
+        taskParams.arg0 = (UArg)func_ptr[i][0];
         /* Set ar1 to loop */
-        taskParams.arg1 = (xdc_UArg)func_ptr[i][1];
+        taskParams.arg1 = (UArg)func_ptr[i][1];
         /* Set the task name */
         taskParams.instance->name = (xdc_String) taskNames[i];
         /* Create the task */
