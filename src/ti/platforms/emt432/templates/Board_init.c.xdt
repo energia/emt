@@ -127,8 +127,8 @@ void Board_initGeneral(void) {
  *  =============================== GPIO ===============================
  */
 
-#include <ti/msp432/runtime/wiring/GPIO2.h>
-#include <ti/msp432/runtime/wiring/GPIO2MSP432.h>
+#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/gpio/GPIO2MSP432.h>
 
 /* Place into subsections to allow the TI linker to remove items properly */
 #if defined(__TI_COMPILER_VERSION__)
@@ -257,7 +257,7 @@ GPIO2_CallbackFxn gpio2CallbackFunctions[] = {
 	NULL,  /*  46 - P1.0 LED1 */
 };
 
-const GPIO2_Config GPIO2_config = {
+const GPIO2MSP432_Config GPIO2MSP432_config = {
     .pinConfigs = (GPIO2_PinConfig *)gpio2PinConfigs,
 	.callbacks = (GPIO2_CallbackFxn *)gpio2CallbackFunctions,
 	.numberOfPinConfigs = sizeof(gpio2PinConfigs)/sizeof(GPIO2_PinConfig),
