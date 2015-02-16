@@ -29,7 +29,7 @@ ifeq (,$(XDCROOT))
     # UNIX TISB tree build support
     #
     XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_30_05_60/$(BUILD_HOST_OS)
-    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f12/exports/tirtos_full_*)
+    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f13/exports/tirtos_full_*)
     DRVLIB  = $(wildcard $(TIRTOS)/products/MSP43*)
     ti.targets.arm.elf.M4F = $(TOOLS)/vendors/ti/arm/5.2.2/$(BUILD_HOST_OS)
     gnu.targets.arm.M4F    = $(TOOLS)/vendors/linaro/4.8-2014q3/$(BUILD_HOST_OS)
