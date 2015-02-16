@@ -62,14 +62,13 @@ INPUT(
 %}
 
 %if (Program.platform.$orig.includeLinkCmdFile) {
-%var linkFile = Program.platform.$package.packageBase + '/include_gnu/'
+%    var linkFile = Program.platform.$package.packageBase + '/include_gnu/'
 %    + Program.cpu.deviceName.toUpperCase() + '.lds';
 INCLUDE "`linkFile`"
 %}
 
 SECTIONS {
-
-%    var _utils = xdc.loadCapsule("gnu/targets/linkUtils.xs");
+%var _utils = xdc.loadCapsule("gnu/targets/linkUtils.xs");
     `_utils.genSections(Program)`
 
     /*
@@ -78,6 +77,15 @@ SECTIONS {
     `_utils.genContributions($args)`
 
     __TI_STACK_BASE = __stack;
+}
+
+SECTIONS {
+    /* create an empty section at the end of SRAM */
+    .empty : { *(.empty) } > SRAM
+
+    /* the UNUSED symbols define reusable heap memory */
+    __UNUSED_start__ = ADDR(.empty);
+    __UNUSED_end__   = ORIGIN(SRAM) + LENGTH(SRAM);
 }
 
 ENTRY(_c_int00)

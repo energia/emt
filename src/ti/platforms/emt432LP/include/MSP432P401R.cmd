@@ -39,11 +39,14 @@
 --retain=interruptVectors
 --retain=flashMailbox
 
+#define RAM_BASE   0x20000000
+#define RAM_LENGTH 0x00010000
+
 MEMORY
 {
     FLASH     (RX) : origin = 0x00000000, length = 0x00040000
     FLASH_OTP (RX) : origin = 0x00200000, length = 0x00004000
-    SRAM      (RWX): origin = 0x20000000, length = 0x00010000
+    SRAM      (RWX): origin = RAM_BASE,   length = RAM_LENGTH
 }
 
 /* The following command line options are set as part of the CCS project.    */
@@ -68,11 +71,27 @@ SECTIONS
     .init_array : > FLASH
 
     .flashMailbox : > 0x00202000
+    .vtable       : > 0x20000000
 
-    .vtable :   > 0x20000000
-    .data   :   > SRAM
-    .bss    :   > SRAM
-    .sysmem :   > SRAM
+    /* start stack at the highest physical address (since it grows to lower
+     * addresses.
+     *
+     * start heap at the end of all RAM data and extend downward wward the
+     * stack top
+     *
+     * define __UNUSED_start__ and __UNUSED_end__ to identify unused memory
+     * to be used as {extra heap space, stack overrun check boundary, ...}
+     */
+    GROUP {
+        .data
+        .bss
+        .sysmem
+        empty: {
+            __UNUSED_start__ = .;
+            __UNUSED_end__ = __stack;
+        }
+    } > SRAM
+
     .stack  :   > SRAM (HIGH)
 }
 
