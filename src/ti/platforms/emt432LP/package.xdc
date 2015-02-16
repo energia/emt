@@ -4,7 +4,7 @@ requires ti.platforms.launchpad;
 
 /*!
  *  ======== ti.platforms.emt432LP ========
- *  Platform support for any MSP432 Launch Pad
+ *  Platform support for the MSP432 Launch Pad
  */
 package ti.platforms.emt432LP [1, 0, 0] {
     module Platform;
