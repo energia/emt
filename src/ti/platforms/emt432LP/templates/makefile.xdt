@@ -99,8 +99,8 @@ CPPFLAGS = -D__MSP432P401R__=1 -Dxdc_target_types__=`TARGET.stdInclude` -Dxdc_ta
 CC = `CC_CMD` `TARGET.cc.opts`
 AR = `AR_CMD` `TARGET.ar.opts`
 
-%if (isWindows) {
 # host OS filesystem commands
+%if (isWindows) {
 RM = cmd.exe /q /c del /f
 MKDIR = mkdir
 %}

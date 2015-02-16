@@ -21,7 +21,7 @@
 %var prog = this;    /* meaningful alias for this (== xdc.cfg.Program) */
 /*
  * Do not modify this file; it is automatically generated from the template
- * linkcmd.xdt in the `prog.platform.$package.$name` package and will be overwritten.
+ * linkcmd_iar.xdt in the `prog.platform.$package.$name` package and will be overwritten.
  */
 
 %/* put all *.o* objects ahead of all libraries/archives */

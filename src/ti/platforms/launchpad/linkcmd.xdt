@@ -86,8 +86,8 @@
 %}
 
 %if (prog.platform.$orig.includeLinkCmdFile) {
-%var linkFile = prog.platform.$package.packageBase + '/include/'
-%    + prog.cpu.deviceName.toUpperCase() + '.cmd';
+%    var linkFile = prog.platform.$package.packageBase + '/include/'
+%        + prog.cpu.deviceName.toUpperCase() + '.cmd';
 -l "`linkFile`"
 %}
 
