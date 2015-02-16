@@ -1,4 +1,4 @@
-				emt-a08
+				emt-a09
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,14 +121,6 @@ Librarian releases
 
 ADDITIONS
 
-ti.platforms.launchpad
-	created first-cut of a generic launchpad platform
-
-ti.platforms.emt432LP
-	created first-cut of a platform that inherits from 
-	ti.platforms.launchpad duplicating the functionality of 
-	the previous ti.platforms.emt432
-
 DELETIONS
 
 CHANGES
@@ -136,12 +128,10 @@ CHANGES
 ./imports.mak
 	import the latest tirtos
 
-ti.msp432.tests.wiring.alan
-    fixed to build under gcc
+ti.platforms/*
+	added UNUSED_start and end symbols to enable all memory on device to 
+	be used.
 
-*
-    makefile cleanup/simplification(?)
-
-    removed all use of old emt432 platform
+	moved to GPIO2 from TI-RTOS
 
 MRS
