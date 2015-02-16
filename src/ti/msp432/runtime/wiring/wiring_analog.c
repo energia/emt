@@ -35,6 +35,7 @@
 #include <timer_a.h>
 #include <adc14.h>
 
+#include <ti/drivers/PWM.h>
 //extern PWM_Config PWM_config[];
 
 static int8_t analogReadShift = 4;

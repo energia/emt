@@ -35,7 +35,7 @@
 
 
 #include "Energia.h"
-#include "GPIO2.h"
+#include <ti/drivers/GPIO2.h>
 
 void interrupts(void)
 {
@@ -49,7 +49,7 @@ void noInterrupts(void)
 
 void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 {
-    GPIO2_IntType intType;
+    GPIO2_PinConfig intType;
 
     GPIO2_setCallback(pin, (GPIO2_CallbackFxn)userFunc);
 
