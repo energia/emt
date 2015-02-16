@@ -30,7 +30,7 @@
  */
 
 #include "wiring_private.h"
-#include "GPIO2.h"
+#include <ti/drivers/GPIO2.h>
 
 /* device specific routine */
 GPIO2_PinConfig mode2gpioConfig(uint8_t mode)
