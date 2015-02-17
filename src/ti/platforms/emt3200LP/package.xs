@@ -16,7 +16,7 @@ function getLibs(prog)
     var dlib = Platform.addDriverLibs ? Platform.findDriverLib() : null;
     if (dlib != null) {
 	libs = libs + ';' 
-	    + dlib + "/MSP432P4xx/ccs/msp432p4xx_driverlib.lib";
+	    + dlib + "/driverlib/ccs/Release/driverlib.a";
     }
 
     /* '!' tells XDCtools the file won't exist until _after_ generation */

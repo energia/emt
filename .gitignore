@@ -47,13 +47,14 @@ doc-files
 *.jar
 
 ## Generated executables, libraries, objects, ...
-*.xem4
 *.x86U
 *.x86_64M
 *.xv7A
 *.vcproj
 *.xm4fg
 *.xem4f
+*.xm4g
+*.xem4
 
 *.exe
 *.bin

@@ -1,0 +1,17 @@
+/* add a "sanity" test for this platform and export pre-built executable */
+Pkg.attrs.exportAll = true;
+Pkg.attrs.profile = "debug";
+Pkg.otherFiles = ["test.c", "test.cfg"];
+
+Pkg.generatedFiles = ["src/"];
+
+/* compute the name of the platform package we are testing from our name */
+var myPlatform = Pkg.name.replace(/\.tests$/,'');
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+
+    if (targ.isa == "v7M4" && targ.model.codeModel == "thumb2" ) {
+        Pkg.addExecutable("test", targ, myPlatform).addObjects(["test"]);
+    }
+}
