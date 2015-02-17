@@ -45,12 +45,12 @@ gnuTargets.M4.lnkOpts.suffix += " -lstdc++";
 
 /* define the set of targets for which to build */
 if (Pkg.name.match(/432/)) {
-    if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
+    if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
 }
 else if (Pkg.name.match(/3200/)) {
-    if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
+    if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
 }
 else {
     Build.useTargets = null;

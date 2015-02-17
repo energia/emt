@@ -13,7 +13,7 @@ export OBJTOOL
 # define top-level build command
 define BUILD
     @echo ======== $1 ========
-    $(MAKE) --no-print-directory -C $1 $2 $3
+    +$(MAKE) --no-print-directory -C $1 $2 $3
 
 endef
 

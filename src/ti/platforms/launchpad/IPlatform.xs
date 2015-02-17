@@ -170,7 +170,7 @@ function instance$meta$init(name)
     /* if in the configuration model ... */
     if (xdc.om.$name == "cfg") {
         /* We use 'revision' to pass 'the real device name' to the generic
-         * MSP432 device.
+         * device.
          */
         this.CPU.revision = this.deviceName;
 

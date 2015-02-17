@@ -42,4 +42,3 @@ function instance$meta$init(name)
         this.stackMemory = "REGION_STACK";
     }
 }
-

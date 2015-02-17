@@ -21,7 +21,7 @@ TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
 #
 # SM-MAKE support
 #
-IMPORT_ARCHIVES = $(wildcard $(CURDIR)/downloads/MSP43*.zip)
+IMPORT_ARCHIVES = 
 IMPORT_PACKAGES =
 
 REFERENCED_REPOS = $(TIRTOS) $(SYSBIOS)
