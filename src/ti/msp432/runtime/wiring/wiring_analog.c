@@ -38,7 +38,7 @@
 #include <ti/drivers/PWM.h>
 //extern PWM_Config PWM_config[];
 
-static int8_t analogReadShift = 4;
+static volatile int8_t analogReadShift = 4;
 
 void analogWrite(uint8_t pin, int val) 
 {
