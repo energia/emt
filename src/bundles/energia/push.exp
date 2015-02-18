@@ -1,5 +1,14 @@
 #!/usr/bin/expect
 
+## set flist to the list of files to transfer
+set flist $argv
+if {$argc == 0} then {
+    set flist [list "msp432LP/closure.zip" "MSP-EXP432P401R-closure.zip"]
+} elseif { [expr {$argc % 2}] != 0 } then {
+    send_user "usage: $argv0 [local-file remote-file] ..."
+    exit 1
+}
+
 ## connect to ftp server on energia.nu via the TI ftp proxy
 spawn ftp gate.ti.com
 
@@ -22,9 +31,11 @@ expect "authenticated to proxy"
 ## set an infinite timeout (to avoid timeout during long put operations)
 set timeout -1
 
-## put closure.zip to energia.nu
-send "put msp432LP/closure.zip MSP-EXP432P401R-closure.zip\r"
-expect "successfully transferred"
+## put closure zips to energia.nu
+foreach {local remote} $flist {
+    send "put $local $remote\r"
+    expect "successfully transferred"
+}
 
 ## exit ftp and expect
 set timeout 10
