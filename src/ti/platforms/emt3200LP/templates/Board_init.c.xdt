@@ -225,165 +225,140 @@ void Board_initGeneral(void)
  *     LED_D4 (red)    Power  (glows when 3.3V power is supplied to board)
  *
  * For a raw launchpad the config table would be:
- *     static const GPIO_HWAttrs gpioHWAttrs[Board_GPIOCOUNT] = {
- *         {GPIOA1_BASE, GPIO_PIN_1, GPIO_OUTPUT}, // Board_LED_D7
- *         {GPIOA1_BASE, GPIO_PIN_2, GPIO_OUTPUT}, // Board_LED_D6
- *         {GPIOA1_BASE, GPIO_PIN_3, GPIO_OUTPUT}, // Board_LED_D5
- *         {GPIOA2_BASE, GPIO_PIN_6, GPIO_INPUT},  // Board_SW2
- *         {GPIOA1_BASE, GPIO_PIN_5, GPIO_INPUT},  // Board_SW3
- *         {GPIOA1_BASE, GPIO_PIN_4, GPIO_INPUT},  // Board_MPU9150
+ *     GPIO2_PinConfig gpioPinConfigs[] = {
+ *         {GPIO2CC3200_GPIO_22 | GPIO2_INPUT_PULLUP | GPIO2_INT_RISING},  // Board_SW2
+ *         {GPIO2CC3200_GPIO_13 | GPIO2_INPUT_PULLUP | GPIO2_INT_RISING},  // Board_SW3
+ *         {GPIO2CC3200_GPIO_11 | GPIO2_OUTPUT_HIGH_STRENGTH}, // Board_LED_D5
+ *         {GPIO2CC3200_GPIO_10 | GPIO2_OUTPUT_HIGH_STRENGTH}, // Board_LED_D6
+ *         {GPIO2CC3200_GPIO_09 | GPIO2_OUTPUT_HIGH_STRENGTH}, // Board_LED_D7
  *     };
  */
-#include <ti/drivers/GPIO.h>
-#include <driverlib/gpio.h>
+
+#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/gpio/GPIO2CC3200.h>
 
 /* GPIO configuration structure definitions */
-const GPIO_HWAttrs gpioHWAttrs[] = {
-    {GPIOA0_BASE, GPIO_PIN_0, GPIO_INPUT},  /* GPIO 00 */
-    {GPIOA0_BASE, GPIO_PIN_1, GPIO_INPUT},  /* GPIO 01 */
-    {GPIOA0_BASE, GPIO_PIN_2, GPIO_INPUT},  /* GPIO 02 */
-    {GPIOA0_BASE, GPIO_PIN_3, GPIO_INPUT},  /* GPIO 03 */
-    {GPIOA0_BASE, GPIO_PIN_4, GPIO_INPUT},  /* GPIO 04 */
-    {GPIOA0_BASE, GPIO_PIN_5, GPIO_INPUT},  /* GPIO 05 */
-    {GPIOA0_BASE, GPIO_PIN_6, GPIO_INPUT},  /* GPIO 06 */
-    {GPIOA0_BASE, GPIO_PIN_7, GPIO_INPUT},  /* GPIO 07 */
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(GPIO2CC3200_config, ".const:GPIO2CC3200_config")
+#pragma DATA_SECTION(gpioPinConfigs, ".const:gpioPinConfigs")
+#pragma DATA_SECTION(gpioCallbackFunctions, ".data:gpioCallbackFunctions")
+#endif
 
-    {GPIOA1_BASE, GPIO_PIN_0, GPIO_INPUT},  /* GPIO 08 */
-    {GPIOA1_BASE, GPIO_PIN_1, GPIO_OUTPUT}, /* GPIO 09 (LED_D7) */
-    {GPIOA1_BASE, GPIO_PIN_2, GPIO_OUTPUT}, /* GPIO 10 (LED_D6) */
-    {GPIOA1_BASE, GPIO_PIN_3, GPIO_OUTPUT}, /* GPIO 11 (LED_D5) */
-    {GPIOA1_BASE, GPIO_PIN_4, GPIO_INPUT},  /* GPIO 12 */
-    {GPIOA1_BASE, GPIO_PIN_5, GPIO_INPUT},  /* GPIO 13 (SW3) */
-    {GPIOA1_BASE, GPIO_PIN_6, GPIO_INPUT},  /* GPIO 14 */
-    {GPIOA1_BASE, GPIO_PIN_7, GPIO_INPUT},  /* GPIO 15 */
-
-    {GPIOA2_BASE, GPIO_PIN_0, GPIO_INPUT},  /* GPIO 16 */
-    {GPIOA2_BASE, GPIO_PIN_1, GPIO_INPUT},  /* GPIO 17 */
-    {GPIOA2_BASE, GPIO_PIN_2, GPIO_INPUT},  /* GPIO 18 (NC) */
-    {GPIOA2_BASE, GPIO_PIN_3, GPIO_INPUT},  /* GPIO 19 (NC) */
-    {GPIOA2_BASE, GPIO_PIN_4, GPIO_INPUT},  /* GPIO 20 (NC) */
-    {GPIOA2_BASE, GPIO_PIN_5, GPIO_INPUT},  /* GPIO 21 (NC) */
-    {GPIOA2_BASE, GPIO_PIN_6, GPIO_INPUT},  /* GPIO 22 (SW2) */
-    {GPIOA2_BASE, GPIO_PIN_7, GPIO_INPUT},  /* GPIO 23 */
-
-    {GPIOA3_BASE, GPIO_PIN_0, GPIO_INPUT},  /* GPIO 24 */
-    {GPIOA3_BASE, GPIO_PIN_1, GPIO_INPUT},  /* GPIO 25 */
-    {GPIOA3_BASE, GPIO_PIN_2, GPIO_INPUT},  /* GPIO 26 (NC) */
-    {GPIOA3_BASE, GPIO_PIN_3, GPIO_INPUT},  /* GPIO 27 (NC) */
-    {GPIOA3_BASE, GPIO_PIN_4, GPIO_INPUT},  /* GPIO 28 */
-    {GPIOA3_BASE, GPIO_PIN_5, GPIO_INPUT},  /* GPIO 29 (NC) */
-    {GPIOA3_BASE, GPIO_PIN_6, GPIO_INPUT},  /* GPIO 30 */
-    {GPIOA3_BASE, GPIO_PIN_7, GPIO_INPUT}   /* GPIO 31 */
+const GPIO2_PinConfig gpioPinConfigs[] = {
+    /* port_pin */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  0  - dummy */
+                          
+    /* pins 1-10 */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  1  - 3.3V */
+    GPIO2CC3200_GPIO_03 | GPIO2_DO_NOT_CONFIG,    /*  2  - GPIO_03 */
+    GPIO2CC3200_GPIO_13 | GPIO2_DO_NOT_CONFIG,    /*  3  - GPIO_13 */
+    GPIO2CC3200_GPIO_12 | GPIO2_DO_NOT_CONFIG,    /*  4  - GPIO_12 */
+    GPIO2CC3200_GPIO_06 | GPIO2_DO_NOT_CONFIG,    /*  5  - GPIO_06 */
+    GPIO2CC3200_GPIO_04 | GPIO2_DO_NOT_CONFIG,    /*  6  - GPIO_04 */
+    GPIO2CC3200_GPIO_14 | GPIO2_DO_NOT_CONFIG,    /*  7  - GPIO_14 */
+    GPIO2CC3200_GPIO_07 | GPIO2_DO_NOT_CONFIG,    /*  8  - GPIO_07 */
+    GPIO2CC3200_GPIO_10 | GPIO2_DO_NOT_CONFIG,    /*  9  - GPIO_10 */
+    GPIO2CC3200_GPIO_11 | GPIO2_DO_NOT_CONFIG,    /*  10 - GPIO_11 */
+                          
+    /* pins 11-20 */
+    GPIO2CC3200_GPIO_22 | GPIO2_DO_NOT_CONFIG,    /*  11 - GPIO_22 */
+    GPIO2CC3200_GPIO_01 | GPIO2_DO_NOT_CONFIG,    /*  12 - GPIO_01 */
+    GPIO2CC3200_GPIO_25 | GPIO2_DO_NOT_CONFIG,    /*  13 - GPIO_25 */
+    GPIO2CC3200_GPIO_15 | GPIO2_DO_NOT_CONFIG,    /*  14 - GPIO_15 */
+    GPIO2CC3200_GPIO_16 | GPIO2_DO_NOT_CONFIG,    /*  15 - GPIO_16 */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  16 - RESET */
+    GPIO2CC3200_GPIO_31 | GPIO2_DO_NOT_CONFIG,    /*  17 - GPIO_31 */
+    GPIO2CC3200_GPIO_17 | GPIO2_DO_NOT_CONFIG,    /*  18 - GPIO_17 */
+    GPIO2CC3200_GPIO_28 | GPIO2_DO_NOT_CONFIG,    /*  19 - GPIO_28 */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  20 - GND */
+                          
+    /* pins 21-30 */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  21 - 5V */
+    GPIO2CC3200_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  22 - GND */
+    GPIO2CC3200_GPIO_02 | GPIO2_DO_NOT_CONFIG,    /*  23 - GPIO_02 */
+    GPIO2CC3200_GPIO_05 | GPIO2_DO_NOT_CONFIG,    /*  24 - GPIO_05 */
+    GPIO2CC3200_GPIO_03 | GPIO2_DO_NOT_CONFIG,    /*  25 - GPIO_03 */
+    GPIO2CC3200_GPIO_04 | GPIO2_DO_NOT_CONFIG,    /*  26 - GPIO_04 */
+    GPIO2CC3200_GPIO_08 | GPIO2_DO_NOT_CONFIG,    /*  27 - GPIO_08 */
+    GPIO2CC3200_GPIO_30 | GPIO2_DO_NOT_CONFIG,    /*  28 - GPIO_30 */
+    GPIO2CC3200_GPIO_09 | GPIO2_DO_NOT_CONFIG,    /*  29 - GPIO_09 */
+    GPIO2CC3200_GPIO_00 | GPIO2_DO_NOT_CONFIG,    /*  30 - GPIO_00 */
+                          
+    /* pins 31-40 */
+    GPIO2CC3200_GPIO_24 | GPIO2_DO_NOT_CONFIG,    /*  31 - GPIO_24 */
+    GPIO2CC3200_GPIO_23 | GPIO2_DO_NOT_CONFIG,    /*  32 - GPIO_23 */
+    GPIO2CC3200_GPIO_05 | GPIO2_DO_NOT_CONFIG,    /*  33 - GPIO_05 */
+    GPIO2CC3200_GPIO_07 | GPIO2_DO_NOT_CONFIG,    /*  34 - GPIO_07 */
+    GPIO2CC3200_GPIO_28 | GPIO2_DO_NOT_CONFIG,    /*  35 - GPIO_28 */
+    GPIO2CC3200_GPIO_25 | GPIO2_DO_NOT_CONFIG,    /*  36 - GPIO_25 */
+    GPIO2CC3200_GPIO_09 | GPIO2_DO_NOT_CONFIG,    /*  37 - GPIO_09 */
+    GPIO2CC3200_GPIO_24 | GPIO2_DO_NOT_CONFIG,    /*  38 - GPIO_24 */
+    GPIO2CC3200_GPIO_10 | GPIO2_DO_NOT_CONFIG,    /*  39 - GPIO_10 */
+    GPIO2CC3200_GPIO_11 | GPIO2_DO_NOT_CONFIG,    /*  40 - GPIO_11 */
 };
 
-const GPIO_Config GPIO_config[] = {
-    {&gpioHWAttrs[0]},
-    {&gpioHWAttrs[1]},
-    {&gpioHWAttrs[2]},
-    {&gpioHWAttrs[3]},
-    {&gpioHWAttrs[4]},
-    {&gpioHWAttrs[5]},
-    {&gpioHWAttrs[6]},
-    {&gpioHWAttrs[7]},
-    {&gpioHWAttrs[8]},
-    {&gpioHWAttrs[9]},
-    {&gpioHWAttrs[10]},
-    {&gpioHWAttrs[11]},
-    {&gpioHWAttrs[12]},
-    {&gpioHWAttrs[13]},
-    {&gpioHWAttrs[14]},
-    {&gpioHWAttrs[15]},
-    {&gpioHWAttrs[16]},
-    {&gpioHWAttrs[17]},
-    {&gpioHWAttrs[18]},
-    {&gpioHWAttrs[19]},
-    {&gpioHWAttrs[20]},
-    {&gpioHWAttrs[21]},
-    {&gpioHWAttrs[22]},
-    {&gpioHWAttrs[23]},
-    {&gpioHWAttrs[24]},
-    {&gpioHWAttrs[25]},
-    {&gpioHWAttrs[26]},
-    {&gpioHWAttrs[27]},
-    {&gpioHWAttrs[28]},
-    {&gpioHWAttrs[29]},
-    {&gpioHWAttrs[30]},
-    {&gpioHWAttrs[31]},
-    {NULL}
+GPIO2_CallbackFxn gpioCallbackFunctions[] = {
+    /* port_pin */
+    NULL,  /*  0  - dummy */
+
+    /* pins 1-10 */
+    NULL,  /*  1  - 3.3V */
+    NULL,  /*  2  - GPIO_03 */
+    NULL,  /*  3  - GPIO_13 */
+    NULL,  /*  4  - GPIO_12 */
+    NULL,  /*  5  - GPIO_06 */
+    NULL,  /*  6  - GPIO_04 */
+    NULL,  /*  7  - GPIO_14 */
+    NULL,  /*  8  - GPIO_07 */
+    NULL,  /*  9  - GPIO_10 */
+    NULL,  /*  10 - GPIO_11 */
+                    
+    /* pins 11-20 */
+    NULL,  /*  11 - GPIO_22 */
+    NULL,  /*  12 - GPIO_01 */
+    NULL,  /*  13 - GPIO_25 */
+    NULL,  /*  14 - GPIO_15 */
+    NULL,  /*  15 - GPIO_16 */
+    NULL,  /*  16 - RESET */
+    NULL,  /*  17 - GPIO_31 */
+    NULL,  /*  18 - GPIO_17 */
+    NULL,  /*  19 - GPIO_28 */
+    NULL,  /*  20 - GND */
+                    
+    /* pins 21-30 */
+    NULL,  /*  21 - 5V */
+    NULL,  /*  22 - GND */
+    NULL,  /*  23 - GPIO_02 */
+    NULL,  /*  24 - GPIO_05 */
+    NULL,  /*  25 - GPIO_03 */
+    NULL,  /*  26 - GPIO_04 */
+    NULL,  /*  27 - GPIO_08 */
+    NULL,  /*  28 - GPIO_30 */
+    NULL,  /*  29 - GPIO_09 */
+    NULL,  /*  30 - GPIO_00 */
+                    
+    /* pins 31-40 */
+    NULL,  /*  31 - GPIO_24 */
+    NULL,  /*  32 - GPIO_23 */
+    NULL,  /*  33 - GPIO_05 */
+    NULL,  /*  34 - GPIO_07 */
+    NULL,  /*  35 - GPIO_28 */
+    NULL,  /*  36 - GPIO_25 */
+    NULL,  /*  37 - GPIO_09 */
+    NULL,  /*  38 - GPIO_24 */
+    NULL,  /*  39 - GPIO_10 */
+    NULL,  /*  40 - GPIO_11 */
 };
 
 /* User requested callback functions for the GPIO input signals */
 
-/* GPIO callback structure for Port A0 GPIO interrupts */
-static Hwi_Struct callbackHwi0; /* memory to construct the Hwi object for port 0 */
-GPIO_Callbacks Board_gpioCallbacks0 = {
-    GPIOA0_BASE,     /* GPIO port A0 */
-    INT_GPIOA0,      /* port A0 interrupt number */
-    &callbackHwi0,   /* Pointer to a family-specific Hwi_Struct */
-    {
-        NULL,        /* bit 0 (GPIO0) Board_GPIO0 callback */
-        NULL,        /* bit 1 (GPIO1) Board_GPIO1 callback */
-        NULL,        /* bit 2 (GPIO2) Board_GPIO2 callback */
-        NULL,        /* bit 3 (GPIO3) Board_GPIO3 callback */
-        NULL,        /* bit 4 (GPIO4) Board_GPIO4 callback */
-        NULL,        /* bit 5 (GPIO5) Board_GPIO5 callback */
-        NULL,        /* bit 6 (GPIO6) Board_GPIO6 callback */
-        NULL,        /* bit 7 (GPIO7) Board_GPIO7 callback */
-    }
-};
-
-/* GPIO callback structure for Port A1 GPIO interrupts */
-static Hwi_Struct callbackHwi1; /* memory to construct the Hwi object for port 1 */
-GPIO_Callbacks Board_gpioCallbacks1 = {
-    GPIOA1_BASE,     /* GPIO port A1 */
-    INT_GPIOA1,      /* port A1 interrupt number */
-    &callbackHwi1,   /* Pointer to a family-specific Hwi_Struct */
-    {
-        NULL,        /* bit 0 (GPIO8) Board_GPIO8 callback */
-        NULL,        /* bit 1 (GPIO9) Board_LED_RED callback */
-        NULL,        /* bit 2 (GPIO10) Board_GPIO10 callback */
-        NULL,        /* bit 3 (GPIO11) Board_GPIO11 callback */
-        NULL,        /* bit 4 (GPIO12) Board_MPU9150_INT callback */
-        NULL,        /* bit 5 (GPIO13) Board_BUTTON1 callback */
-        NULL,        /* bit 6 (GPIO14) Board_GPIO14 callback */
-        NULL,        /* bit 7 (GPIO15) Board_GPIO15 callback */
-    }
-};
-
-/* GPIO callback structure for Port A2 GPIO interrupts */
-static Hwi_Struct callbackHwi2; /* memory to construct the Hwi object for port 2 */
-GPIO_Callbacks Board_gpioCallbacks2 = {
-    GPIOA2_BASE,     /* GPIO port A2 */
-    INT_GPIOA2,      /* port A2 interrupt number */
-    &callbackHwi2,   /* Pointer to a family-specific Hwi_Struct */
-    {
-        NULL,        /* bit 0 (GPIO16) Board_GPIO16 callback */
-        NULL,        /* bit 1 (GPIO17) Board_GPIO17 callback */
-        NULL,        /* bit 2 (GPIO18)  */
-        NULL,        /* bit 3 (GPIO19)  */
-        NULL,        /* bit 4 (GPIO20)  */
-        NULL,        /* bit 5 (GPIO21)  */
-        NULL,        /* bit 6 (GPIO22) Board_BUTTON0 callback */
-        NULL,        /* bit 7 (GPIO23) Board_GPIO23 callback */
-    }
-};
-
-/* GPIO callback structure for Port A3 GPIO interrupts */
-static Hwi_Struct callbackHwi3; /* memory to construct the Hwi object for port 3 */
-GPIO_Callbacks Board_gpioCallbacks3 = {
-    GPIOA3_BASE,     /* GPIO port A3 */
-    INT_GPIOA3,      /* port A3 interrupt number */
-    &callbackHwi3,   /* Pointer to a family-specific Hwi_Struct */
-    {
-        NULL,        /* bit 0 (GPIO24) Board_GPIO24 callback */
-        NULL,        /* bit 1 (GPIO25) Board_GPIO25 callback */
-        NULL,        /* bit 2 (GPIO26)  */
-        NULL,        /* bit 3 (GPIO27)  */
-        NULL,        /* bit 4 (GPIO28) Board_GPIO28 callback */
-        NULL,        /* bit 5 (GPIO29)  */
-        NULL,        /* bit 6 (GPIO30) Board_GPIO30 callback */
-        NULL,        /* bit 7 (GPIO31) Board_GPIO31 callback */
-    }
+/* GPIO driver configuration table */
+const GPIO2CC3200_Config GPIO2CC3200_config = {
+    (GPIO2_PinConfig *)gpioPinConfigs,
+    (GPIO2_CallbackFxn *)gpioCallbackFunctions,
+    sizeof(gpioPinConfigs)/sizeof(GPIO2_PinConfig),
+    sizeof(gpioCallbackFunctions)/sizeof(GPIO2_CallbackFxn),
 };
 
 /*
@@ -391,8 +366,8 @@ GPIO_Callbacks Board_gpioCallbacks3 = {
  */
 void Board_initGPIO(void)
 {
-    /* Once GPIO_init is called, GPIO_config cannot be changed */
-    GPIO_init();
+    /* set up initial GPIO pin configurations */
+    GPIO2_init();
 }
 
 /*
@@ -583,18 +558,4 @@ void Board_init(void)
     PWM_open(Board_PWM5, &params);
     PWM_open(Board_PWM6, &params);
     PWM_open(Board_PWM7, &params);
-
-    /* setup callbacks for all GPIO ports used */
-    GPIO_setupCallbacks(&Board_gpioCallbacks0);
-    GPIO_setupCallbacks(&Board_gpioCallbacks1);
-    GPIO_setupCallbacks(&Board_gpioCallbacks2);
-    GPIO_setupCallbacks(&Board_gpioCallbacks3);
-
-    __extern void Wiring_GPIO_hwiIntFxn(UArg callbacks);
-  
-    /* hijack the common hwi func to point to Wiring's handler that clears the GPIO interrupt */
-    Hwi_setFunc(Hwi_handle((Hwi_Struct *)Board_gpioCallbacks0.hwiStruct), (IHwi_FuncPtr)Wiring_GPIO_hwiIntFxn, (UArg)&Board_gpioCallbacks0);
-    Hwi_setFunc(Hwi_handle((Hwi_Struct *)Board_gpioCallbacks1.hwiStruct), (IHwi_FuncPtr)Wiring_GPIO_hwiIntFxn, (UArg)&Board_gpioCallbacks1);
-    Hwi_setFunc(Hwi_handle((Hwi_Struct *)Board_gpioCallbacks2.hwiStruct), (IHwi_FuncPtr)Wiring_GPIO_hwiIntFxn, (UArg)&Board_gpioCallbacks2);
-    Hwi_setFunc(Hwi_handle((Hwi_Struct *)Board_gpioCallbacks3.hwiStruct), (IHwi_FuncPtr)Wiring_GPIO_hwiIntFxn, (UArg)&Board_gpioCallbacks3);
 }
