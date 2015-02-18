@@ -20,9 +20,9 @@ endef
 # ensure "all" is the default build goal
 all: makefile
 
-msp432LP/closure.zip: | all
+%/closure.zip: | all
 	@echo making $@ ...
-	@cd msp432LP && $(XDCROOT)/bin/zip -rq closure.zip closure
+	@cd $* && $(XDCROOT)/bin/zip -rq closure.zip closure
 
 # rule to build the specified goal for all platforms, compilers, and tests
 %:
