@@ -1,0 +1,9 @@
+## generated output directories
+configPkg/
+closure/
+src/
+
+## generated output files
+*.map
+*.out
+*.obj
