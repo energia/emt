@@ -24,7 +24,7 @@ vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
 
 # define MSP432 DriverLib libs and headers based on definitions above
-SDK_LIBS = $(DRVLIB)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
+SDK_LIBS = $(DRVLIB.msp432)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
