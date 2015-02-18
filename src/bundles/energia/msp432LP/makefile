@@ -6,7 +6,6 @@
 #  This configuration requires the installation directory of each of the
 #  following prerequisite components:
 #      CCROOT  - the GCC arm compiler (version 4.8 or above)
-#      DRVLIB  - the MSP432 DriverLib product installation folder
 #      XDCROOT - XDCtools (version 3.30.05 or above)
 #      TIRTOS  - TI-RTOS for MSP432
 #      EMTROOT - the EMT packages repo
@@ -18,7 +17,7 @@ include tools.mak
 # define the XDC package path based on the settings above
 SYSBIOS = $(wildcard $(TIRTOS)/products/bios_*)
 
-XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT);$(DRVLIB)
+XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
 
 PLATFORM = ti.platforms.emt432LP
 TARGET   = gnu.targets.arm.M4F
@@ -35,7 +34,6 @@ all: .debug closure
 .debug:
 	@echo "  ---- imports ----"
 	@echo "    CCROOT  = $(CCROOT)"
-	@echo "    DRVLIB  = $(DRVLIB)"
 	@echo "    XDCROOT = $(XDCROOT)"
 	@echo "    TIRTOS  = $(lastword $(subst /, ,$(TIRTOS)))"
 	@echo "    SYSBIOS = $(SYSBIOS)"

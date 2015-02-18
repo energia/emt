@@ -47,7 +47,7 @@ SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_6*)
 #
 export XDCARGS := ti.targets.arm.elf.M4F=$(ti.targets.arm.elf.M4F) \
                   gnu.targets.arm.M4F=$(gnu.targets.arm.M4F)
-export XDCPATH = $(SYSBIOS)/packages;$(TIRTOS)/packages;$(DRVLIB)
+export XDCPATH = $(SYSBIOS)/packages;$(TIRTOS)/packages
 
 ## find all packages provided by this tree
 ALLPKGS := $(shell "$(XDCROOT)/bin/xdcpkg" -r $(TOP)/src)
@@ -63,7 +63,6 @@ BASEPKGS    := $(NONTESTPKGS)
 	@echo "  --------------- Dependencies ---------------"
 	@echo "    TIRTOS   = $(TIRTOS)"
 	@echo "    SYSBIOS  = $(SYSBIOS)"
-	@echo "    DRVLIB   = $(DRVLIB)"
 	@echo "    XDCROOT  = $(XDCROOT)"
 	@echo "    XDCARGS  = $(XDCARGS)"
 	@echo "    CCSROOT  = $(CCSROOT)"
