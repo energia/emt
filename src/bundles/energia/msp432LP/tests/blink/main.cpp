@@ -10,7 +10,6 @@
 /* BIOS Header files */
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
-#include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <xdc/runtime/System.h>
 
 /* Board Support Header files (from configuration closure) */

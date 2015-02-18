@@ -26,11 +26,6 @@ vpath %.cpp $(CURDIR)
 # define MSP432 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
 
-SDK_INCS = -I"$(DRVLIB)/driverlib" \
-           -I"$(DRVLIB)/driverlib/inc" \
-           -I"$(DRVLIB)/driverlib/inc/CMSIS" \
-           -I"$(DRVLIB)/driverlib/MSP432P4xx"
-
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
            -I "$(CLOSURE)/ti/msp432/runtime/wiring" 
@@ -44,7 +39,7 @@ CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
 LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CCROOT)/lib"
 BINIFY   = $(CCROOT)/bin/arm-none-eabi-objcopy -O binary
 
-XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t61/product/Linux/xdctools*)
+XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 
 ifeq (,$(MAPTOOL))
     MAPTOOL = :
@@ -68,7 +63,7 @@ blink.out: blink.obj main.obj
 
 %.obj: %.cpp makefile
 	@echo armcl $*.cpp ...
-	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $(SDK_INCS) $< -o $@
+	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
 
 %.out: %.obj main.obj makefile
 	@echo armlink $*.obj ...
