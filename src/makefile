@@ -18,8 +18,8 @@ endif
 ifeq (,$(wildcard $(TIRTOS)))
     $(error TIRTOS, '$(TIRTOS)', does not reference a valid directory)
 endif
-ifeq (,$(wildcard $(DRVLIB)))
-    $(error DRVLIB, '$(DRVLIB)', does not reference a valid directory)
+ifeq (,$(wildcard $(DRVLIB.msp432)))
+    $(error DRVLIB, '$(DRVLIB.msp432)', does not reference a valid directory)
 endif
 
 VERS_UNDER ?= 1_00_00_00
