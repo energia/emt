@@ -111,13 +111,6 @@ void Board_initDMA(void)
  */
 
 /*
- *  ======== Board_init ========
- */
-void Board_init(void) {
-	Board_initGPIO();
-}
-
-/*
  *  ======== Board_initGeneral ========
  */
 void Board_initGeneral(void) {
@@ -320,7 +313,6 @@ void Board_initI2C(void)
     I2C_init();
 }
 
-#if 0
 /*
  *  =============================== PWM ===============================
  */
@@ -339,6 +331,34 @@ const PWMTimerMSP432_HWAttrs pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
     {
         .baseAddr = TIMER_A0_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
+    },
+    {
+        .baseAddr = TIMER_A0_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2
+    },
+    {
+        .baseAddr = TIMER_A0_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3
+    },
+    {
+        .baseAddr = TIMER_A0_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
+    },
+    {
+        .baseAddr = TIMER_A2_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
+    },
+    {
+        .baseAddr = TIMER_A2_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2
+    },
+    {
+        .baseAddr = TIMER_A2_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3
+    },
+    {
+        .baseAddr = TIMER_A2_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     }
 };
 
@@ -348,6 +368,41 @@ const PWM_Config PWM_config[] = {
         .object = &pwmTimerMSP432Objects[0],
         .hwAttrs = &pwmTimerMSP432HWAttrs[0]
     },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[1],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[1]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[2],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[2]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[3],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[3]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[4],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[4]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[5],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[5]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[6],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[6]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[7],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[7]
+    },
     {NULL, NULL, NULL}
 };
 
@@ -356,14 +411,9 @@ const PWM_Config PWM_config[] = {
  */
 void Board_initPWM(void)
 {
-    /* Enable PWM output on GPIO pins */
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2,
-                                                    GPIO_PIN4,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
-
     PWM_init();
 }
-#endif
+
 /*
  *  =============================== SDSPI ===============================
  */
@@ -696,3 +746,29 @@ void Board_initWiFi(void)
     WiFi_init();
 }
 #endif
+
+/*
+ *  ======== Board_init ========
+ */
+void Board_init(void) {
+    PWM_Params params;
+
+    Board_initGPIO();
+    Board_initPWM();
+
+    /* Create PWM instances */
+    PWM_Params_init(&params);
+
+    params.period = 2040; /* arduino period is 2.04ms (490Hz) */
+    params.dutyMode = PWM_DUTY_COUNTS;
+
+    PWM_open(Board_PWM0, &params);
+    PWM_open(Board_PWM1, &params);
+    PWM_open(Board_PWM2, &params);
+    PWM_open(Board_PWM3, &params);
+    PWM_open(Board_PWM4, &params);
+    PWM_open(Board_PWM5, &params);
+    PWM_open(Board_PWM6, &params);
+    PWM_open(Board_PWM7, &params);
+}
+

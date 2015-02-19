@@ -33,37 +33,40 @@
 #include <ti/drivers/GPIO2.h>
 
 /* device specific routine */
-GPIO2_PinConfig mode2gpioConfig(uint8_t mode)
+GPIO2_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
 {
    switch (mode) {
         case INPUT:
         case INPUT_PULLUP:
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
             return (GPIO2_INPUT_PULLUP);
 
         case INPUT_PULLDOWN:
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
             return (GPIO2_INPUT_PULLDOWN);
 
         case OUTPUT:
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_OUTPUT;
             return (GPIO2_OUTPUT_HIGH_STRENGTH);
     }
 
     /* unknown mode */
+    digital_pin_to_pin_function[pin] = PIN_FUNC_UNUSED;
     return (GPIO2_DO_NOT_CONFIG);
 }
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-    GPIO2_PinConfig gpioConfig = mode2gpioConfig(mode);
+    GPIO2_PinConfig gpioConfig = mode2gpioConfig(pin, mode);
 
     if (gpioConfig != GPIO2_DO_NOT_CONFIG) {
-        digital_pin_to_pin_function[pin] = mode;
         GPIO2_setConfig(pin, gpioConfig);
     }
 }
 
 int digitalRead(uint8_t pin)
 {
-    if (digital_pin_to_pin_function[pin] == OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_INPUT) {
         pinMode(pin, INPUT);
     }
 
@@ -76,9 +79,9 @@ int digitalRead(uint8_t pin)
 
 void digitalWrite(uint8_t pin, uint8_t val)
 {
-    if (digital_pin_to_pin_function[pin] != OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_OUTPUT) {
         pinMode(pin, OUTPUT);
     }
 
-    GPIO2_write(pin, val ? 0xff : 0);
+    GPIO2_write(pin, val ? 1 : 0);
 }
