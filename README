@@ -1,4 +1,4 @@
-				emt-a10
+				emt-a11
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,22 +121,15 @@ Librarian releases
 
 ADDITIONS
 
-ti.platforms.emt3200LP
-	added platform for the CC3200
-
-bundles/energia/msp432LP
-	added "hello world" test
-
-bundles/energia/cc3200LP
-	added closure + tests for the CC3200
+ti.cc3200.runtime.wiring
+	added wiring API for the CC3200
 
 DELETIONS
 
 CHANGES
 
-ti.platforms.emt432LP
-	moved TI-RTOS getLibs() workaround to ti.platform.launchpad
-	so it is shared with the new ti.platforms.emt3200LP
+bundles/energia
+	builds for both CC3200 and MSP432
 
 *
 	misc cleanup
