@@ -251,8 +251,8 @@ size_t TwoWire::write(const uint8_t *data, size_t quantity)
 // or after requestFrom(address, numBytes)
 int TwoWire::available(void)
 {
-//    return(rxWriteIndex);
-    return (1);
+    return((rxWriteIndex >= rxReadIndex) ?
+        (rxWriteIndex - rxReadIndex) : BUFFER_LENGTH - (rxReadIndex - rxWriteIndex));
 }
 
 // must be called in:
@@ -261,12 +261,11 @@ int TwoWire::available(void)
 int TwoWire::read(void)
 {
     int value = -1;
-  
-    // get each successive byte on each call
-    if (rxReadIndex <= BUFFER_LENGTH) {
-        value = rxBuffer[rxReadIndex];
-        rxReadIndex = (rxReadIndex + 1) % BUFFER_LENGTH;
-    }
+
+    if(RX_BUFFER_EMPTY) return -1;
+
+    value = rxBuffer[rxReadIndex];
+    rxReadIndex = (rxReadIndex + 1) % BUFFER_LENGTH;
 
     if (rxReadIndex == 0) {
         GateMutex_leave(GateMutex_handle(&gate), 0);
