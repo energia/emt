@@ -80,7 +80,7 @@ test: all
 release: .buildinfo all
 	$(XDCROOT)/xdc --jobs=4 $@ -P $(BASEPKGS)
 	@echo making energia closures ...
-	-$(MAKE) --no-print-directory -C bundles/energia all msp432LP/closure.zip
+	-$(MAKE) --no-print-directory -C bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
 
 clean:
 	$(XDCROOT)/xdc --jobs=4 -k $@ -Pr .

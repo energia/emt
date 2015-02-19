@@ -34,7 +34,7 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g -D__MSP432P401R__=1
+CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
 LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CCROOT)/lib"
 BINIFY   = $(CCROOT)/bin/arm-none-eabi-objcopy -O binary
