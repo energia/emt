@@ -1,4 +1,4 @@
-				emt-a11
+				emt-a12
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,17 +121,14 @@ Librarian releases
 
 ADDITIONS
 
-ti.cc3200.runtime.wiring
-	added wiring API for the CC3200
-
 DELETIONS
 
 CHANGES
 
-bundles/energia
-	builds for both CC3200 and MSP432
+ti/msp432/runtime/wiring
+	added analogWrite
 
-*
-	misc cleanup
+ti/platforms/emt432LP
+	updated templates to initialize PWM
 
 MRS
