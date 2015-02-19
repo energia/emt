@@ -15,6 +15,15 @@
 #include <stdio.h>
 
 #include <ti/drivers/SPI.h>
+#include <ti/sysbios/gates/GateMutex.h>
+
+#define SPI_MODE0 0
+#define SPI_MODE1 1
+#define SPI_MODE2 2
+#define SPI_MODE3 4
+
+#define MSBFIRST 1
+#define LSBFIRST 0
 
 class SPIClass
 {
