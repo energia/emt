@@ -52,7 +52,9 @@ void SPIClass::begin(uint8_t ssPin)
 
     if (spi != NULL) {
         slaveSelect = ssPin;
-        if(slaveSelect != 0) pinMode(slaveSelect, OUTPUT); //set SS as an output
+        if (slaveSelect != 0) {
+            pinMode(slaveSelect, OUTPUT); //set SS as an output
+        }
 
         GateMutex_construct(&gate, NULL);
         begun = TRUE;
@@ -66,7 +68,9 @@ void SPIClass::begin() {
 
 void SPIClass::end(uint8_t ssPin) {
     SPI_close(spi);
-    if(slaveSelect != 0) pinMode(slaveSelect, INPUT);
+    if (slaveSelect != 0) {
+        pinMode(slaveSelect, INPUT);
+    }
 }
 
 void SPIClass::end() {
@@ -95,9 +99,9 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 
     GateMutex_enter(GateMutex_handle(&gate));
 
-    if(slaveSelect != 0)
+    if (slaveSelect != 0) {
         digitalWrite(ssPin, LOW);
-
+    }
     transaction.txBuf = &data_out;
     transaction.rxBuf = &data_in;
     transaction.count = 1;

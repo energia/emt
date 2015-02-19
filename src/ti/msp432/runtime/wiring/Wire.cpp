@@ -251,7 +251,7 @@ size_t TwoWire::write(const uint8_t *data, size_t quantity)
 // or after requestFrom(address, numBytes)
 int TwoWire::available(void)
 {
-    return((rxWriteIndex >= rxReadIndex) ?
+    return ((rxWriteIndex >= rxReadIndex) ?
         (rxWriteIndex - rxReadIndex) : BUFFER_LENGTH - (rxReadIndex - rxWriteIndex));
 }
 
@@ -260,9 +260,11 @@ int TwoWire::available(void)
 // or after requestFrom(address, numBytes)
 int TwoWire::read(void)
 {
-    int value = -1;
+    int value;
 
-    if(RX_BUFFER_EMPTY) return -1;
+    if (RX_BUFFER_EMPTY) {
+        return -1;
+    }
 
     value = rxBuffer[rxReadIndex];
     rxReadIndex = (rxReadIndex + 1) % BUFFER_LENGTH;
