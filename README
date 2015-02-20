@@ -1,4 +1,4 @@
-				emt-a14
+				emt-a15
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,13 +122,13 @@ Librarian releases
 ADDITIONS
 
 DELETIONS
-	removed obsolete ti.platforms.emt432
 
 CHANGES
 
-	renamed packages to enable reuse of common code
-	    o ti.msp432.runtime.wiring -> ti.runtime.wiring.msp432
-	    o ti.cc3200.runtime.wiring -> ti.runtime.wiring.cc3200
-	    o ti.msp432.tests.alan -> ti.runtime.wiring.msp432.tests.alan
+src/bundles
+	restored generation of the closure.zip files
+
+	added UNUSED memory reporting to the mapsum tool; this memory 
+	should be added to the BIOS heap (soon)
 
 MRS
