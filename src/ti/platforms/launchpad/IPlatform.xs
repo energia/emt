@@ -198,8 +198,9 @@ function findDriverLib()
 {
     var file = _wildcard(this.driverLibPattern + "/inc");
     if (file == null) {
-	throw new Error("can't find MSP432 DriverLib along the path '"
-		       + xdc.curPath() + "'");
+	throw new Error("can't find DriverLib along the path '"
+		       + xdc.curPath() + "' using the pattern '"
+		       + this.driverLibPattern + "/inc'");
     }
     file = file.substring(0, file.lastIndexOf('/inc'));
 

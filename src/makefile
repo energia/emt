@@ -51,6 +51,7 @@ export XDCPATH = $(SYSBIOS)/packages;$(TIRTOS)/packages
 
 ## find all packages provided by this tree
 ALLPKGS := $(shell "$(XDCROOT)/bin/xdcpkg" -r $(TOP)/src)
+ALLPKGS := $(patsubst ~%,,$(patsubst %~,,$(subst /cc3200,~ ~,$(ALLPKGS))))
 
 ## categorize packages
 NONTESTPKGS := $(patsubst ~%,,$(patsubst %~,,$(subst /tests,~ ~,$(ALLPKGS))))
@@ -80,7 +81,7 @@ test: all
 release: .buildinfo all
 	$(XDCROOT)/xdc --jobs=4 $@ -P $(BASEPKGS)
 	@echo making energia closures ...
-	-$(MAKE) --no-print-directory -C bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
+	-$(MAKE) --no-print-directory -C bundles/energia all
 
 clean:
 	$(XDCROOT)/xdc --jobs=4 -k $@ -Pr .
