@@ -34,7 +34,7 @@ JOBS = --jobs=4
 	@echo "Building packages ..."
 	$(MYXDC) $(JOBS) release -Pr src
 	@echo making energia closures ...
-	-make -C src/bundles/energia all
+	-make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
 
 # ======== .local-regress ========
 # Test the packages in this tree

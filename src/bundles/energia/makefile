@@ -17,11 +17,16 @@ define BUILD
 
 endef
 
+TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
+TREE_NAME = $(notdir $(TREE_ROOT))
+
 # ensure "all" is the default build goal
 all: makefile
 
 %/closure.zip: | all
-	@echo making $@ ...
+	@echo making $@ "[ $(TREE_NAME) ]" ...
+	@echo "version: $(TREE_NAME)" > $*/closure/version.txt
+	@echo "source : $(TREE_ROOT)" >> $*/closure/version.txt
 	@cd $* && $(XDCROOT)/bin/zip -rq closure.zip closure
 
 # rule to build the specified goal for all platforms, compilers, and tests
