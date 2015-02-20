@@ -207,6 +207,6 @@ function display(carray, verbose)
             }
         }
     }
-    len = String(total).length;
+    var len = String(total).length;
     print("  " + total + pad.substring(len) + "TOTAL");
 }

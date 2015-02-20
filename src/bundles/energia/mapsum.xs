@@ -4,6 +4,9 @@
 
 var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] mapfile";
 
+var unusedStart = null;
+var unusedEnd = null;
+
 function main(arguments)
 {
     var toolChain = "ti";
@@ -92,11 +95,25 @@ function parseGnu(fileName)
     var header = true;
     var continuation = false;
     while ((line = file.readLine()) != null) {
+	line = String(line);
         if (line.indexOf("Linker script and memory map") == 0) {
             header = false;
         }
         if (header) continue;
 
+	/* look for UNUSED start/end symbol values */
+        var tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+__UNUSED_start__/);
+        if (tokens != null && tokens[1] != null) {
+	    unusedStart = Number(tokens[1]);
+	    continue;
+	}
+        tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+__UNUSED_end__/);
+        if (tokens != null && tokens[1] != null) {
+	    unusedEnd = Number(tokens[1]);
+	    continue;
+	}
+
+	/* now look for section allocation lines */
         var section; /* output section name */
         var size;    /* size of contained "section" */
         var key;     /* input container name + optional object name */
@@ -107,11 +124,11 @@ function parseGnu(fileName)
          *    "^ <section_name>", or
          *    "^     0x<addr> 0x<size> <container>(<object>)" immediately followed by the form above
          */
-        var tokens = String(line).match(/^ ([\.a-zA-Z0-9_:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
+        tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
         if (tokens == null) {
             if (continuation == true) {
                 continuation = false;
-                tokens = String(line).match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
+                tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
                 if (tokens == null) {
                     print("warning: expected a continuation of section '" + section + "', skipping line: " + line);
                     continue;
@@ -122,7 +139,7 @@ function parseGnu(fileName)
                 key = tokens[3];
             }
             else {
-                tokens = String(line).match(/^ ([\.a-zA-Z0-9_:\*]+)$/);
+                tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)$/);
                 if (tokens != null && tokens[1] != "CREATE_OBJECT_SYMBOLS") {
                     continuation = true;
                     section = tokens[1];
@@ -194,8 +211,10 @@ function parseTI(fileName)
     var line;
     var result = {};
     while ((line = file.readLine()) != null) {
+	line = String(line);
+
         /* look for lines of the form "  <hex_addr> <hex_size> <anything>" */
-        var tokens = String(line).match(/        ([0-9a-f]+)    ([0-9a-f]+)     (.*)/);
+        var tokens = line.match(/        ([0-9a-f]+)    ([0-9a-f]+)     (.*)/);
         if (tokens != null) {
             var start = ("0x" + tokens[1]) - 0;
             var size = ("0x" + tokens[2]) - 0;
@@ -203,18 +222,21 @@ function parseTI(fileName)
 
             /* parse "<anything>" for "<lib> : <obj> (<section>)" */
             tokens = rest.match(/(([\w\.\-]*) : )?([\w\.\-]+) \((.+)\)(\s\[.*\])?$/);
+	    var lib;
+	    var obj;
+	    var section;
             if (tokens != null) {
-                var lib;
-                if (tokens[1] != null) {     /* if there is a " : " qualifier */
-                    if (tokens[2] != null && tokens[2].length > 0) { /* and if there is a word preceeding the : */
-                        lib = tokens[2];     /* set the current library */
+                if (tokens[1] != null) { /* if there is a " : " qualifier */
+                    if (tokens[2] != null && tokens[2].length > 0) {
+			/* and if there is a word preceeding the : */
+                        lib = tokens[2]; /* set the current library */
                     }
                 }
-                else {                      /* else there is no library for this line */
+                else {                   /* else there's no lib for this line*/
                     lib = null;
                 }
-                var obj = tokens[3];
-                var section = tokens[4];
+                obj = tokens[3];
+                section = tokens[4];
                 //print((lib ? ("lib = " + lib + ", ") : "") + "obj = " + obj + ", section = " + section + ", size = " + size);
             }
             else if (rest.match(/\(\.common.+$/)) {
@@ -290,8 +312,15 @@ function display(carray, verbose)
             }
         }
     }
-    len = String(total).length;
+
+    var len = String(total).length;
     print("  " + total + pad.substring(len) + "TOTAL");
+
+    if (unusedStart != null && unusedEnd != null) {
+	var unused = unusedEnd - unusedStart;
+	len = String(unused).length;
+	print("  " + unused + pad.substring(len) + "UNUSED");
+    }
     
 }
 
