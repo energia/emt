@@ -4,7 +4,7 @@
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
-Pkg.uses = ["ti/msp432/runtime/wiring"];
+Pkg.uses = ["ti/runtime/wiring/msp432"];
 
 var PLATFORM = "ti.platforms.emt432LP";
 

@@ -53,7 +53,7 @@
 									<listOptionValue builtIn="false" value="&quot;${CCWARE_INSTALL_DIR}/cc3200-sdk/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CCWARE_INSTALL_DIR}/cc3200-sdk/oslib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CCWARE_INSTALL_DIR}/cc3200-sdk/simplelink/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tink2_tree}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/emt_tree}&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_5.1.compilerID.DEBUGGING_MODEL.622375837" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.1.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.TMS470_5.1.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_5.1.compilerID.GCC.1599061316" name="Enable support for GCC extensions (--gcc)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.1.compilerID.GCC" value="true" valueType="boolean"/>
@@ -151,10 +151,10 @@
 	<storageModule moduleId="scannerConfiguration"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/tink.runtime.wiring"/>
+			<resource resourceType="PROJECT" workspacePath="/ti.runtime.wiring.cc3200"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/tink.runtime.wiring"/>
+			<resource resourceType="PROJECT" workspacePath="/ti.runtime.wiring.cc3200"/>
 		</configuration>
 	</storageModule>
 </cproject>

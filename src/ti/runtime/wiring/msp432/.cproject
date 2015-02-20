@@ -12,7 +12,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lib" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970" name="Debug" parent="com.ti.ccstudio.buildDefinitions.MSP432.Debug" postbuildStep="${XDCROOT}/bin/cp msp432.runtime.wiring.lib ../lib/ti.msp432.runtime.wiring.lib" prebuildStep="">
+				<configuration artifactExtension="lib" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970" name="Debug" parent="com.ti.ccstudio.buildDefinitions.MSP432.Debug" postbuildStep="${XDCROOT}/bin/cp ti.runtime.wiring.msp432.lib ../lib/ti.runtime.wiring.msp432.lib" prebuildStep="">
 					<folderInfo id="com.ti.ccstudio.buildDefinitions.MSP432.Debug.1314707970." name="/" resourcePath="">
 						<toolChain id="com.ti.ccstudio.buildDefinitions.MSP432_5.2.libraryDebugToolchain.1942746637" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.MSP432_5.2.libraryDebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.MSP432_5.2.library.librarianDebug.1892437785">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.1326012325" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
@@ -140,10 +140,10 @@
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/msp432.runtime.wiring"/>
+			<resource resourceType="PROJECT" workspacePath="/ti.runtime.wiring.msp432"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/msp432.runtime.wiring"/>
+			<resource resourceType="PROJECT" workspacePath="/ti.runtime.wiring.msp432"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.language.mapping">
