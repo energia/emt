@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ti.msp432.tests.wiring.alan</name>
+	<name>ti.runtime.wiring.msp432.tests.alan</name>
 	<comment></comment>
 	<projects>
 	</projects>
