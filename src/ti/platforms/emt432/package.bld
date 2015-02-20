@@ -1,4 +1,0 @@
-Pkg.otherFiles = [
-    "linkcmd.xdt", "linkcmd_gnu.xdt", "linkcmd_iar.xdt",
-    "include", "include_gnu", "templates"
-];
