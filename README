@@ -1,4 +1,4 @@
-				emt-a13
+				emt-a14
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,22 +122,13 @@ Librarian releases
 ADDITIONS
 
 DELETIONS
+	removed obsolete ti.platforms.emt432
 
 CHANGES
 
-ti/msp432/tests/wiring/alan
-src/bundles/energia/msp432
-	unified energia.cfg so PWM/analogWrite should now be available
-
-ti/msp432/runtime/wiring
-	Change SPI to conform to the Arduino UNO API
-
-	- By default SS pin is under user control
-	- Only assert SS if the SS pin is specified in on of the extended API
-          calls
-	- transfer() now returns the byte read from the bus rather than 0
-	- Add SPI mode defines t SPI.h
-
-	Change Wire.available() to return bytes left
+	renamed packages to enable reuse of common code
+	    o ti.msp432.runtime.wiring -> ti.runtime.wiring.msp432
+	    o ti.cc3200.runtime.wiring -> ti.runtime.wiring.cc3200
+	    o ti.msp432.tests.alan -> ti.runtime.wiring.msp432.tests.alan
 
 MRS
