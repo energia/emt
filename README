@@ -1,4 +1,4 @@
-				emt-a15
+				emt-a16
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,10 +125,7 @@ DELETIONS
 
 CHANGES
 
-src/bundles
-	restored generation of the closure.zip files
-
-	added UNUSED memory reporting to the mapsum tool; this memory 
-	should be added to the BIOS heap (soon)
+ti.runtime.wiring.msp432
+	critical I2C bug fix(s)
 
 MRS
