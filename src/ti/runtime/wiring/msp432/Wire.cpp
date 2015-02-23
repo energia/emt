@@ -109,6 +109,7 @@ void TwoWire::begin(void)
 
     if (i2c != NULL) {
         GateMutex_construct(&gate, NULL);
+        gateEnterCount = 0;
         begun = TRUE;
     }
 }
@@ -168,6 +169,7 @@ uint8_t TwoWire::requestFrom(int address, int quantity, int sendStop)
 void TwoWire::beginTransmission(uint8_t address)
 {
     GateMutex_enter(GateMutex_handle(&gate));
+    gateEnterCount++;
 
     if (idle) {
         i2cTransaction.slaveAddress = address;
@@ -197,8 +199,8 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
     if (sendStop) {
         idle = true;
 
-        if (rxReadIndex == 0) {
-            GateMutex_leave(GateMutex_handle(&gate), 0);
+        if (available() == 0 && gateEnterCount) {
+            GateMutex_leave(GateMutex_handle(&gate), --gateEnterCount);
         }
     }
 
@@ -269,8 +271,8 @@ int TwoWire::read(void)
     value = rxBuffer[rxReadIndex];
     rxReadIndex = (rxReadIndex + 1) % BUFFER_LENGTH;
 
-    if (rxReadIndex == 0) {
-        GateMutex_leave(GateMutex_handle(&gate), 0);
+    if (available() == 0 && gateEnterCount) {
+        GateMutex_leave(GateMutex_handle(&gate), --gateEnterCount);
     }
 
     return (value);
