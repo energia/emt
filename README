@@ -1,4 +1,4 @@
-				emt-a16
+				emt-a17
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -126,6 +126,6 @@ DELETIONS
 CHANGES
 
 ti.runtime.wiring.msp432
-	critical I2C bug fix(s)
+	a better fix for critical I2C bug fix(s)
 
 MRS
