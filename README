@@ -1,4 +1,4 @@
-				emt-a17
+				emt-a18
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -126,6 +126,9 @@ DELETIONS
 CHANGES
 
 ti.runtime.wiring.msp432
-	a better fix for critical I2C bug fix(s)
+	re-work wiring_analog to enable dynamic port mapping (to allow
+        analogWrite() on the MSP432LP LEDS)
+
+	cleanup of wiring_digital
 
 MRS
