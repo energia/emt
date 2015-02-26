@@ -34,6 +34,7 @@
 #include <rom_map.h>
 #include <timer_a.h>
 #include <adc14.h>
+#include <pmap.h>
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO2.h>
@@ -50,54 +51,90 @@ const uint16_t pwm_to_port_pin[] = {
     GPIO2MSP432_P6_7,
 };
 
-const uint8_t digital_pin_to_pwm_index[] = {
-    NOT_ON_TIMER,   /*  dummy */
-    NOT_ON_TIMER,   /*  1  - 3.3V */
-    NOT_ON_TIMER,   /*  2  - P6.0_A15 */
-    NOT_ON_TIMER,   /*  3  - P3.2_URXD */
-    NOT_ON_TIMER,   /*  4  - P3.3_UTXD */
-    NOT_ON_TIMER,   /*  5  - P4.1_IO_A12 */
-    NOT_ON_TIMER,   /*  6  - P4.3_A10 */
-    NOT_ON_TIMER,   /*  7  - P1.5_SPICLK */
-    NOT_ON_TIMER,   /*  8  - P4.6_IO_A7 */
-    NOT_ON_TIMER,   /*  9  - P6.5_I2CSCL */
-    NOT_ON_TIMER,   /*  10 - P6.4_I2CSDA */
-    NOT_ON_TIMER,   /*  11 - P3.6_IO */
-    NOT_ON_TIMER,   /*  12 - P5.2_IO */
-    NOT_ON_TIMER,   /*  13 - P5.0_IO */
-    NOT_ON_TIMER,   /*  14 - P1.7_SPIMISO */
-    NOT_ON_TIMER,   /*  15 - P1.6_SPIMOSI */
-    NOT_ON_TIMER,   /*  16 - RESET */
-    5,              /*  17 - P5.7_IO */
-    NOT_ON_TIMER,   /*  18 - P3.0_IO */
-    1,              /*  19 - P2.5_IO_PWM */
-    NOT_ON_TIMER,   /*  20 - GND */
-    NOT_ON_TIMER,   /*  21 - 5V */
-    NOT_ON_TIMER,   /*  22 - GND */
-    NOT_ON_TIMER,   /*  23 - P6.1_A14 */
-    NOT_ON_TIMER,   /*  24 - P4.0_A13 */
-    NOT_ON_TIMER,   /*  25 - P4.2_A11 */
-    NOT_ON_TIMER,   /*  26 - P4.4_A9 */
-    NOT_ON_TIMER,   /*  27 - P4.5_A8 */
-    NOT_ON_TIMER,   /*  28 - P4.7_A6 */
-    NOT_ON_TIMER,   /*  29 - P5.4_IO */
-    NOT_ON_TIMER,   /*  30 - P5.5_IO */
-    NOT_ON_TIMER,   /*  31 - P3.7_IO */
-    NOT_ON_TIMER,   /*  32 - P3.5_IO */
-    NOT_ON_TIMER,   /*  33 - P5.1_IO */
-    NOT_ON_TIMER,   /*  34 - P2.3_IO */
-    7,              /*  35 - P6.7_IO_CAPT */
-    6,              /*  36 - P6.6_IO_CAPT */
-    4,              /*  37 - P5.6_PWM */
-    0,              /*  38 - P2.4_PWM */
-    2,              /*  39 - P2.6_PWM */
-    3,              /*  40 - P2.7_PWM */
-    NOT_ON_TIMER,   /*  41 - P1.1 SW1 */
-    NOT_ON_TIMER,   /*  42 - P1.4 SW2 */
-    NOT_ON_TIMER,   /*  43 - P2.0 RED_LED */
-    NOT_ON_TIMER,   /*  44 - P2.1 GREEN_LED */
-    NOT_ON_TIMER,   /*  45 - P2.2 BLUE_LED */
-    NOT_ON_TIMER,   /*  46 - P1.0 LED1 */
+uint8_t mappable_pwms[] = {
+    PM_TA0CCR1A,
+    PM_TA0CCR2A,
+    PM_TA0CCR3A,
+    PM_TA0CCR4A,
+    PM_TA1CCR1A,
+    PM_TA1CCR2A,
+    PM_TA1CCR3A,
+    PM_TA1CCR4A,
+};
+
+#define NOT_IN_USE 0
+#define IN_USE 0xffff
+
+uint16_t used_pwm_port_pins[] = {
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+};
+
+uint8_t pxmap[] = {
+    0,
+    P1MAP,
+    P2MAP,
+    P3MAP,
+    P4MAP,
+    P5MAP,
+    P6MAP,
+    P7MAP,
+};
+
+const uint16_t digital_pin_to_pwm_index[] = {
+    NOT_ON_TIMER,       /*  dummy */
+    NOT_ON_TIMER,       /*  1  - 3.3V */
+    NOT_ON_TIMER,       /*  2  - P6.0_A15 */
+    GPIO2MSP432_P3_2,   /*  3  - P3.2_URXD */
+    GPIO2MSP432_P3_3,   /*  4  - P3.3_UTXD */
+    NOT_ON_TIMER,       /*  5  - P4.1_IO_A12 */
+    NOT_ON_TIMER,       /*  6  - P4.3_A10 */
+    NOT_ON_TIMER,       /*  7  - P1.5_SPICLK */
+    NOT_ON_TIMER,       /*  8  - P4.6_IO_A7 */
+    NOT_ON_TIMER,       /*  9  - P6.5_I2CSCL */
+    NOT_ON_TIMER,       /*  10 - P6.4_I2CSDA */
+    GPIO2MSP432_P3_6,   /*  11 - P3.6_IO */
+    NOT_ON_TIMER,       /*  12 - P5.2_IO */
+    NOT_ON_TIMER,       /*  13 - P5.0_IO */
+    NOT_ON_TIMER,       /*  14 - P1.7_SPIMISO */
+    NOT_ON_TIMER,       /*  15 - P1.6_SPIMOSI */
+    NOT_ON_TIMER,       /*  16 - RESET */
+    5,                  /*  17 - P5.7_IO */
+    GPIO2MSP432_P3_0,   /*  18 - P3.0_IO */
+    1,                  /*  19 - P2.5_IO_PWM */
+    NOT_ON_TIMER,       /*  20 - GND */
+    NOT_ON_TIMER,       /*  21 - 5V */
+    NOT_ON_TIMER,       /*  22 - GND */
+    NOT_ON_TIMER,       /*  23 - P6.1_A14 */
+    NOT_ON_TIMER,       /*  24 - P4.0_A13 */
+    NOT_ON_TIMER,       /*  25 - P4.2_A11 */
+    NOT_ON_TIMER,       /*  26 - P4.4_A9 */
+    NOT_ON_TIMER,       /*  27 - P4.5_A8 */
+    NOT_ON_TIMER,       /*  28 - P4.7_A6 */
+    NOT_ON_TIMER,       /*  29 - P5.4_IO */
+    NOT_ON_TIMER,       /*  30 - P5.5_IO */
+    GPIO2MSP432_P3_7,   /*  31 - P3.7_IO */
+    GPIO2MSP432_P3_5,   /*  32 - P3.5_IO */
+    NOT_ON_TIMER,       /*  33 - P5.1_IO */
+    GPIO2MSP432_P2_3,   /*  34 - P2.3_IO */
+    7,                  /*  35 - P6.7_IO_CAPT */
+    6,                  /*  36 - P6.6_IO_CAPT */
+    4,                  /*  37 - P5.6_PWM */
+    0,                  /*  38 - P2.4_PWM */
+    2,                  /*  39 - P2.6_PWM */
+    3,                  /*  40 - P2.7_PWM */
+    NOT_ON_TIMER,       /*  41 - P1.1 SW1 */
+    NOT_ON_TIMER,       /*  42 - P1.4 SW2 */
+    GPIO2MSP432_P2_0,   /*  43 - P2.0 RED_LED */
+    GPIO2MSP432_P2_1,   /*  44 - P2.1 GREEN_LED */
+    GPIO2MSP432_P2_2,   /*  45 - P2.2 BLUE_LED */
+    NOT_ON_TIMER,       /*  46 - P1.0 LED1 */
 };
 
 extern PWM_Config PWM_config[];
@@ -114,26 +151,117 @@ extern PWM_Config PWM_config[];
 
 #define PWM_SCALE_FACTOR 24480/255
 
-void analogWrite(uint8_t pin, int val)
+void stopAnalogWrite(uint8_t pin)
 {
-    uint8_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint_fast8_t port;
+    uint_fast16_t pinMask;
+    uint16_t pinNum, i;
 
-    if (pwmIndex == NOT_ON_TIMER) {
+    /* stop the timer */
+    analogWrite(pin, 0);
+
+    /* all done for fix mapped pins */
+    if (pwmIndex < 8) {
+        used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
         return;
     }
 
-    /* re-configure pin if necessary */
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
-        uint_fast8_t port;
-        uint_fast16_t pinMask;
+    /* undo dynamic port mapping plumbing */
+    port = pwmIndex >> 8;
+    pinMask = pwmIndex & 0xff;
+    /* derive pinNum from pinMask */
+    pinNum = 0;
+    while (((1 << pinNum) & pinMask) == 0) pinNum++;
+    /* the following code was extracted from PMAP_configurePort() */
 
+    //Get write-access to port mapping registers:
+    PMAP->rKEYID = PMAP_KEYID_VAL;
+
+    //Enable reconfiguration during runtime
+    PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
+
+    //Undo Port Mapping for this pin:
+    HWREG8(PMAP_BASE + pinNum + pxmap[port]) = PM_NONE;
+
+    //Disable write-access to port mapping registers:
+    PMAP->rKEYID = 0;
+
+    for (i = 0; i < 8; i++) {
+        if (used_pwm_port_pins[i] == pwmIndex) {
+            used_pwm_port_pins[i] = NOT_IN_USE;
+            break;
+        }
+    }
+}
+
+void analogWrite(uint8_t pin, int val)
+{
+    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint_fast8_t port;
+    uint_fast16_t pinMask;
+    uint16_t pinNum, i;
+
+    /* re-configure pin if necessary and possible */
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
 
-        port = pwm_to_port_pin[pwmIndex] >> 8;
-        pinMask = pwm_to_port_pin[pwmIndex] & 0xff;
+        if (pwmIndex == NOT_ON_TIMER) {
+            return; /* can't get there from here */
+        }
+
+        if (pwmIndex < 8) { /* fixed mapping */
+            if (used_pwm_port_pins[pwmIndex] != NOT_IN_USE) {
+                return; /* PWM port already in use */
+            }
+            port = pwm_to_port_pin[pwmIndex] >> 8;
+            pinMask = pwm_to_port_pin[pwmIndex] & 0xff;
+            used_pwm_port_pins[pwmIndex] = IN_USE;
+        }
+        else { /* can be re-mapped */
+            /* find an unused pwm and port map it */
+            for (i = 0; i < 8; i++) {
+                if (used_pwm_port_pins[i] == NOT_IN_USE) {
+                    break;
+                }
+            }
+            if (i > 7) {
+                return; /* no unused PWM ports */
+            }
+            used_pwm_port_pins[i] = pwmIndex;
+            port = pwmIndex >> 8;
+            pinMask = pwmIndex & 0xff;
+            pwmIndex = i; /* convert pwmIndex into usable PWM module instance index */
+            /* derive pinNum from pinMask */
+            pinNum = 0;
+            while (((1 << pinNum) & pinMask) == 0) pinNum++;
+            /* the following code was extracted from PMAP_configurePort() */
+
+            //Get write-access to port mapping registers:
+            PMAP->rKEYID = PMAP_KEYID_VAL;
+
+            //Enable reconfiguration during runtime
+            PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
+
+            //Configure Port Mapping for this pin:
+            HWREG8(PMAP_BASE + pinNum + pxmap[port]) = mappable_pwms[i];
+
+            //Disable write-access to port mapping registers:
+            PMAP->rKEYID = 0;
+        }
         /* Enable PWM output on GPIO pins */
         MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
                                                     GPIO_PRIMARY_MODULE_FUNCTION);
+    }
+    else {
+        if (pwmIndex >= 8) {
+            for (i = 0; i < 8; i++) {
+                if (used_pwm_port_pins[i] == pwmIndex) {
+                    pwmIndex = i;
+                    break;
+                }
+            }
+        }
     }
 
     PWM_setDuty((PWM_Handle)&(PWM_config[pwmIndex]), (val * PWM_SCALE_FACTOR));
