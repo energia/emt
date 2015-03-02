@@ -86,16 +86,6 @@ SECTIONS {
         *(.rodata.*)
     } > REGION_TEXT
 
-    .ARM.exidx : {
-        __exidx_start = .;
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-    } > REGION_ARM_EXIDX
-
-    .ARM.extab : {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > REGION_ARM_EXTAB
-
     __etext = .;
 
     .data : {
@@ -106,6 +96,16 @@ SECTIONS {
         . = ALIGN (4);
         __data_end__ = .;
     } > REGION_DATA AT> REGION_TEXT
+
+    .ARM.exidx : {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    } > REGION_ARM_EXIDX
+
+    .ARM.extab : {
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+    } > REGION_ARM_EXTAB
 
     .bss : {
         __bss_start__ = .;
