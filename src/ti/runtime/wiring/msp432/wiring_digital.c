@@ -2,7 +2,7 @@
  ************************************************************************
  *  wiring_digital.cpp
  *
- *  Energia core files for cc3200
+ *  Energia core files for msp432
  *      Copyright (c) 2014 Robert Wessels. All right reserved.
  *
  *
