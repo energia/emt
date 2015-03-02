@@ -80,12 +80,16 @@ SECTIONS {
 }
 
 SECTIONS {
-    /* create an empty section at the end of SRAM */
+    /* create an empty sections at the end of SRAM and FLASH */
     .empty : { *(.empty) } > SRAM
+    .emptyFlash : { *(.emptyFlash) } > FLASH
 
     /* the UNUSED symbols define reusable heap memory */
-    __UNUSED_start__ = ADDR(.empty);
-    __UNUSED_end__   = ORIGIN(SRAM) + LENGTH(SRAM);
+    __UNUSED_SRAM_start__ = ADDR(.empty);
+    __UNUSED_SRAM_end__   = ORIGIN(SRAM) + LENGTH(SRAM);
+
+    __UNUSED_FLASH_start__ = ADDR(.emptyFlash);
+    __UNUSED_FLASH_end__   = ORIGIN(FLASH) + LENGTH(FLASH);
 }
 
 ENTRY(_c_int00)

@@ -4,8 +4,14 @@
 
 var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] mapfile";
 
-var unusedStart = null;
-var unusedEnd = null;
+var symbolNamesGnu = {
+    __UNUSED_SRAM_start__: "unusedSramStart",
+    __UNUSED_SRAM_end__: "unusedSramEnd",
+    __UNUSED_FLASH_start__: "unusedFlashStart",
+    __UNUSED_FLASH_end__: "unusedFlashEnd"
+};
+
+var symbolTable = {};
 
 function main(arguments)
 {
@@ -101,15 +107,8 @@ function parseGnu(fileName)
         }
         if (header) continue;
 
-	/* look for UNUSED start/end symbol values */
-        var tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+__UNUSED_start__/);
-        if (tokens != null && tokens[1] != null) {
-	    unusedStart = Number(tokens[1]);
-	    continue;
-	}
-        tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+__UNUSED_end__/);
-        if (tokens != null && tokens[1] != null) {
-	    unusedEnd = Number(tokens[1]);
+	/* look for symbol values for the symbols defined in symbolNamesGnu */
+	if (symbolValueGnu(line, symbolNamesGnu, symbolTable)) {
 	    continue;
 	}
 
@@ -124,7 +123,7 @@ function parseGnu(fileName)
          *    "^ <section_name>", or
          *    "^     0x<addr> 0x<size> <container>(<object>)" immediately followed by the form above
          */
-        tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
+        var tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
         if (tokens == null) {
             if (continuation == true) {
                 continuation = false;
@@ -285,6 +284,27 @@ function parseTI(fileName)
 }
 
 /*
+ *  ======== symbolValueGnu ========
+ *  If line is a symbol definition and it's a symbol of interest, enter it's
+ *  value in symbolTable.
+ *
+ *  We use two hash tables to enable TI and GNU tool chains to use different
+ *  names for the same "value"; this enables the display method to be
+ *  independent of the toolchain.
+ */
+function symbolValueGnu(line, symbolNames, symbolTable)
+{
+    var tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+([a-zA-Z_]+[a-zA-Z0-9_]*)/);
+    if (tokens != null && tokens[1] != null && tokens[2] != null) {
+	if (symbolNames[tokens[2]] != null) {
+	    symbolTable[symbolNames[tokens[2]]] = Number(tokens[1]);
+	    return (true);
+	}
+    }
+    return (false);
+}
+
+/*
  *  ======== display ========
  *  Print the array of values returned by parse()
  */
@@ -316,11 +336,22 @@ function display(carray, verbose)
     var len = String(total).length;
     print("  " + total + pad.substring(len) + "TOTAL");
 
-    if (unusedStart != null && unusedEnd != null) {
-	var unused = unusedEnd - unusedStart;
+    /* display unused SRAM */
+    var start = symbolTable["unusedSramStart"];
+    var end = symbolTable["unusedSramEnd"];
+    if (start != null && end != null) {
+	var unused = end - start;
 	len = String(unused).length;
-	print("  " + unused + pad.substring(len) + "UNUSED");
+	print("  " + unused + pad.substring(len) + "UNUSED SRAM");
     }
-    
+
+    /* display unused FLASH */
+    var start = symbolTable["unusedFlashStart"];
+    var end = symbolTable["unusedFlashEnd"];
+    if (start != null && end != null) {
+	var unused = end - start;
+	len = String(unused).length;
+	print("  " + unused + pad.substring(len) + "UNUSED FLASH");
+    }
 }
 

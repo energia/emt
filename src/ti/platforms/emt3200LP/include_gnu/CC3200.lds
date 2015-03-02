@@ -6,6 +6,8 @@
 
 MEMORY
 {
+    /* we define this FLASH region, so we can _always_ define device-independent symbols that describe FLASH */
+    FLASH (RX)  : ORIGIN = 0x00000000, LENGTH = 0x0
     SRAM (RWX)  : ORIGIN = 0x20004000, LENGTH = 0x00030000 - 0x4000
 }
 

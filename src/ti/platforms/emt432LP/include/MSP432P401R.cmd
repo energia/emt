@@ -79,16 +79,17 @@ SECTIONS
      * start heap at the end of all RAM data and extend downward wward the
      * stack top
      *
-     * define __UNUSED_start__ and __UNUSED_end__ to identify unused memory
-     * to be used as {extra heap space, stack overrun check boundary, ...}
+     * define __UNUSED_SRAM_start__ and __UNUSED_SRAM_end__ to identify
+     * unused memory to be used as {extra heap space, stack overrun check
+     * boundary, ...}
      */
     GROUP {
         .data
         .bss
         .sysmem
         empty: {
-            __UNUSED_start__ = .;
-            __UNUSED_end__ = __stack;
+            __UNUSED_SRAM_start__ = .;
+            __UNUSED_SRAM_end__ = __stack;
         }
     } > SRAM
 
