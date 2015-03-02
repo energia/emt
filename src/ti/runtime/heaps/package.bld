@@ -1,0 +1,12 @@
+/* build for all configured targets */
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+
+    /* create a library of all the heap managers */
+    var lib = Pkg.addLibrary("lib/" + Pkg.name, targ);
+    lib.addObjects(Pkg.modules);
+
+    /* create simple test */
+    var exe = Pkg.addExecutable("test", targ, targ.platform);
+    exe.addObjects(["test.c"]);
+}

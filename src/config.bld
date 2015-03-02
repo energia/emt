@@ -52,9 +52,21 @@ else if (Pkg.name.match(/3200/)) {
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
     if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
 }
+else if (Pkg.name.match(/\.runtime\./)) {
+    if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
+    if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
+    if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
+    if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
+}
 else {
     Build.useTargets = null;
 }
+
+gnuTargets.M4F.platform = "ti.platforms.emt432LP";
+tiTargets.M4F.platform =  "ti.platforms.emt432LP";
+
+gnuTargets.M4.platform = "ti.platforms.emt3200LP";
+tiTargets.M4.platform =  "ti.platforms.emt3200LP";
 
 /* For now, the default is to export everthing */
 Pkg.attrs.exportAll = true;
