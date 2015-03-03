@@ -1,4 +1,4 @@
-				emt-a19
+				emt-a20
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,25 +121,13 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.heaps
-	added a heap manager, HeapRem, that uses all of UNUSED SRAM for the 
-	heap
-
-bundles/energia
-	added simple heap test
-
 DELETIONS
 
 CHANGES
 
 bundles/energia
-	use HeapRem in MSP432LP closure
+	added reporting of used and unused SRAM and FLASH
 
-	added ability to report unused FLASH as well as UNUSED SRAM (to
-	facilitate code footprint monitoring)
-
-ti/platforms/emt432LP
-	fix GNU linker command file to not place bss, .heap, and .stack in 
-	both FLASH and SRAM
-
+ti/runtime/wiring/msp432
+	fixed/added analogRead
 MRS

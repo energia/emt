@@ -87,9 +87,11 @@ SECTIONS {
     /* the UNUSED symbols define reusable heap memory */
     __UNUSED_SRAM_start__ = ADDR(.empty);
     __UNUSED_SRAM_end__   = ORIGIN(SRAM) + LENGTH(SRAM);
-
+    __SRAM_LENGTH__       = LENGTH(SRAM);
+    
     __UNUSED_FLASH_start__ = ADDR(.emptyFlash);
     __UNUSED_FLASH_end__   = ORIGIN(FLASH) + LENGTH(FLASH);
+    __FLASH_LENGTH__       = LENGTH(FLASH);
 }
 
 ENTRY(_c_int00)
