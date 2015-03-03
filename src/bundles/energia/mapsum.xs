@@ -5,10 +5,13 @@
 var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] mapfile";
 
 var symbolNamesGnu = {
-    __UNUSED_SRAM_start__: "unusedSramStart",
-    __UNUSED_SRAM_end__: "unusedSramEnd",
-    __UNUSED_FLASH_start__: "unusedFlashStart",
-    __UNUSED_FLASH_end__: "unusedFlashEnd"
+    __UNUSED_SRAM_start__: "SRAM_UNUSED_start",
+    __UNUSED_SRAM_end__: "SRAM_UNUSED_end",
+    __SRAM_LENGTH__: "SRAM_length",
+
+    __UNUSED_FLASH_start__: "FLASH_UNUSED_start",
+    __UNUSED_FLASH_end__: "FLASH_UNUSED_end",
+__FLASH_LENGTH__: "FLASH_length"
 };
 
 var symbolTable = {};
@@ -336,22 +339,28 @@ function display(carray, verbose)
     var len = String(total).length;
     print("  " + total + pad.substring(len) + "TOTAL");
 
-    /* display unused SRAM */
-    var start = symbolTable["unusedSramStart"];
-    var end = symbolTable["unusedSramEnd"];
-    if (start != null && end != null) {
-	var unused = end - start;
-	len = String(unused).length;
-	print("  " + unused + pad.substring(len) + "UNUSED SRAM");
-    }
-
-    /* display unused FLASH */
-    var start = symbolTable["unusedFlashStart"];
-    var end = symbolTable["unusedFlashEnd"];
-    if (start != null && end != null) {
-	var unused = end - start;
-	len = String(unused).length;
-	print("  " + unused + pad.substring(len) + "UNUSED FLASH");
-    }
+    /* display unused SRAM and FLASH */
+    displayMem("SRAM");
+    displayMem("FLASH");
 }
 
+/*
+ *  ======== displayMem ========
+ */
+function displayMem(name)
+{
+    var pad = "       ";
+
+    /* display unused memory named 'name' */
+    var start = symbolTable[name + "_UNUSED_start"];
+    var end = symbolTable[name + "_UNUSED_end"];
+    var len = symbolTable[name + "_length"];
+    if (start != null && end != null) {
+	var unused = end - start;
+	var suffix = len != null 
+	    ? (" (" + unused + "/" + len + ", used = " + (len-unused) + ")") 
+	    : "";
+	len = String(unused).length;
+	print("  " + unused + pad.substring(len) + "UNUSED " + name + suffix);
+    }
+}
