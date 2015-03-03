@@ -10,7 +10,7 @@ Pkg.attrs.exportAll = true;
 
 var TI_CCOPTS = "--gcc --diag_warning=225";
 
-var DEFS = "-D__MSP432P401R__=1";
+var DEFS = "-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX";
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '
