@@ -32,8 +32,6 @@
 #include "wiring_private.h"
 #include <ti/drivers/GPIO2.h>
 
-extern void stopAnalogWrite(uint8_t pin);
-
 /* device specific routine */
 GPIO2_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
 {
@@ -59,9 +57,16 @@ GPIO2_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-    /* undo analogWrite() plumbing */
-    if (digital_pin_to_pin_function[pin] == PIN_FUNC_ANALOG_OUTPUT) {
-        stopAnalogWrite(pin);
+    /* undo any previous plumbing */
+    switch (digital_pin_to_pin_function[pin])
+    {
+        case PIN_FUNC_ANALOG_OUTPUT:
+            stopAnalogWrite(pin);
+            break;
+
+        case PIN_FUNC_ANALOG_INPUT:
+            stopAnalogRead(pin);
+            break;
     }
 
     GPIO2_PinConfig gpioConfig = mode2gpioConfig(pin, mode);

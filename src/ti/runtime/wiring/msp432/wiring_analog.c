@@ -34,11 +34,18 @@
 #include <rom_map.h>
 #include <timer_a.h>
 #include <adc14.h>
+#include <ref_a.h>
 #include <pmap.h>
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO2.h>
 #include <ti/drivers/gpio/GPIO2MSP432.h>
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+
+/*
+ * analogWrite() support
+ */
 
 const uint16_t pwm_to_port_pin[] = {
     GPIO2MSP432_P2_4,
@@ -151,50 +158,6 @@ extern PWM_Config PWM_config[];
 
 #define PWM_SCALE_FACTOR 24480/255
 
-void stopAnalogWrite(uint8_t pin)
-{
-    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
-    uint_fast8_t port;
-    uint_fast16_t pinMask;
-    uint16_t pinNum, i;
-
-    /* stop the timer */
-    analogWrite(pin, 0);
-
-    /* all done for fix mapped pins */
-    if (pwmIndex < 8) {
-        used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
-        return;
-    }
-
-    /* undo dynamic port mapping plumbing */
-    port = pwmIndex >> 8;
-    pinMask = pwmIndex & 0xff;
-    /* derive pinNum from pinMask */
-    pinNum = 0;
-    while (((1 << pinNum) & pinMask) == 0) pinNum++;
-    /* the following code was extracted from PMAP_configurePort() */
-
-    //Get write-access to port mapping registers:
-    PMAP->rKEYID = PMAP_KEYID_VAL;
-
-    //Enable reconfiguration during runtime
-    PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
-
-    //Undo Port Mapping for this pin:
-    HWREG8(PMAP_BASE + pinNum + pxmap[port]) = PM_NONE;
-
-    //Disable write-access to port mapping registers:
-    PMAP->rKEYID = 0;
-
-    for (i = 0; i < 8; i++) {
-        if (used_pwm_port_pins[i] == pwmIndex) {
-            used_pwm_port_pins[i] = NOT_IN_USE;
-            break;
-        }
-    }
-}
-
 void analogWrite(uint8_t pin, int val)
 {
     uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
@@ -267,6 +230,62 @@ void analogWrite(uint8_t pin, int val)
     PWM_setDuty((PWM_Handle)&(PWM_config[pwmIndex]), (val * PWM_SCALE_FACTOR));
 }
 
+/*
+ * This internal API is used to de-configure a pin that has been
+ * put in analogWrite() mode. 
+ *
+ * It will free up the pin's PWM resource after
+ * it is no longer being used to support analogWrite() on a different
+ * pin. It is called by pinMap() when a pin's function is being modified.
+ */
+void stopAnalogWrite(uint8_t pin)
+{
+    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint_fast8_t port;
+    uint_fast16_t pinMask;
+    uint16_t pinNum, i;
+
+    /* stop the timer */
+    analogWrite(pin, 0);
+
+    /* all done for fix mapped pins */
+    if (pwmIndex < 8) {
+        used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
+        return;
+    }
+
+    /* undo dynamic port mapping plumbing */
+    port = pwmIndex >> 8;
+    pinMask = pwmIndex & 0xff;
+    /* derive pinNum from pinMask */
+    pinNum = 0;
+    while (((1 << pinNum) & pinMask) == 0) pinNum++;
+    /* the following code was extracted from PMAP_configurePort() */
+
+    //Get write-access to port mapping registers:
+    PMAP->rKEYID = PMAP_KEYID_VAL;
+
+    //Enable reconfiguration during runtime
+    PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
+
+    //Undo Port Mapping for this pin:
+    HWREG8(PMAP_BASE + pinNum + pxmap[port]) = PM_NONE;
+
+    //Disable write-access to port mapping registers:
+    PMAP->rKEYID = 0;
+
+    for (i = 0; i < 8; i++) {
+        if (used_pwm_port_pins[i] == pwmIndex) {
+            used_pwm_port_pins[i] = NOT_IN_USE;
+            break;
+        }
+    }
+}
+
+/*
+ * analogRead() support
+ */
+ 
 const uint16_t adc_to_port_pin[] = {
     GPIO2MSP432_P5_5,  /* A0 */
     GPIO2MSP432_P5_4,  /* A1 */
@@ -336,7 +355,7 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,     /*  46 - P1.0 LED1 */
 };
 
-static int8_t analogReadShift = 4;
+static int8_t analogResolution = 10;
 static bool adc_module_enabled = false;
 
 /*
@@ -350,11 +369,14 @@ uint16_t analogRead(uint8_t pin)
     uint32_t adcMem, adcInt;
     uint16_t sample = 0;
     uint64_t status;
+    uint32_t hwiKey;
 
     if (adcIndex == NOT_ON_ADC) return;
 
     adcMem = 1 << adcIndex;
     adcInt = 1 << adcIndex;
+
+    hwiKey = Hwi_disable();
 
     /* re-configure pin if necessary */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
@@ -362,15 +384,27 @@ uint16_t analogRead(uint8_t pin)
         uint_fast16_t pinMask;
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
+
+        Hwi_restore(hwiKey);
+    
+        hwiKey = Hwi_disable();
+
         /* initialize top level ADC module if it hasn't been already */
         if (adc_module_enabled == false) {
+            adc_module_enabled = true;
+            Hwi_restore(hwiKey);
+
             /* Initializing ADC (MCLK/1/1) */
-            ADC14_enableModule();
-            ADC14_initModule(ADC_CLOCKSOURCE_MCLK,
+            MAP_ADC14_enableModule();
+            MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK,
                              ADC_PREDIVIDER_1,
                              ADC_DIVIDER_1,
                              0);
-            adc_module_enabled = true;
+            /* Setting reference voltage to 2.5 */
+            MAP_REF_A_setReferenceVoltage(REF_A_VREF2_5V);
+            MAP_REF_A_enableReferenceVoltage();
+            
+            analogReadResolution(analogResolution);
         }
 
         port = adc_to_port_pin[adcIndex] >> 8;
@@ -379,19 +413,27 @@ uint16_t analogRead(uint8_t pin)
         /* Setting up GPIO pins as analog inputs (and references) */
         MAP_GPIO_setAsPeripheralModuleFunctionInputPin(port, pinMask,
                                         GPIO_TERTIARY_MODULE_FUNCTION);
-        /* Enabling sample timer in auto iteration mode and interrupts */
-        MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
     }
 
-    /* clear out last sample */
-    MAP_ADC14_clearInterruptFlag(adcInt);
-
+    hwiKey = Hwi_disable();
+    
+    /* stop all current conversions */
+    MAP_ADC14_disableConversion();
+    
     /* Configuring ADC Memory in single conversion mode
      * with use of internal VSS as references */
     MAP_ADC14_configureSingleSampleMode(adcMem, false);
     MAP_ADC14_configureConversionMemory(adcMem,
                                     ADC_VREFPOS_AVCC_VREFNEG_VSS,
                                     adcIndex, false);
+
+    /* Enabling sample timer in auto iteration mode and interrupts */
+    MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
+
+    /* clear out any stale conversions */
+    status = MAP_ADC14_getInterruptStatus();
+    MAP_ADC14_clearInterruptFlag(status);
+    
     /* start new conversion */
     MAP_ADC14_enableConversion();
     MAP_ADC14_toggleConversionTrigger();
@@ -402,16 +444,58 @@ uint16_t analogRead(uint8_t pin)
         status = MAP_ADC14_getInterruptStatus();
     }
 
-    sample = MAP_ADC14_getResult(adcMem);
+    /* clear out last sample */
     MAP_ADC14_clearInterruptFlag(adcInt);
+    sample = MAP_ADC14_getResult(adcMem);
 
+    Hwi_restore(hwiKey);
+    
     return (sample);
+}
+
+/*
+ * This internal API is used to de-configure a pin that has been
+ * put in analogRead() mode.
+ *
+ * It is called by pinMap() when a pin's function is
+ * being modified.
+ */
+void stopAnalogRead(uint8_t pin)
+{
+    uint8_t adcIndex = digital_pin_to_adc_index[pin];
+    uint_fast8_t port;
+    uint_fast16_t pinMask;
+
+    port = adc_to_port_pin[adcIndex] >> 8;
+    pinMask = adc_to_port_pin[adcIndex] & 0xff;
+
+    /* Place Pin in NORMAL GPIO mode */
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
+                                                    GPIO_PRIMARY_MODULE_FUNCTION);
 }
 
 /*
  * \brief sets the number of bits to shift the value read by ADCFIFORead()
  */
-void analogReadResolution(uint8_t bits)
+void analogReadResolution(uint16_t bits)
 {
-    analogReadShift = 14 - bits;
+    uint32_t adcBits;
+    
+    switch (bits) {
+        case 8:
+            adcBits = ADC_8BIT;
+            break;
+        case 10:
+            adcBits = ADC_10BIT;
+            break;
+        case 12:
+            adcBits = ADC_12BIT;
+            break;
+        case 14:
+            adcBits = ADC_14BIT;
+            break;
+    }
+    analogResolution = bits;
+
+    MAP_ADC14_setResolution(adcBits);
 }
