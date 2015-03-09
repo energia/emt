@@ -32,7 +32,7 @@ ifeq (,$(XDCROOT))
     # UNIX TISB tree build support
     #
     XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_30_05_60/$(BUILD_HOST_OS)
-    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f13/exports/tirtos_full_*)
+    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f17/exports/tirtos_full_*)
     DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSP43*)
     DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
     ti.targets.arm.elf.M4F = $(TOOLS)/vendors/ti/arm/5.2.2/$(BUILD_HOST_OS)
