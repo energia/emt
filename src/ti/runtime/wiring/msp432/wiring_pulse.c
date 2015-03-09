@@ -33,7 +33,7 @@
 #include <rom.h>
 #include <rom_map.h>
 
-#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/GPIO.h>
 
 /* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
  * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
@@ -53,13 +53,13 @@ unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
     unsigned long maxloops = microsecondsToClockCycles(timeout) / 11;
 
     // wait for any previous pulse to end
-    while (GPIO2_read(pin) == stateMask)
+    while (GPIO_read(pin) == stateMask)
         if (numloops++ == maxloops) {
             return (0);
         }
 
     // wait for the pulse to start
-    while (GPIO2_read(pin) != stateMask)
+    while (GPIO_read(pin) != stateMask)
         if (numloops++ == maxloops) {
             return (0);
         }
@@ -67,7 +67,7 @@ unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
     // wait for the pulse to stop
     start = micros();
 
-    while (GPIO2_read(pin) == stateMask) {
+    while (GPIO_read(pin) == stateMask) {
         if (numloops++ == maxloops) {
             return (0);
         }

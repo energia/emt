@@ -30,12 +30,13 @@
  */
 #define ARDUINO_MAIN
 #include "wiring_private.h"
+#include <inc/hw_types.h>
+#include <inc/hw_memmap.h>
 #include <driverlib/prcm.h>
 #include <driverlib/rom_map.h>
 #include <driverlib/pin.h>
 #include <driverlib/timer.h>
 #include "driverlib/adc.h"
-#include <inc/hw_memmap.h>
 
 #include <ti/drivers/PWM.h>
 
@@ -86,6 +87,20 @@ void analogWrite(uint8_t pin, int val)
 }
 
 /*
+ * This internal API is used to de-configure a pin that has been
+ * put in analogWrite() mode. 
+ *
+ * It will free up the pin's PWM resource after
+ * it is no longer being used to support analogWrite() on a different
+ * pin. It is called by pinMap() when a pin's function is being modified.
+ */
+void stopAnalogWrite(uint8_t pin)
+{
+    /* stop the timer */
+    analogWrite(pin, 0);
+}
+
+/*
  * \brief           Reads an analog value from the pin specified.
  * \param[in] pin   The pin number to read from.
  * \return          A 16-bit integer containing a 12-bit sample from the ADC.
@@ -131,9 +146,20 @@ uint16_t analogRead(uint8_t pin)
 }
 
 /*
+ * This internal API is used to de-configure a pin that has been
+ * put in analogRead() mode.
+ *
+ * It is called by pinMap() when a pin's function is
+ * being modified.
+ */
+void stopAnalogRead(uint8_t pin)
+{
+}
+
+/*
  * \brief sets the number of bits to shift the value read by ADCFIFORead()
  */
-void analogReadResolution(uint8_t bits)
+void analogReadResolution(uint16_t bits)
 {
     analogReadShift = 14 - bits;
 }

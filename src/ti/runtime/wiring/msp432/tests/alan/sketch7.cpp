@@ -6,11 +6,11 @@ void buttonFxn0()
 
     if (off) {
     	off = false;
-    	digitalWrite(46, 1);
+    	digitalWrite(YELLOW_LED, 1);
     }
     else {
     	off = true;
-    	digitalWrite(46, 0);
+    	digitalWrite(YELLOW_LED, 0);
     }
 }
 
@@ -21,34 +21,34 @@ void buttonFxn1()
     state = (state + 1) & 0x7;
 
     if (state & 0x1) {
-    	digitalWrite(43, 1);
+    	digitalWrite(RED_LED, 1);
     }
     else {
-    	digitalWrite(43, 0);
+    	digitalWrite(RED_LED, 0);
     }
 
     if (state & 0x2) {
-    	digitalWrite(44, 1);
+    	digitalWrite(GREEN_LED, 1);
     }
     else {
-    	digitalWrite(44, 0);
+    	digitalWrite(GREEN_LED, 0);
     }
 
     if (state & 0x4) {
-    	digitalWrite(45, 1);
+    	digitalWrite(BLUE_LED, 1);
     }
     else {
-    	digitalWrite(45, 0);
+    	digitalWrite(BLUE_LED, 0);
     }
 }
 
 void setup7()
 {
-    pinMode(41, INPUT_PULLUP);
-    pinMode(42, INPUT_PULLUP);
+    pinMode(PUSH1, INPUT_PULLUP);
+    pinMode(PUSH2, INPUT_PULLUP);
 
-    attachInterrupt(41, buttonFxn0, RISING);
-    attachInterrupt(42, buttonFxn1, RISING);
+    attachInterrupt(PUSH1, buttonFxn0, RISING);
+    attachInterrupt(PUSH2, buttonFxn1, RISING);
 }
 
 void loop7()

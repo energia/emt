@@ -52,7 +52,9 @@ void SPIClass::begin(uint8_t ssPin)
 
     if (spi != NULL) {
         slaveSelect = ssPin;
-        pinMode(slaveSelect, OUTPUT); //set SS as an output
+        if (slaveSelect != 0) {
+            pinMode(slaveSelect, OUTPUT); //set SS as an output
+        }
 
         GateMutex_construct(&gate, NULL);
         begun = TRUE;
@@ -60,12 +62,15 @@ void SPIClass::begin(uint8_t ssPin)
 }
 
 void SPIClass::begin() {
-    /* default CS is on pin 8 */
-    begin(8);
+    /* default CS is under user control */
+    begin(0);
 }
 
 void SPIClass::end(uint8_t ssPin) {
     SPI_close(spi);
+    if (slaveSelect != 0) {
+        pinMode(slaveSelect, INPUT);
+    }
 }
 
 void SPIClass::end() {
@@ -88,24 +93,26 @@ void SPIClass::setClockDivider(uint8_t divider)
 {
 }
 
-uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data, uint8_t transferMode)
+uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode)
 {
-    char junk;
+    char data_in;
 
     GateMutex_enter(GateMutex_handle(&gate));
 
-    digitalWrite(ssPin, LOW);
-    transaction.txBuf = &data;
-    transaction.rxBuf = &junk;
+    if (slaveSelect != 0) {
+        digitalWrite(ssPin, LOW);
+    }
+    transaction.txBuf = &data_out;
+    transaction.rxBuf = &data_in;
     transaction.count = 1;
     SPI_transfer(spi, &transaction);
-    
-    if (transferMode == SPI_LAST) {
+
+    if (transferMode == SPI_LAST && slaveSelect != 0) {
         digitalWrite(ssPin, HIGH);
     }
-    
+
     GateMutex_leave(GateMutex_handle(&gate), 0);
-    return ((uint8_t)0); /* Master mode always returns null */
+    return ((uint8_t)data_in);
 }
 
 uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data)

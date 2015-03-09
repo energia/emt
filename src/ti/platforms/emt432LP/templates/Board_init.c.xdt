@@ -120,141 +120,216 @@ void Board_initGeneral(void) {
  *  =============================== GPIO ===============================
  */
 
-#include <ti/drivers/GPIO2.h>
-#include <ti/drivers/gpio/GPIO2MSP432.h>
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOMSP432.h>
 
 /* Place into subsections to allow the TI linker to remove items properly */
 #if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(gpio2PinConfigs, ".const:gpio2PinConfigs")
+#pragma DATA_SECTION(GPIOMSP432_config, ".const:GPIOMSP432_config")
+#pragma DATA_SECTION(gpioPinConfigs, ".data:gpioPinConfigs")
+#pragma DATA_SECTION(gpioCallbackFunctions, ".data:gpioCallbackFunctions")
 #endif
 
-const GPIO2_PinConfig gpio2PinConfigs[] = {
-	/* port_pin */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  0  - dummy */
-                          
-	/* pins 1-10 */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  1  - 3.3V */
-	GPIO2MSP432_P6_0 | GPIO2_DO_NOT_CONFIG,       /*  2  - P6.0_A15 */
-	GPIO2MSP432_P3_2 | GPIO2_DO_NOT_CONFIG,       /*  3  - P3.2_URXD */
-	GPIO2MSP432_P3_3 | GPIO2_DO_NOT_CONFIG,       /*  4  - P3.3_UTXD */
-	GPIO2MSP432_P4_1 | GPIO2_DO_NOT_CONFIG,       /*  5  - P4.1_IO_A12 */
-	GPIO2MSP432_P4_3 | GPIO2_DO_NOT_CONFIG,       /*  6  - P4.3_A10 */
-	GPIO2MSP432_P1_5 | GPIO2_DO_NOT_CONFIG,       /*  7  - P1.5_SPICLK */
-	GPIO2MSP432_P4_6 | GPIO2_DO_NOT_CONFIG,       /*  8  - P4.6_IO_A7 */
-	GPIO2MSP432_P6_5 | GPIO2_DO_NOT_CONFIG,       /*  9  - P6.5_I2CSCL */
-	GPIO2MSP432_P6_4 | GPIO2_DO_NOT_CONFIG,       /*  10 - P6.4_I2CSDA */
-                          
-	/* pins 11-20 */
-	GPIO2MSP432_P3_6 | GPIO2_DO_NOT_CONFIG,       /*  11 - P3.6_IO */
-	GPIO2MSP432_P5_2 | GPIO2_DO_NOT_CONFIG,       /*  12 - P5.2_IO */
-	GPIO2MSP432_P5_0 | GPIO2_DO_NOT_CONFIG,       /*  13 - P5.0_IO */
-	GPIO2MSP432_P1_7 | GPIO2_DO_NOT_CONFIG,       /*  14 - P1.7_SPIMISO */
-	GPIO2MSP432_P1_6 | GPIO2_DO_NOT_CONFIG,       /*  15 - P1.6_SPIMOSI */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  16 - RESET */
-	GPIO2MSP432_P5_7 | GPIO2_DO_NOT_CONFIG,       /*  17 - P5.7_IO */
-	GPIO2MSP432_P3_0 | GPIO2_DO_NOT_CONFIG,       /*  18 - P3.0_IO */
-	GPIO2MSP432_P2_5 | GPIO2_DO_NOT_CONFIG,       /*  19 - P2.5_IO_PWM */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  20 - GND */
-                          
-	/* pins 21-30 */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  21 - 5V */
-	GPIO2MSP432_EMPTY_PIN | GPIO2_DO_NOT_CONFIG,  /*  22 - GND */
-	GPIO2MSP432_P6_1 | GPIO2_DO_NOT_CONFIG,       /*  23 - P6.1_A14 */
-	GPIO2MSP432_P4_0 | GPIO2_DO_NOT_CONFIG,       /*  24 - P4.0_A13 */
-	GPIO2MSP432_P4_2 | GPIO2_DO_NOT_CONFIG,       /*  25 - P4.2_A11 */
-	GPIO2MSP432_P4_4 | GPIO2_DO_NOT_CONFIG,       /*  26 - P4.4_A9 */
-	GPIO2MSP432_P4_5 | GPIO2_DO_NOT_CONFIG,       /*  27 - P4.5_A8 */
-	GPIO2MSP432_P4_7 | GPIO2_DO_NOT_CONFIG,       /*  28 - P4.7_A6 */
-	GPIO2MSP432_P5_4 | GPIO2_DO_NOT_CONFIG,       /*  29 - P5.4_IO */
-	GPIO2MSP432_P5_5 | GPIO2_DO_NOT_CONFIG,       /*  30 - P5.5_IO */
-                          
-	/* pins 31-40 */
-	GPIO2MSP432_P3_7 | GPIO2_DO_NOT_CONFIG,       /*  31 - P3.7_IO */
-	GPIO2MSP432_P3_5 | GPIO2_DO_NOT_CONFIG,       /*  32 - P3.5_IO */
-	GPIO2MSP432_P5_1 | GPIO2_DO_NOT_CONFIG,       /*  33 - P5.1_IO */
-	GPIO2MSP432_P2_3 | GPIO2_DO_NOT_CONFIG,       /*  34 - P2.3_IO */
-	GPIO2MSP432_P6_7 | GPIO2_DO_NOT_CONFIG,       /*  35 - P6.7_IO_CAPT */
-	GPIO2MSP432_P6_6 | GPIO2_DO_NOT_CONFIG,       /*  36 - P6.6_IO_CAPT */
-	GPIO2MSP432_P5_6 | GPIO2_DO_NOT_CONFIG,       /*  37 - P5.6_PWM */
-	GPIO2MSP432_P2_4 | GPIO2_DO_NOT_CONFIG,       /*  38 - P2.4_PWM */
-	GPIO2MSP432_P2_6 | GPIO2_DO_NOT_CONFIG,       /*  39 - P2.6_PWM */
-	GPIO2MSP432_P2_7 | GPIO2_DO_NOT_CONFIG,       /*  40 - P2.7_PWM */
-                          
-	/* virtual pins 41-46 */
-	GPIO2MSP432_P1_1 | GPIO2_DO_NOT_CONFIG,       /*  41 - P1.1 SW1 */
-	GPIO2MSP432_P1_4 | GPIO2_DO_NOT_CONFIG,       /*  42 - P1.4 SW2 */
-	GPIO2MSP432_P2_0 | GPIO2_DO_NOT_CONFIG,       /*  43 - P2.0 RED_LED */
-	GPIO2MSP432_P2_1 | GPIO2_DO_NOT_CONFIG,       /*  44 - P2.1 GREEN_LED */
-	GPIO2MSP432_P2_2 | GPIO2_DO_NOT_CONFIG,       /*  45 - P2.2 BLUE_LED */
-	GPIO2MSP432_P1_0 | GPIO2_DO_NOT_CONFIG,       /*  46 - P1.0 LED1 */
+GPIO_PinConfig gpioPinConfigs[] = {
+    /* port_pin */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  0  - dummy */
+
+    /* pins 1-10 */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - 3.3V */
+    GPIOMSP432_P6_0 | GPIO_DO_NOT_CONFIG,       /*  2  - P6.0_A15 */
+    GPIOMSP432_P3_2 | GPIO_DO_NOT_CONFIG,       /*  3  - P3.2_URXD */
+    GPIOMSP432_P3_3 | GPIO_DO_NOT_CONFIG,       /*  4  - P3.3_UTXD */
+    GPIOMSP432_P4_1 | GPIO_DO_NOT_CONFIG,       /*  5  - P4.1_IO_A12 */
+    GPIOMSP432_P4_3 | GPIO_DO_NOT_CONFIG,       /*  6  - P4.3_A10 */
+    GPIOMSP432_P1_5 | GPIO_DO_NOT_CONFIG,       /*  7  - P1.5_SPICLK */
+    GPIOMSP432_P4_6 | GPIO_DO_NOT_CONFIG,       /*  8  - P4.6_IO_A7 */
+    GPIOMSP432_P6_5 | GPIO_DO_NOT_CONFIG,       /*  9  - P6.5_I2CSCL */
+    GPIOMSP432_P6_4 | GPIO_DO_NOT_CONFIG,       /*  10 - P6.4_I2CSDA */
+
+    /* pins 11-20 */
+    GPIOMSP432_P3_6 | GPIO_DO_NOT_CONFIG,       /*  11 - P3.6_IO */
+    GPIOMSP432_P5_2 | GPIO_DO_NOT_CONFIG,       /*  12 - P5.2_IO */
+    GPIOMSP432_P5_0 | GPIO_DO_NOT_CONFIG,       /*  13 - P5.0_IO */
+    GPIOMSP432_P1_7 | GPIO_DO_NOT_CONFIG,       /*  14 - P1.7_SPIMISO */
+    GPIOMSP432_P1_6 | GPIO_DO_NOT_CONFIG,       /*  15 - P1.6_SPIMOSI */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  16 - RESET */
+    GPIOMSP432_P5_7 | GPIO_DO_NOT_CONFIG,       /*  17 - P5.7_IO */
+    GPIOMSP432_P3_0 | GPIO_DO_NOT_CONFIG,       /*  18 - P3.0_IO */
+    GPIOMSP432_P2_5 | GPIO_DO_NOT_CONFIG,       /*  19 - P2.5_IO_PWM */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  20 - GND */
+
+    /* pins 21-30 */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  21 - 5V */
+    GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  22 - GND */
+    GPIOMSP432_P6_1 | GPIO_DO_NOT_CONFIG,       /*  23 - P6.1_A14 */
+    GPIOMSP432_P4_0 | GPIO_DO_NOT_CONFIG,       /*  24 - P4.0_A13 */
+    GPIOMSP432_P4_2 | GPIO_DO_NOT_CONFIG,       /*  25 - P4.2_A11 */
+    GPIOMSP432_P4_4 | GPIO_DO_NOT_CONFIG,       /*  26 - P4.4_A9 */
+    GPIOMSP432_P4_5 | GPIO_DO_NOT_CONFIG,       /*  27 - P4.5_A8 */
+    GPIOMSP432_P4_7 | GPIO_DO_NOT_CONFIG,       /*  28 - P4.7_A6 */
+    GPIOMSP432_P5_4 | GPIO_DO_NOT_CONFIG,       /*  29 - P5.4_IO */
+    GPIOMSP432_P5_5 | GPIO_DO_NOT_CONFIG,       /*  30 - P5.5_IO */
+
+    /* pins 31-40 */
+    GPIOMSP432_P3_7 | GPIO_DO_NOT_CONFIG,       /*  31 - P3.7_IO */
+    GPIOMSP432_P3_5 | GPIO_DO_NOT_CONFIG,       /*  32 - P3.5_IO */
+    GPIOMSP432_P5_1 | GPIO_DO_NOT_CONFIG,       /*  33 - P5.1_IO */
+    GPIOMSP432_P2_3 | GPIO_DO_NOT_CONFIG,       /*  34 - P2.3_IO */
+    GPIOMSP432_P6_7 | GPIO_DO_NOT_CONFIG,       /*  35 - P6.7_IO_CAPT */
+    GPIOMSP432_P6_6 | GPIO_DO_NOT_CONFIG,       /*  36 - P6.6_IO_CAPT */
+    GPIOMSP432_P5_6 | GPIO_DO_NOT_CONFIG,       /*  37 - P5.6_PWM */
+    GPIOMSP432_P2_4 | GPIO_DO_NOT_CONFIG,       /*  38 - P2.4_PWM */
+    GPIOMSP432_P2_6 | GPIO_DO_NOT_CONFIG,       /*  39 - P2.6_PWM */
+    GPIOMSP432_P2_7 | GPIO_DO_NOT_CONFIG,       /*  40 - P2.7_PWM */
+
+    /* bottom row pins 41-56 */
+    GPIOMSP432_P8_5 | GPIO_DO_NOT_CONFIG,       /*  41 - P8.5 */
+    GPIOMSP432_P9_0 | GPIO_DO_NOT_CONFIG,       /*  42 - P9.0 */
+    GPIOMSP432_P8_4 | GPIO_DO_NOT_CONFIG,       /*  43 - P8.4 */
+    GPIOMSP432_P8_2 | GPIO_DO_NOT_CONFIG,       /*  44 - P8.2 */
+    GPIOMSP432_P9_2 | GPIO_DO_NOT_CONFIG,       /*  45 - P9.2 */
+    GPIOMSP432_P6_2 | GPIO_DO_NOT_CONFIG,       /*  46 - P6.2 */
+    GPIOMSP432_P7_3 | GPIO_DO_NOT_CONFIG,       /*  47 - P7.3 */
+    GPIOMSP432_P7_1 | GPIO_DO_NOT_CONFIG,       /*  48 - P7.1 */
+    GPIOMSP432_P9_4 | GPIO_DO_NOT_CONFIG,       /*  49 - P9.4 */
+    GPIOMSP432_P9_6 | GPIO_DO_NOT_CONFIG,       /*  40 - P9.6 */
+    GPIOMSP432_P8_0 | GPIO_DO_NOT_CONFIG,       /*  51 - P8.0 */
+    GPIOMSP432_P7_4 | GPIO_DO_NOT_CONFIG,       /*  52 - P7.4 */
+    GPIOMSP432_P7_6 | GPIO_DO_NOT_CONFIG,       /*  53 - P7.6 */
+    GPIOMSP432_P10_0 | GPIO_DO_NOT_CONFIG,      /*  54 - P10.0 */
+    GPIOMSP432_P10_2 | GPIO_DO_NOT_CONFIG,      /*  55 - P10_2 */
+    GPIOMSP432_P10_4 | GPIO_DO_NOT_CONFIG,      /*  56 - P10.4 */
+
+    /* bottom row pins 57-72 */
+    GPIOMSP432_P8_6 | GPIO_DO_NOT_CONFIG,       /*  57 - P8.6 */
+    GPIOMSP432_P8_7 | GPIO_DO_NOT_CONFIG,       /*  58 - P8.7 */
+    GPIOMSP432_P9_1 | GPIO_DO_NOT_CONFIG,       /*  59 - P9.1 */
+    GPIOMSP432_P8_3 | GPIO_DO_NOT_CONFIG,       /*  60 - P8.3 */
+    GPIOMSP432_P5_3 | GPIO_DO_NOT_CONFIG,       /*  61 - P5.3 */
+    GPIOMSP432_P9_3 | GPIO_DO_NOT_CONFIG,       /*  62 - P9.3 */
+    GPIOMSP432_P6_3 | GPIO_DO_NOT_CONFIG,       /*  63 - P6.3 */
+    GPIOMSP432_P7_2 | GPIO_DO_NOT_CONFIG,       /*  64 - P7.2 */
+    GPIOMSP432_P7_0 | GPIO_DO_NOT_CONFIG,       /*  65 - P7.0 */
+    GPIOMSP432_P9_5 | GPIO_DO_NOT_CONFIG,       /*  66 - P9.5 */
+    GPIOMSP432_P9_7 | GPIO_DO_NOT_CONFIG,       /*  67 - P9.7 */
+    GPIOMSP432_P7_5 | GPIO_DO_NOT_CONFIG,       /*  68 - P7.5 */
+    GPIOMSP432_P7_7 | GPIO_DO_NOT_CONFIG,       /*  69 - P7.7 */
+    GPIOMSP432_P10_1 | GPIO_DO_NOT_CONFIG,      /*  70 - P10.1 */
+    GPIOMSP432_P10_3 | GPIO_DO_NOT_CONFIG,      /*  71 - P10.3 */
+    GPIOMSP432_P10_5 | GPIO_DO_NOT_CONFIG,      /*  72 - P10.5 */
+
+    /* virtual pins 73-78 */
+    GPIOMSP432_P1_1 | GPIO_DO_NOT_CONFIG,       /*  73 - P1.1 SW1 */
+    GPIOMSP432_P1_4 | GPIO_DO_NOT_CONFIG,       /*  74 - P1.4 SW2 */
+    GPIOMSP432_P2_0 | GPIO_DO_NOT_CONFIG,       /*  75 - P2.0 RED_LED */
+    GPIOMSP432_P2_1 | GPIO_DO_NOT_CONFIG,       /*  76 - P2.1 GREEN_LED */
+    GPIOMSP432_P2_2 | GPIO_DO_NOT_CONFIG,       /*  77 - P2.2 BLUE_LED */
+    GPIOMSP432_P1_0 | GPIO_DO_NOT_CONFIG,       /*  78 - P1.0 LED1 */
 };
 
-GPIO2_CallbackFxn gpio2CallbackFunctions[] = {
-	/* port_pin */
-	NULL,  /*  0  - dummy */
+GPIO_CallbackFxn gpioCallbackFunctions[] = {
+    /* port_pin */
+    NULL,  /*  0  - dummy */
 
-	/* pins 1-10 */
-	NULL,  /*  1  - 3.3V */
-	NULL,  /*  2  - P6.0_A15 */
-	NULL,  /*  3  - P3.2_URXD */
-	NULL,  /*  4  - P3.3_UTXD */
-	NULL,  /*  5  - P4.1_IO_A12 */
-	NULL,  /*  6  - P4.3_A10 */
-	NULL,  /*  7  - P1.5_SPICLK */
-	NULL,  /*  8  - P4.6_IO_A7 */
-	NULL,  /*  9  - P6.5_I2CSCL */
-	NULL,  /*  10 - P6.4_I2CSDA */
+    /* pins 1-10 */
+    NULL,  /*  1  - 3.3V */
+    NULL,  /*  2  - P6.0_A15 */
+    NULL,  /*  3  - P3.2_URXD */
+    NULL,  /*  4  - P3.3_UTXD */
+    NULL,  /*  5  - P4.1_IO_A12 */
+    NULL,  /*  6  - P4.3_A10 */
+    NULL,  /*  7  - P1.5_SPICLK */
+    NULL,  /*  8  - P4.6_IO_A7 */
+    NULL,  /*  9  - P6.5_I2CSCL */
+    NULL,  /*  10 - P6.4_I2CSDA */
 
-	/* pins 11-20 */
-	NULL,  /*  11 - P3.6_IO */
-	NULL,  /*  12 - P5.2_IO */
-	NULL,  /*  13 - P5.0_IO */
-	NULL,  /*  14 - P1.7_SPIMISO */
-	NULL,  /*  15 - P1.6_SPIMOSI */
-	NULL,  /*  16 - RESET */
-	NULL,  /*  17 - P5.7_IO */
-	NULL,  /*  18 - P3.0_IO */
-	NULL,  /*  19 - P2.5_IO_PWM */
-	NULL,  /*  20 - GND */
+    /* pins 11-20 */
+    NULL,  /*  11 - P3.6_IO */
+    NULL,  /*  12 - P5.2_IO */
+    NULL,  /*  13 - P5.0_IO */
+    NULL,  /*  14 - P1.7_SPIMISO */
+    NULL,  /*  15 - P1.6_SPIMOSI */
+    NULL,  /*  16 - RESET */
+    NULL,  /*  17 - P5.7_IO */
+    NULL,  /*  18 - P3.0_IO */
+    NULL,  /*  19 - P2.5_IO_PWM */
+    NULL,  /*  20 - GND */
 
-	/* pins 21-30 */
-	NULL,  /*  21 - 5V */
-	NULL,  /*  22 - GND */
-	NULL,  /*  23 - P6.1_A14 */
-	NULL,  /*  24 - P4.0_A13 */
-	NULL,  /*  25 - P4.2_A11 */
-	NULL,  /*  26 - P4.4_A9 */
-	NULL,  /*  27 - P4.5_A8 */
-	NULL,  /*  28 - P4.7_A6 */
-	NULL,  /*  29 - P5.4_IO */
-	NULL,  /*  30 - P5.5_IO */
+    /* pins 21-30 */
+    NULL,  /*  21 - 5V */
+    NULL,  /*  22 - GND */
+    NULL,  /*  23 - P6.1_A14 */
+    NULL,  /*  24 - P4.0_A13 */
+    NULL,  /*  25 - P4.2_A11 */
+    NULL,  /*  26 - P4.4_A9 */
+    NULL,  /*  27 - P4.5_A8 */
+    NULL,  /*  28 - P4.7_A6 */
+    NULL,  /*  29 - P5.4_IO */
+    NULL,  /*  30 - P5.5_IO */
 
-	/* pins 31-40 */
-	NULL,  /*  31 - P3.7_IO */
-	NULL,  /*  32 - P3.5_IO */
-	NULL,  /*  33 - P5.1_IO */
-	NULL,  /*  34 - P2.3_IO */
-	NULL,  /*  35 - P6.7_IO_CAPT */
-	NULL,  /*  36 - P6.6_IO_CAPT */
-	NULL,  /*  37 - P5.6_PWM */
-	NULL,  /*  38 - P2.4_PWM */
-	NULL,  /*  39 - P2.6_PWM */
-	NULL,  /*  40 - P2.7_PWM */
+    /* pins 31-40 */
+    NULL,  /*  31 - P3.7_IO */
+    NULL,  /*  32 - P3.5_IO */
+    NULL,  /*  33 - P5.1_IO */
+    NULL,  /*  34 - P2.3_IO */
+    NULL,  /*  35 - P6.7_IO_CAPT */
+    NULL,  /*  36 - P6.6_IO_CAPT */
+    NULL,  /*  37 - P5.6_PWM */
+    NULL,  /*  38 - P2.4_PWM */
+    NULL,  /*  39 - P2.6_PWM */
+    NULL,  /*  40 - P2.7_PWM */
 
-	/* virtual pins 41-46 */
-	NULL,  /*  41 - P1.1 SW1 */
-	NULL,  /*  42 - P1.4 SW2 */
-	NULL,  /*  43 - P2.0 RED_LED */
-	NULL,  /*  44 - P2.1 GREEN_LED */
-	NULL,  /*  45 - P2.2 BLUE_LED */
-	NULL,  /*  46 - P1.0 LED1 */
+    /* pins 41-56 */
+    NULL,  /*  41 - P8.5 */
+    NULL,  /*  42 - P9.0 */
+    NULL,  /*  43 - P8.4 */
+    NULL,  /*  44 - P8.2 */
+    NULL,  /*  45 - P9.2 */
+    NULL,  /*  46 - P6.2 */
+    NULL,  /*  47 - P7.3 */
+    NULL,  /*  48 - P7.1 */
+    NULL,  /*  49 - P9.4 */
+    NULL,  /*  40 - P9.6 */
+    NULL,  /*  51 - P8.0 */
+    NULL,  /*  52 - P7.4 */
+    NULL,  /*  53 - P7.6 */
+    NULL,  /*  54 - P10.0 */
+    NULL,  /*  55 - P10_2 */
+    NULL,  /*  56 - P10.4 */
+
+    /* pins 57-72 */
+    NULL,  /*  57 - P8.6 */
+    NULL,  /*  58 - P8.7 */
+    NULL,  /*  59 - P9.1 */
+    NULL,  /*  60 - P8.3 */
+    NULL,  /*  61 - P5.3 */
+    NULL,  /*  62 - P9.3 */
+    NULL,  /*  63 - P6.3 */
+    NULL,  /*  64 - P7.2 */
+    NULL,  /*  65 - P7.0 */
+    NULL,  /*  66 - P9.5 */
+    NULL,  /*  67 - P9.7 */
+    NULL,  /*  68 - P7.5 */
+    NULL,  /*  69 - P7.7 */
+    NULL,  /*  70 - P10.1 */
+    NULL,  /*  71 - P10.3 */
+    NULL,  /*  72 - P10.5 */
+
+    /* virtual pins 73-78 */
+    NULL,  /*  73 - P1.1 SW1 */
+    NULL,  /*  74 - P1.4 SW2 */
+    NULL,  /*  75 - P2.0 RED_LED */
+    NULL,  /*  76 - P2.1 GREEN_LED */
+    NULL,  /*  77 - P2.2 BLUE_LED */
+    NULL,  /*  78 - P1.0 LED1 */
 };
 
-const GPIO2MSP432_Config GPIO2MSP432_config = {
-    .pinConfigs = (GPIO2_PinConfig *)gpio2PinConfigs,
-	.callbacks = (GPIO2_CallbackFxn *)gpio2CallbackFunctions,
-	.numberOfPinConfigs = sizeof(gpio2PinConfigs)/sizeof(GPIO2_PinConfig),
-	.numberOfCallbacks = sizeof(gpio2CallbackFunctions)/sizeof(GPIO2_CallbackFxn),
+const GPIOMSP432_Config GPIOMSP432_config = {
+    .pinConfigs = (GPIO_PinConfig *)gpioPinConfigs,
+    .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
+    .numberOfPinConfigs = sizeof(gpioPinConfigs)/sizeof(GPIO_PinConfig),
+    .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
+    .intPriority = ~(0),
 };
 
 /*
@@ -263,7 +338,7 @@ const GPIO2MSP432_Config GPIO2MSP432_config = {
 void Board_initGPIO(void)
 {
     /* set up initial GPIO pin configurations */
-    GPIO2_init();
+    GPIO_init();
 }
 
 /*
@@ -286,6 +361,7 @@ const I2CMSP432_HWAttrs i2cMSP432HWAttrs[Board_I2CCOUNT] = {
     {
         .baseAddr = EUSCI_B1_BASE,
         .intNum = INT_EUSCIB1,
+        .intPriority = ~(0),
         .clockSource = EUSCI_B_I2C_CLOCKSOURCE_SMCLK
     }
 };
@@ -345,19 +421,19 @@ const PWMTimerMSP432_HWAttrs pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     },
     {
-        .baseAddr = TIMER_A2_BASE,
+        .baseAddr = TIMER_A1_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
     },
     {
-        .baseAddr = TIMER_A2_BASE,
+        .baseAddr = TIMER_A1_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2
     },
     {
-        .baseAddr = TIMER_A2_BASE,
+        .baseAddr = TIMER_A1_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3
     },
     {
-        .baseAddr = TIMER_A2_BASE,
+        .baseAddr = TIMER_A1_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     }
 };
@@ -598,16 +674,21 @@ const UARTMSP432_BaudrateConfig uartMSP432Baudrates[] = {
     {9600,   32768,     3,  0, 146, 0}
 };
 
+unsigned char uartMSP432RingBuffer[2][32];
+
 /* UART configuration structure */
 const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = EUSCI_A0_BASE,
         .intNum = INT_EUSCIA0,
+        .intPriority = ~(0),
         .clockSource = EUSCI_A_UART_CLOCKSOURCE_SMCLK,
         .bitOrder = EUSCI_A_UART_LSB_FIRST,
         .numBaudrateEntries = sizeof(uartMSP432Baudrates) /
                               sizeof(UARTMSP432_BaudrateConfig),
-        .baudrateLUT = uartMSP432Baudrates
+        .baudrateLUT = uartMSP432Baudrates,
+        .ringBufPtr  = &uartMSP432RingBuffer[0],
+        .ringBufSize = sizeof(uartMSP432RingBuffer),
     }
 };
 

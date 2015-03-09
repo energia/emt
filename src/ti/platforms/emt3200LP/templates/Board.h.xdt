@@ -19,12 +19,6 @@
 extern "C" {
 #endif
 
-/* GPIO_Callbacks structure for GPIO interrupts */
-extern GPIO_Callbacks Board_gpioCallbacks0;
-extern GPIO_Callbacks Board_gpioCallbacks1;
-extern GPIO_Callbacks Board_gpioCallbacks2;
-extern GPIO_Callbacks Board_gpioCallbacks3;
-
 /*!
  *  @def    Board_GPIOName
  *  @brief  Enum of GPIO names on the CC3200 LaunchPad (LP) dev board

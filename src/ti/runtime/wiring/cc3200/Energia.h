@@ -19,42 +19,38 @@
 #include <ti/drivers/bsp/Board.h>
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C" { 
 #endif 
 
-#define NOT_A_PORT 0
-#define NOT_A_PIN 0
-#define NOT_ON_TIMER 128
-#define NOT_ON_ADC 0xFF
+#define NOT_A_PORT      0
+#define NOT_A_PIN       0
+#define NOT_ON_TIMER    128
+#define NOT_ON_ADC      0xFF
 
-#define CHANGE 4
-#define FALLING 3
-#define RISING 2
-#define HIGH 0x1
-#define LOW  0x0
+/* interrupt edges */
+#define CHANGE          4
+#define FALLING         3
+#define RISING          2
+#define HIGH            1
+#define LOW             0
 
-#define LSBFIRST 0
-#define MSBFIRST 1
+/* digital i/o configurations */
+#define INPUT           0x0
+#define OUTPUT          0x1
+#define INPUT_PULLUP    0x2
+#define INPUT_PULLDOWN  0x3
 
-#define INPUT 0x0
-#define OUTPUT 0x1
-#define INPUT_PULLUP 0x2
-#define INPUT_PULLDOWN 0x3
-
+/* SPI stuff */
 #define SPI_LAST 0
 #define SPI_CONTINUE 1
+#define LSBFIRST 0
+#define MSBFIRST 1
 
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
 #define TWO_PI 6.283185307179586476925286766559
 #define DEG_TO_RAD 0.017453292519943295769236907684886
 #define RAD_TO_DEG 57.295779513082320876798154814105
-
-#define S0 1
-#define S1 2
-#define S2 3
-#define S3 4
-#define S4 5
 
 #define TIMERA0A 0
 #define TIMERA0B 1
@@ -65,24 +61,15 @@ extern "C"{
 #define TIMERA3A 6
 #define TIMERA3B 7
 
-#define PIN_FUNC_UNUSED				0
-#define PIN_FUNC_DIGITAL_OUTPUT    	1
-#define PIN_FUNC_DIGITAL_INPUT     	2
-#define PIN_FUNC_ANALOG_OUTPUT 		3
-#define PIN_FUNC_ANALOG_INPUT 		4
-
 typedef uint8_t boolean;
 typedef uint8_t byte;
 
-//#define min(a,b) ((a)<(b)?(a):(b))
-//#define max(a,b) ((a)>(b)?(a):(b))
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 #define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-//#define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesPerMicrosecond() ( 80000000L / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
@@ -113,7 +100,7 @@ uint16_t analogRead(uint8_t);
 void analogWrite(uint8_t, int);
 void analogReference(uint16_t);
 void analogFrequency(uint32_t);
-void analogResolution(uint16_t);
+void analogReadResolution(uint16_t);
 
 void delay(uint32_t milliseconds);
 
