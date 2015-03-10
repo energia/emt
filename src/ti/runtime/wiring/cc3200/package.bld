@@ -40,5 +40,6 @@ function getSources(dir)
             result.push(file);
         }
     }
+    result.push("avr/dtostrf.c");
     return (result);
 }

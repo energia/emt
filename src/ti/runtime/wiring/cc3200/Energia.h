@@ -6,6 +6,10 @@
 #include <string.h> 
 #include <math.h>
 
+#include <avr/dtostrf.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+
 #include "binary.h"
 
 #include <xdc/runtime/System.h>
