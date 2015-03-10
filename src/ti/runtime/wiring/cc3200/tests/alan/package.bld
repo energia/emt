@@ -1,0 +1,34 @@
+/*
+ *  ======== package.bld ========
+ */
+Pkg.attrs.profile = "release";
+Pkg.attrs.exportAll = true;
+
+Pkg.uses = ["ti/runtime/wiring/cc3200"];
+
+var PLATFORM = "ti.platforms.emt3200LP";
+
+var SRCS = getSources(".");
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+    Pkg.addExecutable("energia", targ, PLATFORM).addObjects(SRCS);
+    break;
+}
+
+/*
+ *  ======== getSources ========
+ *  Return array of *.c and *.cpp files in the current working directory
+ */
+function getSources(dir)
+{
+    var result = [];
+    var list = java.io.File(dir).list();
+    for (var i = 0; i < list.length; i++) {
+        var file = String(list[i]);
+        if (file.match(/\.c$|\.cpp$/) && file[0] != '.') {
+            result.push(file);
+        }
+    }
+    return (result);
+}

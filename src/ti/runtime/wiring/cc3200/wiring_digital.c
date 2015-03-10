@@ -2,7 +2,7 @@
  ************************************************************************
  *  wiring_digital.cpp
  *
- *  Energia core files for cc3200
+ *  Energia core files
  *      Copyright (c) 2014 Robert Wessels. All right reserved.
  *
  *
@@ -30,44 +30,59 @@
  */
 
 #include "wiring_private.h"
-#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/GPIO.h>
 
 /* device specific routine */
-GPIO2_PinConfig mode2gpioConfig(uint8_t mode)
+GPIO_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
 {
    switch (mode) {
         case INPUT:
         case INPUT_PULLUP:
-            return (GPIO2_INPUT_PULLUP);
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
+            return (GPIO_CFG_IN_PU);
 
         case INPUT_PULLDOWN:
-            return (GPIO2_INPUT_PULLDOWN);
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
+            return (GPIO_CFG_IN_PD);
 
         case OUTPUT:
-            return (GPIO2_OUTPUT_HIGH_STRENGTH);
+            digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_OUTPUT;
+            return (GPIO_CFG_OUT_STR_HIGH);
     }
 
     /* unknown mode */
-    return (GPIO2_DO_NOT_CONFIG);
+    digital_pin_to_pin_function[pin] = PIN_FUNC_UNUSED;
+    return (GPIO_DO_NOT_CONFIG);
 }
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-    GPIO2_PinConfig gpioConfig = mode2gpioConfig(mode);
+    /* undo any previous plumbing */
+    switch (digital_pin_to_pin_function[pin])
+    {
+        case PIN_FUNC_ANALOG_OUTPUT:
+            stopAnalogWrite(pin);
+            break;
 
-    if (gpioConfig != GPIO2_DO_NOT_CONFIG) {
-        digital_pin_to_pin_function[pin] = mode;
-        GPIO2_setConfig(pin, gpioConfig);
+        case PIN_FUNC_ANALOG_INPUT:
+            stopAnalogRead(pin);
+            break;
+    }
+
+    GPIO_PinConfig gpioConfig = mode2gpioConfig(pin, mode);
+
+    if (gpioConfig != GPIO_DO_NOT_CONFIG) {
+        GPIO_setConfig(pin, gpioConfig);
     }
 }
 
 int digitalRead(uint8_t pin)
 {
-    if (digital_pin_to_pin_function[pin] == OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_INPUT) {
         pinMode(pin, INPUT);
     }
 
-    if (GPIO2_read(pin)) {
+    if (GPIO_read(pin)) {
         return (HIGH);
     }
 
@@ -76,9 +91,9 @@ int digitalRead(uint8_t pin)
 
 void digitalWrite(uint8_t pin, uint8_t val)
 {
-    if (digital_pin_to_pin_function[pin] != OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_DIGITAL_OUTPUT) {
         pinMode(pin, OUTPUT);
     }
 
-    GPIO2_write(pin, val ? 0xff : 0);
+    GPIO_write(pin, val ? 1 : 0);
 }

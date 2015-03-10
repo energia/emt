@@ -35,7 +35,7 @@
 
 
 #include "Energia.h"
-#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/GPIO.h>
 
 void interrupts(void)
 {
@@ -49,32 +49,33 @@ void noInterrupts(void)
 
 void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 {
-    GPIO2_PinConfig intType;
-
-    GPIO2_setCallback(pin, (GPIO2_CallbackFxn)userFunc);
+    GPIO_PinConfig intType;
 
     switch(mode) {
         case LOW:
-            intType = GPIO2_INT_LOW;
+            intType = GPIO_CFG_IN_INT_LOW;
             break;
         case CHANGE:
-            intType = GPIO2_INT_BOTH_EDGES;
+            intType = GPIO_CFG_IN_INT_BOTH_EDGES;
             break;
         case RISING:
-            intType = GPIO2_INT_RISING;
+            intType = GPIO_CFG_IN_INT_RISING;
             break;
         case FALLING:
-            intType = GPIO2_INT_FALLING;
+            intType = GPIO_CFG_IN_INT_FALLING;
             break;
         case HIGH:
-            intType = GPIO2_INT_HIGH;
+            intType = GPIO_CFG_IN_INT_HIGH;
             break;
     }
 
-    GPIO2_setConfig(pin, intType);
-    GPIO2_enableInt(pin);
+    GPIO_setConfig(pin, GPIO_CFG_IN_INT_ONLY | intType);
+
+    GPIO_setCallback(pin, (GPIO_CallbackFxn)userFunc);
+
+    GPIO_enableInt(pin);
 }
 
 void detachInterrupt(uint8_t pin) {
-    GPIO2_setCallback(pin, NULL);
+    GPIO_setCallback(pin, NULL);
 }

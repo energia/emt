@@ -40,6 +40,12 @@
 extern "C" {
 #endif
 
+#define PIN_FUNC_UNUSED             0
+#define PIN_FUNC_DIGITAL_OUTPUT     1
+#define PIN_FUNC_DIGITAL_INPUT      2
+#define PIN_FUNC_ANALOG_OUTPUT      3
+#define PIN_FUNC_ANALOG_INPUT       4
+
 extern void stopAnalogWrite(uint8_t pin);
 extern void stopAnalogRead(uint8_t pin);
 

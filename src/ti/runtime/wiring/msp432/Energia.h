@@ -6,6 +6,10 @@
 #include <string.h> 
 #include <math.h>
 
+#include <avr/dtostrf.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+
 #include "binary.h"
 
 #include <xdc/runtime/System.h>
@@ -52,24 +56,15 @@ extern "C" {
 #define DEG_TO_RAD 0.017453292519943295769236907684886
 #define RAD_TO_DEG 57.295779513082320876798154814105
 
-#define PIN_FUNC_UNUSED             0
-#define PIN_FUNC_DIGITAL_OUTPUT     1
-#define PIN_FUNC_DIGITAL_INPUT      2
-#define PIN_FUNC_ANALOG_OUTPUT      3
-#define PIN_FUNC_ANALOG_INPUT       4
-
 typedef uint8_t boolean;
 typedef uint8_t byte;
 
-//#define min(a,b) ((a)<(b)?(a):(b))
-//#define max(a,b) ((a)>(b)?(a):(b))
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 #define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-//#define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesPerMicrosecond() ( 80000000L / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )

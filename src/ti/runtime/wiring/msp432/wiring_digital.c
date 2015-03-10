@@ -2,7 +2,7 @@
  ************************************************************************
  *  wiring_digital.cpp
  *
- *  Energia core files for msp432
+ *  Energia core files
  *      Copyright (c) 2014 Robert Wessels. All right reserved.
  *
  *
@@ -30,29 +30,29 @@
  */
 
 #include "wiring_private.h"
-#include <ti/drivers/GPIO2.h>
+#include <ti/drivers/GPIO.h>
 
 /* device specific routine */
-GPIO2_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
+GPIO_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
 {
    switch (mode) {
         case INPUT:
         case INPUT_PULLUP:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
-            return (GPIO2_INPUT_PULLUP);
+            return (GPIO_CFG_IN_PU);
 
         case INPUT_PULLDOWN:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
-            return (GPIO2_INPUT_PULLDOWN);
+            return (GPIO_CFG_IN_PD);
 
         case OUTPUT:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_OUTPUT;
-            return (GPIO2_OUTPUT_HIGH_STRENGTH);
+            return (GPIO_CFG_OUT_STR_HIGH);
     }
 
     /* unknown mode */
     digital_pin_to_pin_function[pin] = PIN_FUNC_UNUSED;
-    return (GPIO2_DO_NOT_CONFIG);
+    return (GPIO_DO_NOT_CONFIG);
 }
 
 void pinMode(uint8_t pin, uint8_t mode)
@@ -69,10 +69,10 @@ void pinMode(uint8_t pin, uint8_t mode)
             break;
     }
 
-    GPIO2_PinConfig gpioConfig = mode2gpioConfig(pin, mode);
+    GPIO_PinConfig gpioConfig = mode2gpioConfig(pin, mode);
 
-    if (gpioConfig != GPIO2_DO_NOT_CONFIG) {
-        GPIO2_setConfig(pin, gpioConfig);
+    if (gpioConfig != GPIO_DO_NOT_CONFIG) {
+        GPIO_setConfig(pin, gpioConfig);
     }
 }
 
@@ -82,7 +82,7 @@ int digitalRead(uint8_t pin)
         pinMode(pin, INPUT);
     }
 
-    if (GPIO2_read(pin)) {
+    if (GPIO_read(pin)) {
         return (HIGH);
     }
 
@@ -95,5 +95,5 @@ void digitalWrite(uint8_t pin, uint8_t val)
         pinMode(pin, OUTPUT);
     }
 
-    GPIO2_write(pin, val ? 1 : 0);
+    GPIO_write(pin, val ? 1 : 0);
 }

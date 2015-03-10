@@ -37,14 +37,17 @@
 #include "Energia.h"
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
-void PWMWrite(uint8_t pin, uint32_t analog_res, uint32_t duty, unsigned int freq);
-uint8_t getTimerInterrupt(uint8_t timer);
-uint32_t getTimerBase(uint32_t offset);
+#define PIN_FUNC_UNUSED             0
+#define PIN_FUNC_DIGITAL_OUTPUT     1
+#define PIN_FUNC_DIGITAL_INPUT      2
+#define PIN_FUNC_ANALOG_OUTPUT      3
+#define PIN_FUNC_ANALOG_INPUT       4
 
-typedef void (*voidFuncPtr)(void);
+extern void stopAnalogWrite(uint8_t pin);
+extern void stopAnalogRead(uint8_t pin);
 
 #ifdef __cplusplus
 } // extern "C"

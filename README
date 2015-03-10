@@ -1,4 +1,4 @@
-				emt-a20
+				emt-a21
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,13 +121,31 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring.cc3200.tests.alan
+	Added test case for CC3200.
+
+ti.runtime.wiring.cc3200
+ti.runtime.wiring.msp432
+	Added Robert's AVR stuff
+
 DELETIONS
 
 CHANGES
 
-bundles/energia
-	added reporting of used and unused SRAM and FLASH
+ti.runtime.wiring
+ti.platforms.*/templates
+	Cutover to official new TI-RTOS GPIO driver
 
-ti/runtime/wiring/msp432
-	fixed/added analogRead
+./imports.mak, products.mak
+	Switch to ti-rtos 2.12.0.17_eng
+
+ti.runtime.wiring.msp432
+	Support for the bottom row of pins on the MSP432 board
+	Cleaned up MSP432 analogWrite() design.
+	Fixed misspelling of Serial.seize().
+
+ti.runtime.wiring.cc3200
+	Normalize CC3200/MSP432 wiring lib source files
+	   We should factor out common files soon.
+
 MRS

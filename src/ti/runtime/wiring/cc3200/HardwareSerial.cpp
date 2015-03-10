@@ -116,7 +116,7 @@ void HardwareSerial::setPins(unsigned long pins)
     /* almost same functionality as above */
 }
 
-void HardwareSerial::sieze(void)
+void HardwareSerial::seize(void)
 {
     GateMutex_enter(GateMutex_handle(&gate));
 }

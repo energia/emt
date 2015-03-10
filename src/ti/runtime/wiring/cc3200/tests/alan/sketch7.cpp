@@ -6,11 +6,11 @@ void buttonFxn0()
 
     if (off) {
     	off = false;
-    	digitalWrite(YELLOW_LED, 1);
+//    	digitalWrite(YELLOW_LED, 1);
     }
     else {
     	off = true;
-    	digitalWrite(YELLOW_LED, 0);
+//    	digitalWrite(YELLOW_LED, 0);
     }
 }
 
@@ -28,17 +28,17 @@ void buttonFxn1()
     }
 
     if (state & 0x2) {
-    	digitalWrite(GREEN_LED, 1);
+//    	digitalWrite(GREEN_LED, 1);
     }
     else {
-    	digitalWrite(GREEN_LED, 0);
+//    	digitalWrite(GREEN_LED, 0);
     }
 
     if (state & 0x4) {
-    	digitalWrite(BLUE_LED, 1);
+//    	digitalWrite(YELLOW_LED, 1);
     }
     else {
-    	digitalWrite(BLUE_LED, 0);
+//    	digitalWrite(YELLOW_LED, 0);
     }
 }
 
