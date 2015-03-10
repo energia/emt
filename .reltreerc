@@ -1,5 +1,10 @@
 #!/bin/ksh
 
+echo "pushing to energia.nu ..."
+base=./src/bundles/energia
+$base/push.exp $base/msp432LP/closure.zip MSP-EXP432P401R-closure.zip \
+               $base/cc3200LP/closure.zip CC3200-LAUNCHXL-closure.zip
+
 echo "pushing to gitorious ..."
 cd ../emt.git
 git push --all
