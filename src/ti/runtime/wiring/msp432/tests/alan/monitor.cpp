@@ -43,6 +43,7 @@
 #define RETURN_FAIL_PRINT_USAGE (-2)
 
 typedef void (*RepeatFunc)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
+static void doRepeat(RepeatFunc func, uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
 
 static void sanitizeLine(char *line);
 
