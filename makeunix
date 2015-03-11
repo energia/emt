@@ -35,10 +35,6 @@ JOBS = --jobs=4
 	$(MYXDC) $(JOBS) release -Pr src
 	@echo making energia closures ...
 	-make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
-ifeq (xlibrary,$(USER))
-	@echo pushing to energia.nu ...
-	-cd src/bundles/energia && ./push.exp msp432LP/closure.zip MSP-EXP432P401R-closure.zip cc3200LP/closure.zip CC3200-LAUNCHXL-closure.zip
-endif
 
 # ======== .local-regress ========
 # Test the packages in this tree

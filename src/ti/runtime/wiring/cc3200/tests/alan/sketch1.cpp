@@ -31,7 +31,6 @@ void loop1()
 {
     static int sw1 = 0;
     static int sw2 = 0;
-    static int pin31 = 0;
 
     delay(10);
 

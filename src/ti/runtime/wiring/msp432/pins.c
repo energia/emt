@@ -96,7 +96,7 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  71 - P10.3 */
     PIN_FUNC_UNUSED,    /*  72 - P10.5 */
 
-    /* virtual pins 41-46 */
+    /* virtual pins 73-78 */
     PIN_FUNC_UNUSED,    /*  73 - P1.1 SW1 */
     PIN_FUNC_UNUSED,    /*  74 - P1.4 SW2 */
     PIN_FUNC_UNUSED,    /*  75 - P2.0 RED_LED */

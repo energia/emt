@@ -47,7 +47,7 @@ void loop1()
     lcd.cursor(5,15);
     lcd.print("Sw1 = ");
     lcd.setColor(GREEN);
-    lcd.print(sw1 = digitalRead(41));
+    lcd.print(sw1 = digitalRead(PUSH1));
 
     delay(10);
 
@@ -63,7 +63,7 @@ void loop1()
     lcd.cursor(5,40);
     lcd.print("Sw2 = ");
     lcd.setColor(GREEN);
-    lcd.print(sw2 = digitalRead(42));
+    lcd.print(sw2 = digitalRead(PUSH2));
 
     delay(10);
 

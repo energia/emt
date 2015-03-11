@@ -18,6 +18,8 @@ function getLibs(prog)
  */
 function validate()
 {
+    return;
+
     /* patch TI-RTOS getLibs() bug */
     if ("ti.tirtos.Package" in xdc.om) {
 	var pkgType = xdc.om["ti.tirtos.Package"];
