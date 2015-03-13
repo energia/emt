@@ -36,7 +36,7 @@ int Stream::timedRead()
         if (c >= 0) return (c);
     }
     while (millis() - _startMillis < _timeout);
-    
+
     return (-1);     // -1 indicates timeout
 }
 
@@ -50,7 +50,7 @@ int Stream::timedPeek()
         if (c >= 0) return (c);
     }
     while (millis() - _startMillis < _timeout);
-    
+
     return (-1);     // -1 indicates timeout
 }
 
@@ -107,7 +107,7 @@ bool Stream::findUntil(char *target, size_t targetLen, char *terminator, size_t 
     if (*target == 0) {
         return (true);   // return true if target is a null string
     }
-        
+
     while ((c = timedRead()) > 0)
     {
         if (c != target[index]) {
