@@ -1,4 +1,4 @@
-				emt-a22
+				emt-a23
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,17 +125,12 @@ DELETIONS
 
 CHANGES
 
-makeunix, .reltreerc
-	  moved push to energia.nu to .reltreerc
 
 ti.runtime.wiring.*.tests.alan
-	misc cleanup
-	removed adc.g (the patched version is now available in TI-RTOS)
+	minor cleanup + monitor sketch enhancements
 
-ti.platforms.emt432LP
-	fix SPI HWAttrs
-
-ti.platforms.launchpad
-	remove unnecessary workarounds
+ti.runtime.wiring.*
+	refactored the MSP432 and CC3200 wiring to be almost identical: only
+	pins_energia.h, pins.c, and wiring_analog.c differ (!)
 
 MRS

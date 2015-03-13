@@ -1,6 +1,6 @@
 # define default set of platforms, compiler toolchains, and tests to build
 PLATFORMS ?= msp432LP cc3200LP
-TESTS     ?= blink hello alloc
+TESTS     ?= blink hello
 
 # define (optional) tools to run on output files to summarize footprint
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)

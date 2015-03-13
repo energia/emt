@@ -197,7 +197,7 @@ size_t Print::println(const Printable& x)
 
 // Private Methods /////////////////////////////////////////////////////////////
 
-size_t Print::printNumber(unsigned long n, uint8_t base) 
+size_t Print::printNumber(unsigned long n, uint8_t base)
 {
     char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
     char *str = &buf[sizeof(buf) - 1];
@@ -217,8 +217,8 @@ size_t Print::printNumber(unsigned long n, uint8_t base)
     return (write(str));
 }
 
-size_t Print::printFloat(double number, uint8_t digits) 
-{ 
+size_t Print::printFloat(double number, uint8_t digits)
+{
     size_t n = 0;
 
     // Handle negative numbers

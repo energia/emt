@@ -1,33 +1,35 @@
 /*
- ************************************************************************
- *  wiring_analog.c
+ * Copyright (c) 2015, Texas Instruments Incorporated
+ * All rights reserved.
  *
- *  Energia core files for MSP430
- *  Copyright (c) 2014 Robert Wessels. All right reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- ***********************************************************************
-  Derived from:
-  wiring_analog.c - analog input and output
-  Part of Arduino - http://www.arduino.cc/
-
-  Copyright (c) 2005-2006 David A. Mellis
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General
-  Public License along with this library; if not, write to the
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-  Boston, MA  02111-1307  USA
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #define ARDUINO_MAIN
 #include "wiring_private.h"
 #include <rom.h>
@@ -201,13 +203,13 @@ void analogWrite(uint8_t pin, int val)
     uint_fast16_t pinMask;
     uint16_t pinNum, i;
 
-    /* 
+    /*
      * The pwmIndex fetched from the pin_to_pwm_index[] table
      * is either an actual index into the PWM instance table
      * if the pin has already been mapped to a PWM resource,
      * or a mappable port/pin ID, or NOT_MAPPABLE.
      */
-     
+
     /* re-configure pin if necessary and possible */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
 
@@ -223,14 +225,14 @@ void analogWrite(uint8_t pin, int val)
                 break;
             }
         }
-        
+
         if (i > 7) {
             return; /* no unused PWM ports */
         }
 
         used_pwm_port_pins[i] = pwmIndex; /* save port/pin info */
 
-        /* i is actual PWM resource index */        
+        /* i is actual PWM resource index */
         digital_pin_to_pwm_index[pin] = i; /* save pwm index */
 
         port = pwmIndex >> 8;
@@ -284,7 +286,7 @@ void stopAnalogWrite(uint8_t pin)
     /* undo dynamic port mapping plumbing */
     port = used_pwm_port_pins[pwmIndex] >> 8;
     pinMask = used_pwm_port_pins[pwmIndex] & 0xff;
-    
+
     /* derive pinNum from pinMask */
     pinNum = 0;
     while (((1 << pinNum) & pinMask) == 0) pinNum++;
@@ -304,7 +306,7 @@ void stopAnalogWrite(uint8_t pin)
 
     /* restore pin table entry with port/pin info */
     digital_pin_to_pwm_index[pin] = used_pwm_port_pins[pwmIndex];
-    
+
     /* free up pwm resource */
     used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
 }
@@ -313,7 +315,12 @@ void stopAnalogWrite(uint8_t pin)
  * analogRead() support
  */
 
-const uint16_t adc_to_port_pin[] = {
+#define NOT_ON_ADC      0xFF
+
+static int8_t analogResolution = 10;
+static bool adc_module_enabled = false;
+
+static const uint16_t adc_to_port_pin[] = {
     GPIOMSP432_P5_5,  /* A0 */
     GPIOMSP432_P5_4,  /* A1 */
     GPIOMSP432_P5_3,  /* A2 */
@@ -322,7 +329,7 @@ const uint16_t adc_to_port_pin[] = {
     GPIOMSP432_P5_0,  /* A5 */
     GPIOMSP432_P4_7,  /* A6 */
     GPIOMSP432_P4_6,  /* A7 */
-    
+
     GPIOMSP432_P4_5,  /* A8 */
     GPIOMSP432_P4_4,  /* A9 */
     GPIOMSP432_P4_3,  /* A10 */
@@ -331,7 +338,7 @@ const uint16_t adc_to_port_pin[] = {
     GPIOMSP432_P4_0,  /* A13 */
     GPIOMSP432_P6_1,  /* A14 */
     GPIOMSP432_P6_0,  /* A15 */
-    
+
     GPIOMSP432_P9_1,  /* A16 */
     GPIOMSP432_P9_0,  /* A17 */
     GPIOMSP432_P8_7,  /* A18 */
@@ -342,7 +349,7 @@ const uint16_t adc_to_port_pin[] = {
     GPIOMSP432_P8_2,  /* A23 */
 };
 
-const uint8_t digital_pin_to_adc_index[] = {
+static const uint8_t digital_pin_to_adc_index[] = {
     /* port_pin */
     NOT_ON_ADC,     /*  dummy */
 
@@ -438,9 +445,6 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,     /*  77 - P2.2 BLUE_LED */
     NOT_ON_ADC,     /*  78 - P1.0 LED1 */
 };
-
-static int8_t analogResolution = 10;
-static bool adc_module_enabled = false;
 
 /*
  * \brief           Reads an analog value from the pin specified.
