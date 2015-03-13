@@ -1,33 +1,33 @@
 /*
- ************************************************************************
- *  TwoWire.cpp
+ * Copyright (c) 2015, Texas Instruments Incorporated
+ * All rights reserved.
  *
- *  Arduino core files for TI-RTOS
- *      Copyright (c) 2013 Louis Peryea. All right reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- ***********************************************************************
-  Derived from:
-  TwoWire.cpp - Hardware serial library for Wiring
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-  Modified 23 November 2006 by David A. Mellis
-  Modified 28 September 2010 by Mark Sproul
-  Modified for MSP430 by Robert Wessels
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <stdlib.h>
@@ -76,12 +76,12 @@ WireContext *TwoWire::getWireContext(void)
     WireContext *wc;
 
     wc = (WireContext *)Task_getEnv(Task_self());
-    
+
     if (wc == NULL) {
         wc = (WireContext *)Memory_alloc(NULL, sizeof(WireContext), 4, NULL);
-        
+
         wc->idle = true;
-        
+
         wc->rxReadIndex = 0;
         wc->rxWriteIndex = 0;
         wc->txReadIndex = 0;
@@ -93,10 +93,10 @@ WireContext *TwoWire::getWireContext(void)
         wc->i2cTransaction.readBuf = wc->rxBuffer;
         wc->i2cTransaction.readCount = 0;
         wc->i2cTransaction.writeCount = 0;
-        
+
         Task_setEnv(Task_self(), (void *)wc);
     }
-    
+
     return (wc);
 }
 
@@ -113,16 +113,16 @@ void TwoWire::forceStop(void)
 void TwoWire::begin(void)
 {
     I2C_Params params;
-    
+
     /* return if I2C already started */
     if (begun == TRUE) return;
 
     Board_initI2C();
-    
+
     I2C_Params_init(&params);
     params.transferMode = I2C_MODE_BLOCKING;
     params.bitRate = I2C_400kHz;
-    
+
     i2c = I2C_open(i2cModule, &params);
 
     if (i2c != NULL) {
@@ -136,9 +136,9 @@ void TwoWire::begin(void)
 void TwoWire::begin(uint8_t address)
 {
     WireContext *wc = getWireContext();
-    
+
     wc->i2cTransaction.slaveAddress = address;
-    
+
     begin();
 }
 
@@ -307,11 +307,11 @@ int TwoWire::peek(void)
 {
     int value = -1;
     WireContext *wc = getWireContext();
-      
+
     if(!RX_BUFFER_EMPTY){
         value = wc->rxBuffer[wc->rxReadIndex];
     }
-    
+
     return (value);
 }
 void TwoWire::flush(void)
