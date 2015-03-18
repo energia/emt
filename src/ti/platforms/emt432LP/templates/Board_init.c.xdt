@@ -45,15 +45,15 @@
 #include <ti/sysbios/interfaces/IHwi.h>
 
 #include <msp432.h>
-#include <MSP432P4xx/rom.h>
-#include <MSP432P4xx/rom_map.h>
-#include <MSP432P4xx/dma.h>
-#include <MSP432P4xx/gpio.h>
-#include <MSP432P4xx/i2c.h>
-#include <MSP432P4xx/spi.h>
-#include <MSP432P4xx/timer_a.h>
-#include <MSP432P4xx/uart.h>
-#include <MSP432P4xx/wdt_a.h>
+#include <rom.h>
+#include <rom_map.h>
+#include <dma.h>
+#include <gpio.h>
+#include <i2c.h>
+#include <spi.h>
+#include <timer_a.h>
+#include <uart.h>
+#include <wdt_a.h>
 
 #include "Board.h"
 
@@ -718,6 +718,29 @@ void Board_initUART(void)
 }
 
 /*
+ *  =============================== Power ===============================
+ */
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
+
+const PowerMSP432_Config PowerMSP432_config = {
+    .policyInitFxn = &PowerMSP432_policyInitFxn,
+    .policyFxn = &PowerMSP432_policyFxn,
+    .initialPerfLevel = 0,
+    .enablePolicy = false,
+    .enablePerf = false
+};
+
+/*
+ *  ======== Board_initPower ========
+ */
+void Board_initPower(void)
+{
+    Power_init();
+}
+
+/*
  *  =============================== Watchdog ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
@@ -838,6 +861,7 @@ void Board_init(void) {
 
     Board_initGPIO();
     Board_initPWM();
+    Board_initPower();
 
     /* Create PWM instances */
     PWM_Params_init(&params);

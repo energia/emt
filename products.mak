@@ -21,7 +21,7 @@ CCSROOT := $(subst \,/,$(CCSROOT))
 TIRTOS  ?= $(call latest, c:/ti/tirtos_msp430_2_12_*)
 XDCROOT  = $(call latest, $(CCSROOT)/xdctools_*/.)
 
-DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSP43*)
+DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare**)
 DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
 
 ti.targets.arm.elf.M4F = $(call latest,$(CCSROOT)/ccsv6/tools/compiler/*arm_5.*)
@@ -32,8 +32,8 @@ ifeq (,$(XDCROOT))
     # UNIX TISB tree build support
     #
     XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_30_05_60/$(BUILD_HOST_OS)
-    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f17/exports/tirtos_full_*)
-    DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSP43*)
+    TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-f19/exports/tirtos_full_*)
+    DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare*)
     DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
     ti.targets.arm.elf.M4F = $(TOOLS)/vendors/ti/arm/5.2.2/$(BUILD_HOST_OS)
     gnu.targets.arm.M4F    = $(TOOLS)/vendors/linaro/4.8-2014q3/$(BUILD_HOST_OS)
