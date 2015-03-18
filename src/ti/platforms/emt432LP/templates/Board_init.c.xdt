@@ -45,15 +45,15 @@
 #include <ti/sysbios/interfaces/IHwi.h>
 
 #include <msp432.h>
-#include <rom.h>
-#include <rom_map.h>
-#include <dma.h>
-#include <gpio.h>
-#include <i2c.h>
-#include <spi.h>
-#include <timer_a.h>
-#include <uart.h>
-#include <wdt_a.h>
+#include <MSP432P4xx/rom.h>
+#include <MSP432P4xx/rom_map.h>
+#include <MSP432P4xx/dma.h>
+#include <MSP432P4xx/gpio.h>
+#include <MSP432P4xx/i2c.h>
+#include <MSP432P4xx/spi.h>
+#include <MSP432P4xx/timer_a.h>
+#include <MSP432P4xx/uart.h>
+#include <MSP432P4xx/wdt_a.h>
 
 #include "Board.h"
 

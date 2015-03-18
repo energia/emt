@@ -29,8 +29,9 @@
     
     /* find device headers */
     var DLIB = Platform.findDriverLib();
-    var DLIBI = DLIB ? ('-I "' + DLIB + '/inc" -I "' + DLIB + '/MSP432P4xx" -I "' + DLIB + '/inc/CMSIS"') : "";
-    
+    var DLIBI = DLIB ? ('-I "' + DLIB + '/inc" -I "' + DLIB + '" -I "' + DLIB + '/inc/CMSIS"') : "";
+    var DLIBIHACK = DLIB ? ('-I "' + DLIB + '/MSP432P4xx"') : "";
+
     /* get location of the config script */
     var PROJ = java.io.File(Program.build.cfgScript).getParent();
     PROJ = (PROJ == null) ? "." : String(PROJ).replace(/\\/g, '/');
@@ -93,7 +94,7 @@ CCOPTS ?= `TARGET.ccOpts.prefix` `TARGET.ccOpts.suffix`
 #    device   headers: "`DLIBI`"
 #    package  headers: `xdc.curPath()`
 #    project  headers: "`PROJ`"
-CPPFLAGS = -D__MSP432P401R__=1 -Dxdc_target_types__=`TARGET.stdInclude` -Dxdc_target_name__=`TARGET.name` `CGENI` `DLIBI` `PATHI` `PROJI`
+CPPFLAGS = -D__MSP432P401R__=1 -Dxdc_target_types__=`TARGET.stdInclude` -Dxdc_target_name__=`TARGET.name` `CGENI` `DLIBI` `PATHI` `PROJI` `DLIBIHACK`
 
 # the compiler and archiver commands
 CC = `CC_CMD` `TARGET.cc.opts`
