@@ -459,7 +459,7 @@ uint16_t analogRead(uint8_t pin)
     uint64_t status;
     uint32_t hwiKey;
 
-    if (adcIndex == NOT_ON_ADC) return;
+    if (adcIndex == NOT_ON_ADC) return (0);
 
     adcMem = 1 << adcIndex;
     adcInt = 1 << adcIndex;
