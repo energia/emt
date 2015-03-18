@@ -350,7 +350,6 @@ const I2CCC3200_HWAttrs i2cCC3200HWAttrs[Board_I2CCOUNT] = {
         .baseAddr = I2CA0_BASE, 
         .intNum = INT_I2CA0,
         .intPriority = ~(0), 
-        .powerMngrId = PowerCC3200_PERIPH_I2CA0
     }
 };
 
@@ -431,7 +430,6 @@ static const SPICC3200DMA_HWAttrs SPICC3200DMAHWAttrs[Board_SPICOUNT] = {
         GSPI_BASE,
         INT_GSPI,
         ~(0),
-        PowerCC3200_PERIPH_GSPI,
         PRCM_GSPI,
         SPI_HW_CTRL_CS,
         SPI_CS_ACTIVELOW,
@@ -478,7 +476,6 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
         .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer,
         .ringBufSize = sizeof(uartCC3200RingBuffer),
-        .powerMngrId = PowerCC3200_PERIPH_UARTA0
     }
 };
 
@@ -497,6 +494,44 @@ const UART_Config UART_config[] = {
 void Board_initUART(void)
 {
     UART_init();
+}
+
+/* 
+ *  =============================== Power ===============================
+ */
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC3200.h>
+
+/*
+ *  ======== PowerCC3200_config ========
+ *  In this configuration, Power management is disabled since runPolicy
+ *  is set to 0.  Power management can be enabled from main() by calling
+ *  Power_enablePolicy(), or by changing runPolicy to 1 in this structure.
+ */
+const PowerCC3200_Config PowerCC3200_config = {
+    &PowerCC3200_initPolicy,   /* policyInitFxn */
+    &PowerCC3200_sleepPolicy,  /* policyFxn */
+    NULL,                      /* enterLPDSHookFxn */
+    NULL,                      /* resumeLPDSHookFxn */
+    0,                         /* enablePolicy */
+    1,                         /* enableGPIOWakeupLPDS */
+    0,                         /* enableGPIOWakeupShutdown */
+    0,                         /* enableNetworkWakeupLPDS */
+    PRCM_LPDS_GPIO13,          /* wakeupGPIOSourceLPDS */
+    PRCM_LPDS_FALL_EDGE,       /* wakeupGPIOTypeLPDS */
+    0,                         /* wakeupGPIOSourceShutdown */
+    0,                         /* wakeupGPIOTypeShutdown */
+    PRCM_SRAM_COL_1|PRCM_SRAM_COL_2|PRCM_SRAM_COL_3|PRCM_SRAM_COL_4
+                               /* ramRetentionMaskLPDS */
+};
+
+/*
+ *  ======== Board_initPower ========
+ */
+void Board_initPower(void)
+{
+    Power_init();
 }
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
@@ -520,10 +555,8 @@ void Board_init(void)
 
     /* driver-specific initialization */
     Board_initGPIO();
-    Board_initI2C();
     Board_initPWM();
-    Board_initSPI();
-    Board_initUART();
+    Board_initPower();
 
     /* Create PWM instances */
     PWM_Params_init(&params);

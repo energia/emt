@@ -1,4 +1,4 @@
-				emt-a23
+				emt-a24
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,12 +125,13 @@ DELETIONS
 
 CHANGES
 
+./imports.mak
+./products.mak
+	switch to latest TI-RTOS
 
-ti.runtime.wiring.*.tests.alan
-	minor cleanup + monitor sketch enhancements
-
-ti.runtime.wiring.*
-	refactored the MSP432 and CC3200 wiring to be almost identical: only
-	pins_energia.h, pins.c, and wiring_analog.c differ (!)
+ti/platforms/*
+	switch to latest TI-RTOS (required changing driverlib include paths,
+	TI-RTOS Power432.h header references driverlib headers without a
+	prefix)
 
 MRS
