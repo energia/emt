@@ -1,4 +1,4 @@
-				emt-a24
+				emt-a25
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,13 +125,8 @@ DELETIONS
 
 CHANGES
 
-./imports.mak
-./products.mak
-	switch to latest TI-RTOS
-
 ti/platforms/*
-	switch to latest TI-RTOS (required changing driverlib include paths,
-	TI-RTOS Power432.h header references driverlib headers without a
-	prefix)
+	fix/hack to allow build on windows (due to GPIO.h/gpio.h and 
+	SPI.h/spi.h header file name conflicts)
 
 MRS
