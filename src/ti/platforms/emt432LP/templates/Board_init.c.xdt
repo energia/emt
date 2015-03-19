@@ -718,6 +718,29 @@ void Board_initUART(void)
 }
 
 /*
+ *  =============================== Power ===============================
+ */
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
+
+const PowerMSP432_Config PowerMSP432_config = {
+    .policyInitFxn = &PowerMSP432_policyInitFxn,
+    .policyFxn = &PowerMSP432_policyFxn,
+    .initialPerfLevel = 0,
+    .enablePolicy = false,
+    .enablePerf = false
+};
+
+/*
+ *  ======== Board_initPower ========
+ */
+void Board_initPower(void)
+{
+    Power_init();
+}
+
+/*
  *  =============================== Watchdog ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
@@ -838,6 +861,7 @@ void Board_init(void) {
 
     Board_initGPIO();
     Board_initPWM();
+    Board_initPower();
 
     /* Create PWM instances */
     PWM_Params_init(&params);

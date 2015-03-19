@@ -9,7 +9,7 @@
 function module$meta$init()
 {
     this.$super.module$meta$init();
-    this.driverLibPattern = "../products/MSP43*/driverlib";
+    this.driverLibPattern = "../products/MSPWare*/driverlib";
 }
 
 /*

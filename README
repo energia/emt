@@ -1,4 +1,4 @@
-				emt-a23
+				emt-a25
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,12 +125,8 @@ DELETIONS
 
 CHANGES
 
-
-ti.runtime.wiring.*.tests.alan
-	minor cleanup + monitor sketch enhancements
-
-ti.runtime.wiring.*
-	refactored the MSP432 and CC3200 wiring to be almost identical: only
-	pins_energia.h, pins.c, and wiring_analog.c differ (!)
+ti/platforms/*
+	fix/hack to allow build on windows (due to GPIO.h/gpio.h and 
+	SPI.h/spi.h header file name conflicts)
 
 MRS

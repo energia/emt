@@ -27,7 +27,7 @@ metaonly module Platform inherits ti.platforms.launchpad.IPlatform
      *
      *  @see ti.platforms.launchpad.IPlatform#driverLibPattern
      */
-    override config String driverLibPattern = "../products/MSP43*/driverlib";
+    override config String driverLibPattern = "../products/MSPWare*/driverlib";
 
 instance:
 
