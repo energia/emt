@@ -18,6 +18,7 @@ JOBS = --jobs=4
 .debug:
 	@echo "XDC          =" $(MYXDC)
 	@echo "TIRTOS       =" $(TIRTOS)
+	@echo "SYSBIOS      =" $(SYSBIOS)
 	@echo "DRVLIB       =" $(DRVLIB)
 	@echo "TIRTOS_REPOS =" "$(TIRTOS_REPOS)"
 
@@ -25,16 +26,20 @@ JOBS = --jobs=4
 # Builds all packages and makes release archive files 
 .exports: .local-release
 
-# ======== .local-release ========
-# Builds all packages and makes releases
-.local-release:
+# ======== .local-all ========
+# Builds all packages
+.local-all: .imports
 	-@mkdir -p exports
 	@echo "Building platforms ..."
 	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
 	@echo "Building packages ..."
 	$(MYXDC) $(JOBS) release -Pr src
+
+# ======== .local-release ========
+# Builds all packages and makes releases
+.local-release: .local-all
 	@echo making energia closures ...
-	-make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
+	make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
 
 # ======== .local-regress ========
 # Test the packages in this tree
