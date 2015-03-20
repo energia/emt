@@ -1,4 +1,4 @@
-				emt-a25
+				emt-a26
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,12 +121,28 @@ Librarian releases
 
 ADDITIONS
 
+bundles/energia/msp432LP/tests
+	added class String example (named string)
+
 DELETIONS
 
 CHANGES
 
-ti/platforms/*
-	fix/hack to allow build on windows (due to GPIO.h/gpio.h and 
-	SPI.h/spi.h header file name conflicts)
+./imports.mak
+	import a patched form of SYS/BIOS (to replace String with xdc_String
+	in headers)
+
+	import latest TI-RTOS (with fix for CC3200 I2C driver)
+
+ti/runtime/wiring/msp432
+	add support for class String
+
+bundles/energia/msp432LP
+	fix all msp432 examples to disable xdc base types (so we can reference
+	class String in examples
+
+bundles/energia
+	import patched SYS/BIOS (to ensure xdc__nolocalnames works as 
+	advertised)
 
 MRS
