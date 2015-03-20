@@ -532,7 +532,6 @@ const PowerCC3200_Config PowerCC3200_config = {
 void Board_initPower(void)
 {
     Power_init();
-    Power_enablePolicy();
 }
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
