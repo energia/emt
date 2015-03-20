@@ -5,16 +5,16 @@
 #include <xdc/runtime/Memory.h>
 #include <xdc/runtime/Error.h>
 
-extern Void printMem(IHeap_Handle heap);
+extern void printMem(IHeap_Handle heap);
 
 /*
  *  ======== main task ========
  */
-Void alloc_task(UArg arg0, UArg arg1)
+void alloc_task(xdc_UArg arg0, xdc_UArg arg1)
 {
-    Int i;
-    Ptr ptr;
-    Int total;
+    int i;
+    xdc_Ptr ptr;
+    int total;
     static Error_Block eb;
     
     System_printf("alloc_task(%p, %p) ...\n", arg0, arg1);

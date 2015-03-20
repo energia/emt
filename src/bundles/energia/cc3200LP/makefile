@@ -15,7 +15,7 @@
 include tools.mak
 
 # define the XDC package path based on the settings above
-SYSBIOS = $(wildcard $(TIRTOS)/products/bios_*)
+SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
 
 XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
 
@@ -47,6 +47,8 @@ closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
 	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
+	@echo patching $@ ...
+	@$(CURDIR)/../patch.ksh $@
 
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg

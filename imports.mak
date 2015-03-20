@@ -1,7 +1,7 @@
 #
 # XDCtools used to build this tree
 #
-XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_30_05_60/$(BUILD_HOST_OS)
+XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_01_27_eng/$(BUILD_HOST_OS)
 
 #
 # internal TISB trees containing imports
@@ -14,14 +14,13 @@ ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-f20
 TIRTOS  = $(wildcard $(ZUMAPROD_TREE)/exports/tirtos_full_*)
 DRVLIB  = $(wildcard $(CURDIR)/imports/MSPWare*)
 DRVLIB  = $(wildcard $(TIRTOS)/products/MSPWare*)
-SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6*)
-
-TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
+#SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6*)
+SYSBIOS = $(CURDIR)/imports/bios_6_41_03_49_eng
 
 #
 # SM-MAKE support
 #
-IMPORT_ARCHIVES = 
+IMPORT_ARCHIVES = $(CURDIR)/downloads/bios_6_41_03_49_eng.zip
 IMPORT_PACKAGES =
 
 REFERENCED_REPOS = $(TIRTOS) $(SYSBIOS)

@@ -20,11 +20,12 @@
 #ifndef Print_h
 #define Print_h
 
+#include <xdc/std.h> // for xdc_String
+
 #include <inttypes.h>
 #include <stdio.h> // for size_t
 #include <string.h>
 #include "Printable.h"
-#include <xdc/std.h>
 
 #define DEC 10
 #define HEX 16
@@ -58,7 +59,7 @@ class Print
         size_t write(const char *str) { return write((const uint8_t *)str, strlen(str)); }
         virtual size_t write(const uint8_t *buffer, size_t size);
 
-        size_t print(const String &);
+        size_t print(const xdc_String &);
         size_t print(const char[]);
         size_t print(char);
         size_t print(unsigned char, int = DEC);
@@ -70,7 +71,7 @@ class Print
         size_t print(float, int = 2);
         size_t print(const Printable&);
 
-        size_t println(const String &s);
+        size_t println(const xdc_String &s);
         size_t println(const char[]);
         size_t println(char);
         size_t println(unsigned char, int = DEC);
