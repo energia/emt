@@ -13,7 +13,7 @@ var SRCS = getSources(".");
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
     Pkg.addExecutable("energia", targ, PLATFORM).addObjects(SRCS);
-    break;
+    break;  /* comment this out to build using TI compiler */
 }
 
 /*

@@ -40,7 +40,7 @@ else
     CPDIR = cp -rf
 endif
 
-SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_6*)
+SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
 
 #
 # set XDCARGS and XDCPATH
