@@ -662,7 +662,7 @@ static void printTaskInfo(Task_Handle task)
 {
     Task_Stat taskStat;
     Load_Stat loadStat;
-    String name;
+    xdc_String name;
     static char buf[100];
     uint32_t loadInt, loadFrac;
 
@@ -670,12 +670,12 @@ static void printTaskInfo(Task_Handle task)
     Load_getTaskLoad(task, &loadStat);
 
     if (taskStat.priority == 0) {
-        name = (String)"Idle";
+        name = (xdc_String)"Idle";
     }
     else {
         name = Task_Handle_name(task);
         if (name[0] == '{') {
-            name = (String)"Unnamed";
+            name = (xdc_String)"Unnamed";
         }
     }
 

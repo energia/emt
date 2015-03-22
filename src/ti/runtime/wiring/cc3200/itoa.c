@@ -66,12 +66,12 @@ extern void itoa( int n, char s[] )
 
 #else
 
-extern char* itoa1( int value, char *string, int radix )
+extern char* itoa( int value, char *string, int radix )
 {
-  return ltoa1( value, string, radix ) ;
+  return ltoa( value, string, radix ) ;
 }
 
-extern char* ltoa1( long value, char *string, int radix )
+extern char* ltoa( long value, char *string, int radix )
 {
   char tmp[33];
   char *tp = tmp;

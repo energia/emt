@@ -43,7 +43,7 @@ size_t Print::write(const uint8_t *buffer, size_t size)
 size_t Print::print(const String &s)
 {
     size_t n = 0;
-    for (uint16_t i = 0; i < strlen(s); i++) {
+    for (uint16_t i = 0; i < s.length(); i++) {
         n += write(s[i]);
     }
     return (n);

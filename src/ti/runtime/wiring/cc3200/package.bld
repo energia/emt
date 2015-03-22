@@ -2,19 +2,19 @@
  *  ======== package.bld ========
  */
 var Platform = xdc.module("ti.platforms.emt3200LP.Platform");
-var DRVLIB = Platform.findDriverLib();
-print("  using DriverLib: " + DRVLIB);
+var DLIBROOT = Platform.findDriverLib();
+print("  using DriverLib: " + DLIBROOT);
 
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
 var TI_CCOPTS = "--gcc --diag_warning=225";
 
-var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED -Dxdc__nolocalnames=1";
 
-var INCS = '-I"' + DRVLIB + '" '
-       + '-I"' + DRVLIB + '/driverlib" '
-       + '-I"' + DRVLIB + '/inc" ';
+var INCS = '-I"' + DLIBROOT + '" '
+       + '-I"' + DLIBROOT + '/driverlib" '
+       + '-I"' + DLIBROOT + '/inc" ';
 
 var SRCS = getSources(".");
 
