@@ -43,8 +43,17 @@ gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 gnuTargets.M4F.lnkOpts.suffix += " -lstdc++";
 gnuTargets.M4.lnkOpts.suffix  += " -lstdc++";
 
-gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3";
-gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3";
+if (false) {
+    /* define exceptions as default for both TI and GCC */
+    gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3";
+    gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3";
+//    tiTargets.M4F.ccOpts.suffix = " --exceptions"; /* must be used on all C++ files (TI's compiler exits if this is used on .c files) */
+    tiTargets.M4F.lnkOpts.suffix = " -c -m $(XDCCFGDIR)/$@.map -i $(rootDir)/lib --disable_auto_rts --library=rtsv7M4_T_le_v4SPD16_eabi_eh.lib";
+}
+else {
+    gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -fno-exceptions";
+    gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -fno-exceptions";
+}
 
 /* define the set of targets for which to build */
 if (Pkg.name.match(/432/)) {
