@@ -15,7 +15,7 @@ __extern void stringSetup(void)
     System_flush();
 
     String stringOne = String("Hello");
-    Serial.println((stringOne + " String").length());
+    System_printf("len: %d\n", (stringOne + " String").length());
 
     pinMode(ledPin, OUTPUT);  // set ledPin pin as output
 }
