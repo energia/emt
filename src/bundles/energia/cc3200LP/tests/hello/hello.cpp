@@ -5,9 +5,9 @@
 /*
  *  ======== main task ========
  */
-Void hello_task(UArg arg0, UArg arg1)
+void hello_task(xdc_UArg arg0, xdc_UArg arg1)
 {
-    Int i;
+    int i;
     
     System_printf("hello_task(%p, %p) ...\n", arg0, arg1);
     System_flush();

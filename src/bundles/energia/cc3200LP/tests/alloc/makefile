@@ -33,7 +33,7 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src"
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g
+CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g -Dxdc__nolocalnames=1 -fno-exceptions
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
 LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CCROOT)/lib"
 BINIFY   = $(CCROOT)/bin/arm-none-eabi-objcopy -O binary
@@ -41,10 +41,10 @@ BINIFY   = $(CCROOT)/bin/arm-none-eabi-objcopy -O binary
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 
 ifeq (,$(MAPTOOL))
-    MAPTOOL = :
+    MAPTOOL = $(XDCROOT)/xs -c $(TREE_ROOT)/src/bundles/energia/mapsum.xs -t gnu
 endif
 ifeq (,$(OBJTOOL))
-    OBJTOOL = :
+    OBJTOOL = $(XDCROOT)/xs -c $(TREE_ROOT)/src/bundles/energia/objsum.xs
 endif
 
 ifeq (sh.exe,$(SHELL))

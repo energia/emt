@@ -15,7 +15,7 @@
 /* TI-RTOS Board support */
 #include <ti/drivers/bsp/Board.h>
 
-extern Void hello_task(UArg a0, UArg arg1);
+extern void hello_task(xdc_UArg a0, xdc_UArg arg1);
 
 /*
  *  ======== main ========
@@ -38,7 +38,7 @@ int main()
     taskParams.stackSize = 0x800;
 
     /* Set the task name */
-    taskParams.instance->name = (String)"hello";
+    taskParams.instance->name = (xdc_String)"hello";
 
     /* Create the task */
     Task_create(hello_task, &taskParams, NULL);

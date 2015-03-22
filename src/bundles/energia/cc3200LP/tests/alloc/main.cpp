@@ -18,16 +18,16 @@
 /* TI-RTOS Board support */
 #include <ti/drivers/bsp/Board.h>
 
-extern Void alloc_task(UArg a0, UArg arg1);
+extern void alloc_task(xdc_UArg a0, xdc_UArg arg1);
 
-Void printMem(IHeap_Handle heap);
+void printMem(IHeap_Handle heap);
 
 /*
  *  ======== main ========
  */
 int main()
 {
-    Ptr ptr;
+    xdc_Ptr ptr;
     
     printMem(NULL);
     ptr = Memory_alloc(NULL, 1024, 1, NULL);
@@ -49,7 +49,7 @@ int main()
     taskParams.stackSize = 0x800;
 
     /* Set the task name */
-    taskParams.instance->name = (String)"alloc";
+    taskParams.instance->name = (xdc_String)"alloc";
 
     /* Create the task */
     Task_create(alloc_task, &taskParams, NULL);
@@ -65,7 +65,7 @@ int main()
 /*
  *  ======== printMem ========
  */
-Void printMem(IHeap_Handle heap)
+void printMem(IHeap_Handle heap)
 {
     Memory_Stats stats;
     Memory_getStats(heap, &stats);

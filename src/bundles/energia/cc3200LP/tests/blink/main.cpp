@@ -31,7 +31,7 @@ const char *taskNames[] = {
 /*
  *  ======== main task ========
  */
-Void the_task(UArg _task_setup, UArg _task_loop)
+void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 {
     /* Call setup once */
     (*(void(*)()) _task_setup)();
