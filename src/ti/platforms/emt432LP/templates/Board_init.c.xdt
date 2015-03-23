@@ -738,6 +738,7 @@ const PowerMSP432_Config PowerMSP432_config = {
 void Board_initPower(void)
 {
     Power_init();
+    Power_enablePolicy();
 }
 
 /*
