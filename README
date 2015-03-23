@@ -1,4 +1,4 @@
-				emt-a27
+				emt-a28
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,25 +121,15 @@ Librarian releases
 
 ADDITIONS
 
-bundles/energia/cc3200LP/tests
-	added class String example (named string)
-
 DELETIONS
 
 CHANGES
 
-./imports.mak
-	import latest xdctools tree (to get fix that allows disable of just
-	the String short name)
+ti/platforms/emt432
+	added Power_enablePolicy() to enable "implicit" power management
 
-ti/runtime/wiring/msp432
-	add all missing "generic" support
-	fixed Print to properly reference class String (rather than xdc_String)
-
-ti/runtime/wiring/cc3200
-	sync up with msp432 wiring library
-
-*
-	add -fno-execptions to all builds
+bundles/energia/msp432LP
+	set Clock.tickMode = Clock.TickMode_DYNAMIC; to minimize
+	unnecessary clock interrupts
 
 MRS
