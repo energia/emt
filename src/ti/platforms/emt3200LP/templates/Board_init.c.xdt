@@ -149,34 +149,34 @@ void Board_initGeneral(void)
     /* Serial */
 
     /*
-     * Configure LaunchPad P2.9 as a UART: UART TX (via USB port)
+     * Configure LaunchPad P2.9 as a UART1: UART1 TX (via USB port)
      *     device pin: 55 (UART0_TX)
      *     Wiring id : 12
      */
-    MAP_PinTypeUART(PIN_55, PIN_MODE_3);
+    MAP_PinTypeUART(PIN_55, PIN_MODE_6);
 
     /*
-     * Configure LaunchPad P3.3 as a UART: UART RX (via USB port)
+     * Configure LaunchPad P3.3 as a UART1: UART1 RX (via USB port)
      *     device pin: 57 (UART0_RX)
      *     Wiring id : 23
      */
-    MAP_PinTypeUART(PIN_57, PIN_MODE_3);
+    MAP_PinTypeUART(PIN_57, PIN_MODE_6);
 
     /* Serial1 */
 
     /*
-     * Configure LaunchPad P1.2 as a UART1: UART1 TX
-     *     device pin: 58 (UART1_TX)
-     *     Wiring id : 2
+     * Configure LaunchPad P1.4 as a UART0: UART0 TX
+     *     device pin: 3 (UART0_TX)
+     *     Wiring id : 4
      */
-    MAP_PinTypeUART(PIN_58, PIN_MODE_6);
+    MAP_PinTypeUART(PIN_03, PIN_MODE_7);
 
     /*
-     * Configure LaunchPad P2.4 as a UART1: UART1 RX
-     *     device pin: 45 (UART1_RX)
-     *     Wiring id : 17
+     * Configure LaunchPad P1.3 as a UART0: UART0 RX
+     *     device pin: 4 (UART0_RX)
+     *     Wiring id : 3
      */
-    MAP_PinTypeUART(PIN_45, PIN_MODE_2);
+    MAP_PinTypeUART(PIN_04, PIN_MODE_7);
 
 
     /* ======== SPI Pin Configuration ======== */
@@ -497,20 +497,20 @@ unsigned char uartCC3200RingBuffer1[32];
 /* UART configuration structure */
 const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
     {
-        .baseAddr = UARTA0_BASE, 
-        .intNum = INT_UARTA0,
-        .intPriority = ~(0),
-        .flowControl = UART_FLOWCONTROL_NONE,
-        .ringBufPtr  = uartCC3200RingBuffer0,
-        .ringBufSize = sizeof(uartCC3200RingBuffer0)
-    },
-    {
         .baseAddr = UARTA1_BASE, 
         .intNum = INT_UARTA1,
         .intPriority = ~(0),
         .flowControl = UART_FLOWCONTROL_NONE,
+        .ringBufPtr  = uartCC3200RingBuffer0,
+        .ringBufSize = sizeof(uartCC3200RingBuffer0),
+    },
+    {
+        .baseAddr = UARTA0_BASE, 
+        .intNum = INT_UARTA0,
+        .intPriority = ~(0),
+        .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer1,
-        .ringBufSize = sizeof(uartCC3200RingBuffer1),
+        .ringBufSize = sizeof(uartCC3200RingBuffer1)
     }
 };
 
