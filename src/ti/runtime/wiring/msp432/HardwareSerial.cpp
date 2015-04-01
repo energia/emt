@@ -40,6 +40,7 @@
 #define RX_BUFFER_FULL    (((rxWriteIndex + 1) % SERIAL_BUFFER_SIZE) == rxReadIndex)
 
 void uartReadCallback(UART_Handle uart, void *buf, size_t count);
+void uartReadCallback1(UART_Handle uart, void *buf, size_t count);
 
 HardwareSerial::HardwareSerial(void)
 {
@@ -85,13 +86,13 @@ void HardwareSerial::begin(unsigned long baud)
     UART_Params_init(&uartParams);
     uartParams.writeDataMode = UART_DATA_BINARY;
     uartParams.readMode = UART_MODE_CALLBACK;
-    uartParams.readCallback = uartReadCallback;
+    uartParams.readCallback = uartModule == 0 ? uartReadCallback : uartReadCallback1;
     uartParams.readDataMode = UART_DATA_BINARY;
     uartParams.readReturnMode = UART_RETURN_FULL;
     uartParams.readEcho = UART_ECHO_OFF;
     uartParams.baudRate = baud;
 
-    uart = UART_open(Board_UART, &uartParams);
+    uart = UART_open(uartModule, &uartParams);
 
     if (uart != NULL) {
         GateMutex_construct(&gate, NULL);
@@ -203,6 +204,10 @@ void uartReadCallback(UART_Handle uart, void *buf, size_t count)
     Serial.readCallback(uart, buf, count);
 }
 
+void uartReadCallback1(UART_Handle uart, void *buf, size_t count)
+{
+    Serial1.readCallback(uart, buf, count);
+}
 
 void serialEvent() __attribute__((weak));
 void serialEvent() { }
@@ -214,4 +219,12 @@ void serialEventRun(void)
     }
 }
 
-HardwareSerial Serial;
+void serialEventRun1(void)
+{
+    if (Serial1.available()) {
+        serialEvent();
+    }
+}
+
+HardwareSerial Serial(0);
+HardwareSerial Serial1(1);

@@ -80,6 +80,7 @@ class HardwareSerial : public Stream
 
 //Create new HardwareSerial called Serial for use in Sketch.
 extern HardwareSerial Serial;
+extern HardwareSerial Serial1;
 
 //I should delete this, but i need to check first
 extern void serialEventRun(void) __attribute__((weak));
