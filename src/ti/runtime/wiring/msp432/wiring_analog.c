@@ -212,6 +212,7 @@ void analogWrite(uint8_t pin, int val)
 
     /* re-configure pin if necessary and possible */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
+        PWM_Params params;
 
         if (pwmIndex == NOT_MAPPABLE) {
             return; /* can't get there from here */
@@ -229,6 +230,13 @@ void analogWrite(uint8_t pin, int val)
         if (i > 7) {
             return; /* no unused PWM ports */
         }
+
+        /* Open the PWM */
+        PWM_Params_init(&params);
+        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
+        params.dutyMode = PWM_DUTY_COUNTS;
+
+        PWM_open(i, &params);
 
         used_pwm_port_pins[i] = pwmIndex; /* save port/pin info */
 
@@ -309,6 +317,9 @@ void stopAnalogWrite(uint8_t pin)
 
     /* free up pwm resource */
     used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
+    
+    /* Close PWM port */
+    PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
 }
 
 /*
