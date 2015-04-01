@@ -329,7 +329,7 @@ const GPIOMSP432_Config GPIOMSP432_config = {
     .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
     .numberOfPinConfigs = sizeof(gpioPinConfigs)/sizeof(GPIO_PinConfig),
     .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
-    .intPriority = ~(0),
+    .intPriority = (~0),
 };
 
 /*
@@ -561,14 +561,6 @@ void Board_initSDSPI(void)
 
 /* SPI objects */
 SPIMSP432DMA_Object spiMSP432DMAObjects[Board_SPICOUNT];
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_ALIGN(spiMSP432DMAscratchBuf, 32)
-#elif defined(__IAR_SYSTEMS_ICC__)
-#pragma data_alignment=32
-#elif defined(__GNUC__)
-__attribute__ ((aligned (32)))
-#endif
-uint8_t spiMSP432DMAscratchBuf[Board_SPICOUNT];
 
 /* SPI configuration structure, describing which pins are to be used */
 const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
@@ -577,7 +569,6 @@ const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
 
-        .scratchBufPtr = &spiMSP432DMAscratchBuf[0],
         .defaultTxBufValue = 0,
 
         .dmaIntNum = INT_DMA_INT1,
@@ -590,7 +581,6 @@ const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
 
-        .scratchBufPtr = &spiMSP432DMAscratchBuf[1],
         .defaultTxBufValue = 0,
 
         .dmaIntNum = INT_DMA_INT2,
@@ -676,21 +666,34 @@ const UARTMSP432_BaudrateConfig uartMSP432Baudrates[] = {
     {9600,   32768,     3,  0, 146, 0}
 };
 
-unsigned char uartMSP432RingBuffer[2][32];
+unsigned char uartMSP432RingBuffer0[32];
+unsigned char uartMSP432RingBuffer1[32];
 
 /* UART configuration structure */
 const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = EUSCI_A0_BASE,
         .intNum = INT_EUSCIA0,
-        .intPriority = ~(0),
+        .intPriority = (~0),
         .clockSource = EUSCI_A_UART_CLOCKSOURCE_SMCLK,
         .bitOrder = EUSCI_A_UART_LSB_FIRST,
         .numBaudrateEntries = sizeof(uartMSP432Baudrates) /
                               sizeof(UARTMSP432_BaudrateConfig),
         .baudrateLUT = uartMSP432Baudrates,
-        .ringBufPtr  = &uartMSP432RingBuffer[0],
-        .ringBufSize = sizeof(uartMSP432RingBuffer),
+        .ringBufPtr  = uartMSP432RingBuffer0,
+        .ringBufSize = sizeof(uartMSP432RingBuffer0)
+    },
+    {
+        .baseAddr = EUSCI_A2_BASE,
+        .intNum = INT_EUSCIA2,
+        .intPriority = (~0),
+        .clockSource = EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+        .bitOrder = EUSCI_A_UART_LSB_FIRST,
+        .numBaudrateEntries = sizeof(uartMSP432Baudrates) /
+            sizeof(UARTMSP432_BaudrateConfig),
+        .baudrateLUT = uartMSP432Baudrates,
+        .ringBufPtr  = uartMSP432RingBuffer1,
+        .ringBufSize = sizeof(uartMSP432RingBuffer1)
     }
 };
 
@@ -699,6 +702,11 @@ const UART_Config UART_config[] = {
         .fxnTablePtr = &UARTMSP432_fxnTable,
         .object = &uartMSP432Objects[0],
         .hwAttrs = &uartMSP432HWAttrs[0]
+    },
+    {
+        .fxnTablePtr = &UARTMSP432_fxnTable,
+        .object = &uartMSP432Objects[1],
+        .hwAttrs = &uartMSP432HWAttrs[1]
     },
     {NULL, NULL, NULL}
 };
@@ -710,6 +718,11 @@ void Board_initUART(void)
 {
     /* Set P1.2 & P1.3 in UART mode */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
+                                                   GPIO_PIN2 | GPIO_PIN3,
+                                                   GPIO_PRIMARY_MODULE_FUNCTION);
+
+    /* Set P3.2 & P3.3 in UART mode */
+    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
                                                    GPIO_PIN2 | GPIO_PIN3,
                                                    GPIO_PRIMARY_MODULE_FUNCTION);
 
@@ -727,9 +740,9 @@ void Board_initUART(void)
 const PowerMSP432_Config PowerMSP432_config = {
     .policyInitFxn = &PowerMSP432_policyInitFxn,
     .policyFxn = &PowerMSP432_policyFxn,
-    .initialPerfLevel = 0,
+    .initialPerfLevel = 2,
     .enablePolicy = false,
-    .enablePerf = false
+    .enablePerf = true
 };
 
 /*
@@ -858,25 +871,8 @@ void Board_initWiFi(void)
  *  ======== Board_init ========
  */
 void Board_init(void) {
-    PWM_Params params;
-
     Board_initGPIO();
     Board_initPWM();
     Board_initPower();
-
-    /* Create PWM instances */
-    PWM_Params_init(&params);
-
-    params.period = 2040; /* arduino period is 2.04ms (490Hz) */
-    params.dutyMode = PWM_DUTY_COUNTS;
-
-    PWM_open(Board_PWM0, &params);
-    PWM_open(Board_PWM1, &params);
-    PWM_open(Board_PWM2, &params);
-    PWM_open(Board_PWM3, &params);
-    PWM_open(Board_PWM4, &params);
-    PWM_open(Board_PWM5, &params);
-    PWM_open(Board_PWM6, &params);
-    PWM_open(Board_PWM7, &params);
 }
 
