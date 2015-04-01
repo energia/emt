@@ -102,6 +102,7 @@ typedef enum Board_SPIName {
  */
 typedef enum Board_UARTName {
     Board_UART0 = 0,
+    Board_UART1,
 
     Board_UARTCOUNT
 } Board_UARTName;
