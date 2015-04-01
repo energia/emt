@@ -165,18 +165,18 @@ void Board_initGeneral(void)
     /* Serial1 */
 
     /*
-     * Configure LaunchPad P4.9 as a UART1: UART1 TX
-     *     device pin: 16 (UART1_TX)
-     *     Wiring id : 32
+     * Configure LaunchPad P1.2 as a UART1: UART1 TX
+     *     device pin: 58 (UART1_TX)
+     *     Wiring id : 2
      */
-//    MAP_PinTypeUART(PIN_16, PIN_MODE_2);
+    MAP_PinTypeUART(PIN_58, PIN_MODE_6);
 
     /*
-     * Configure LaunchPad P4.10 as a UART1: UART1 RX
-     *     device pin: 17 (UART1_RX)
-     *     Wiring id : 31
+     * Configure LaunchPad P2.4 as a UART1: UART1 RX
+     *     device pin: 45 (UART1_RX)
+     *     Wiring id : 17
      */
-//    MAP_PinTypeUART(PIN_17, PIN_MODE_2);
+    MAP_PinTypeUART(PIN_45, PIN_MODE_2);
 
 
     /* ======== SPI Pin Configuration ======== */
