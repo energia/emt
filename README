@@ -1,4 +1,4 @@
-				emt-a28
+				emt-a29
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -126,10 +126,12 @@ DELETIONS
 CHANGES
 
 ti/platforms/emt432
-	added Power_enablePolicy() to enable "implicit" power management
+	add a second serial port: Serial1
 
-bundles/energia/msp432LP
-	set Clock.tickMode = Clock.TickMode_DYNAMIC; to minimize
-	unnecessary clock interrupts
+imports.mak
+	use latest TI-RTOS to fix INPUT_PULLDOWN bug in MSP432 GPIO driver
+
+ti/runtime/wiring/msp432
+	open/close PWM's only as needed (to enable true LPM3)
 
 MRS
