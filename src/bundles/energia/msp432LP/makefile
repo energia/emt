@@ -48,7 +48,7 @@ closure: configPkg
 	@echo xs xdc.tools.closure -d $@ $< ...
 	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
 	@echo patching $@ ...
-	@$(CURDIR)/../patch.ksh $@
+	@$(CURDIR)/../patch.ksh $@ ./src
 
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
