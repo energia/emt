@@ -11,14 +11,14 @@ var symbolNamesGnu = {
 
     __UNUSED_FLASH_start__: "FLASH_UNUSED_start",
     __UNUSED_FLASH_end__: "FLASH_UNUSED_end",
-__FLASH_LENGTH__: "FLASH_length"
+    __FLASH_LENGTH__: "FLASH_length"
 };
 
 var symbolTable = {};
 
 function main(arguments)
 {
-    var toolChain = "ti";
+    var toolChain = null;
     var verbose = 0;
 
     for (;;) {
@@ -56,7 +56,53 @@ function main(arguments)
     var carray = parse(arguments[0], toolChain);
 
     print(arguments[0] + " summary:");
-    display(carray, verbose);
+    display(carray, arguments[0], verbose);
+}
+
+/*
+ *  ======== getTargetSuffix ========
+ */
+function getTargetSuffix(carray)
+{
+    for (var i = 0; i < carray.length; i++) {
+        var name = carray[i].name.split(/\s/)[0];
+	var k = name.lastIndexOf('.') + 1;
+	if (k != 0) {
+	    var suffix = name.substring(k);
+	    if (suffix[0] == 'o' || suffix[0] == 'a') {
+		if (suffix != "obj" && suffix != "a") {
+		    return (suffix.substring(1));
+		}
+	    }
+	}
+    }
+    return (null);
+}
+
+/*
+ *  ======== getToolChain ========
+ */
+function getToolChain(fileName)
+{
+    var result = null;
+    
+    var file = new java.io.BufferedReader(new java.io.FileReader(fileName));
+    var line;
+
+    for (var i = 0; i < 10 && (line = file.readLine()) != null; i++) {
+	line = String(line);
+	if (line.match(/^Archive member included/)) {
+            result = "gnu";
+	    break;
+	}
+	else if (line.match(/^>> Linked /)) {
+	    result = "ti";
+            break;
+	}
+    }
+    file.close();
+    
+    return (result);
 }
 
 /*
@@ -65,6 +111,11 @@ function main(arguments)
 function parse(fileName, toolChain)
 {
     var result = null;
+
+    /* if toolchain is not specified, try to figure it out from the map file */
+    if (toolChain == null) {
+	toolChain = getToolChain(fileName);
+    }
 
     switch (toolChain) {
         case "gnu": {
@@ -76,7 +127,8 @@ function parse(fileName, toolChain)
             break;
         }
         default: {
-            throw new Error("unknown toolchain '" + toolChain + "'; use 'ti' or 'gnu'.");
+            throw new Error("unknown toolchain '" 
+			    + toolChain + "'; use 'ti' or 'gnu'.");
             break;
         }
     }
@@ -185,6 +237,9 @@ function parseGnu(fileName)
         result[key].sections[section] = size + (ssize != null ? ssize : 0);
     }
 
+    /* close file stream */
+    file.close();
+
     /* create array of containers and sort by size */
     var carray = [];
     for (var k in result) {
@@ -276,6 +331,9 @@ function parseTI(fileName)
         }
     }
 
+    /* close file stream */
+    file.close();
+
     /* create array of containers and sort by size */
     var carray = [];
     for (var k in result) {
@@ -311,7 +369,7 @@ function symbolValueGnu(line, symbolNames, symbolTable)
  *  ======== display ========
  *  Print the array of values returned by parse()
  */
-function display(carray, verbose)
+function display(carray, fileName, verbose)
 {
     var total = 0;
     var pad = "       ";
@@ -337,30 +395,38 @@ function display(carray, verbose)
     }
 
     var len = String(total).length;
-    print("  " + total + pad.substring(len) + "TOTAL");
+    print("  " + total + pad.substring(len) + "TOTAL: " + fileName);
 
+    var targ = getTargetSuffix(carray);
+    
     /* display unused SRAM and FLASH */
-    displayMem("SRAM");
-    displayMem("FLASH");
+    displayMem("SRAM", fileName, targ);
+    displayMem("FLASH", fileName, targ);
 }
 
 /*
  *  ======== displayMem ========
  */
-function displayMem(name)
+function displayMem(name, fileName, targ)
 {
     var pad = "       ";
-
+    targ = (targ == null) ? "" : (", targ = " + targ);
+    
     /* display unused memory named 'name' */
     var start = symbolTable[name + "_UNUSED_start"];
     var end = symbolTable[name + "_UNUSED_end"];
     var len = symbolTable[name + "_length"];
     if (start != null && end != null) {
 	var unused = end - start;
-	var suffix = len != null 
-	    ? (" (" + unused + "/" + len + ", used = " + (len-unused) + ")") 
-	    : "";
-	len = String(unused).length;
-	print("  " + unused + pad.substring(len) + "UNUSED " + name + suffix);
+	var suffix = "";
+        if (len != null) {
+	    var percent = len == 0 ? 100 : (unused / len) * 100;
+	    suffix = " (" + percent.toFixed(0)
+                      + "%, used = " + (len - unused) + targ + ")";
+        }
+
+        len = String(unused).length;
+        print("  " + unused + pad.substring(len) + "UNUSED "
+              + name + suffix + ": " + fileName);
     }
 }

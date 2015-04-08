@@ -5,10 +5,11 @@ TESTS     ?= blink hello alloc string
 # define (optional) tools to run on output files to summarize footprint
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 OBJTOOL  = $(if $(XDCROOT),$(XDCROOT)/xs -c $(CURDIR)/objsum.xs,:)
-MAPTOOL  = $(if $(XDCROOT),$(XDCROOT)/xs -c $(CURDIR)/mapsum.xs -t $1,:)
+MAPTOOL  = $(if $(XDCROOT),$(XDCROOT)/xs -c $(CURDIR)/mapsum.xs,:)
 
 export XDCROOT
 export OBJTOOL
+export MAPTOOL
 
 # define top-level build command
 define BUILD
@@ -34,4 +35,4 @@ all: makefile
 	$(foreach p,$(PLATFORMS), $(call BUILD, $p, $@,))
 	$(foreach p,$(PLATFORMS), \
             $(foreach t,$(TESTS), \
-                $(call BUILD, $p/tests/$t, $@, MAPTOOL="$(call MAPTOOL,gnu)")))
+                $(call BUILD, $p/tests/$t, $@,)))
