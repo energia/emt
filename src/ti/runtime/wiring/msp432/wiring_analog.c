@@ -92,7 +92,14 @@ uint16_t used_pwm_port_pins[] = {
 
 #define NOT_MAPPABLE 0xffff
 
-/* achievable dynamic PWM mappings */
+/*
+ * Prior to a pin being used for analogWrite(), this table
+ * contains the PIN IDs for achievable dynamic PWM mappings.
+ *
+ * While in use, those PIN IDs are replaced with the
+ * corresponding index of the PWM resource that was mapped
+ * to the pin.
+ */
 uint16_t digital_pin_to_pwm_index[] = {
     NOT_MAPPABLE,       /*  dummy */
     NOT_MAPPABLE,       /*  1  - 3.3V */
@@ -186,7 +193,7 @@ uint16_t digital_pin_to_pwm_index[] = {
 
 /*
  * For the MSP432, the timers used for PWM are clocked at 12MHz.
- * The period is set to 2.04ms in the PWM_open() calls in Board_init().
+ * The period is set to 2.04ms in the PWM_open() call.
  * The PWM objects are configured for PWM_DUTY_COUNTS mode to minimize
  * the PWM_setDuty() processing overhead.
  * The 2.04ms period yields a period count of 24480.
@@ -198,69 +205,73 @@ uint16_t digital_pin_to_pwm_index[] = {
 
 void analogWrite(uint8_t pin, int val)
 {
-    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint16_t pwmIndex, pinId, pinNum;
     uint_fast8_t port;
     uint_fast16_t pinMask;
-    uint16_t pinNum, i;
+    uint32_t hwiKey;
 
-    /*
-     * The pwmIndex fetched from the pin_to_pwm_index[] table
-     * is either an actual index into the PWM instance table
-     * if the pin has already been mapped to a PWM resource,
-     * or a mappable port/pin ID, or NOT_MAPPABLE.
-     */
+    hwiKey = Hwi_disable();
 
-    /* re-configure pin if necessary and possible */
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
+    if (digital_pin_to_pin_function[pin] == PIN_FUNC_ANALOG_OUTPUT) {
+        pwmIndex = digital_pin_to_pwm_index[pin];
+    }
+    else {
+        /* re-configure pin if possible */
         PWM_Params params;
 
-        if (pwmIndex == NOT_MAPPABLE) {
+        /*
+         * The pwmIndex fetched from the pin_to_pwm_index[] table
+         * is either an actual index into the PWM instance table
+         * if the pin has already been mapped to a PWM resource,
+         * or a mappable port/pin ID, or NOT_MAPPABLE.
+         */
+        pinId = digital_pin_to_pwm_index[pin];
+
+        if (pinId == NOT_MAPPABLE) {
+            Hwi_restore(hwiKey);
             return; /* can't get there from here */
         }
 
-        /* pwmIndex is an encoded pinID */
-
         /* find an unused PWM resource and port map it */
-        for (i = 0; i < 8; i++) {
-            if (used_pwm_port_pins[i] == NOT_IN_USE) {
+        for (pwmIndex = 0; pwmIndex < 8; pwmIndex++) {
+            if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
+                /* remember which pinId is being used by this PWM resource */
+                used_pwm_port_pins[pwmIndex] = pinId; /* save port/pin info */
+                /* remember which PWM resource is being used by this pin */
+                digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
                 break;
             }
         }
 
-        if (i > 7) {
+        if (pwmIndex > 7) {
+            Hwi_restore(hwiKey);
             return; /* no unused PWM ports */
         }
 
-        /* Open the PWM */
         PWM_Params_init(&params);
+
+        /* Open the PWM port */
         params.period = 2040; /* arduino period is 2.04ms (490Hz) */
         params.dutyMode = PWM_DUTY_COUNTS;
+        PWM_open(pwmIndex, &params);
 
-        PWM_open(i, &params);
+        port = pinId >> 8;
+        pinMask = pinId & 0xff;
 
-        used_pwm_port_pins[i] = pwmIndex; /* save port/pin info */
-
-        /* i is actual PWM resource index */
-        digital_pin_to_pwm_index[pin] = i; /* save pwm index */
-
-        port = pwmIndex >> 8;
-        pinMask = pwmIndex & 0xff;
-        pwmIndex = i; /* convert pwmIndex into usable PWM module instance index */
         /* derive pinNum from pinMask */
         pinNum = 0;
         while (((1 << pinNum) & pinMask) == 0) pinNum++;
-        /* the following code was extracted from PMAP_configurePort() */
 
-        //Get write-access to port mapping registers:
+        /* Get write-access to port mapping registers: */
         PMAP->rKEYID = PMAP_KEYID_VAL;
 
-        //Enable reconfiguration during runtime
+        /* Enable reconfiguration during runtime */
         PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
 
-        //Configure Port Mapping for this pin:
-        HWREG8(PMAP_BASE + pinNum + pxmap[port]) = mappable_pwms[i];
+        /* Configure Port Mapping for this pin: */
+        HWREG8(PMAP_BASE + pinNum + pxmap[port]) = mappable_pwms[pwmIndex];
 
-        //Disable write-access to port mapping registers:
+        /* Disable write-access to port mapping registers: */
         PMAP->rKEYID = 0;
 
         /* Enable PWM output on GPIO pins */
@@ -269,6 +280,8 @@ void analogWrite(uint8_t pin, int val)
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
+
+    Hwi_restore(hwiKey);
 
     PWM_setDuty((PWM_Handle)&(PWM_config[pwmIndex]), (val * PWM_SCALE_FACTOR));
 }
@@ -287,6 +300,7 @@ void stopAnalogWrite(uint8_t pin)
     uint_fast8_t port;
     uint_fast16_t pinMask;
     uint16_t pinNum;
+    uint32_t hwiKey;
 
     /* stop the timer */
     analogWrite(pin, 0);
@@ -312,14 +326,18 @@ void stopAnalogWrite(uint8_t pin)
     //Disable write-access to port mapping registers:
     PMAP->rKEYID = 0;
 
+    /* Close PWM port */
+    PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
+
+    hwiKey = Hwi_disable();
+
     /* restore pin table entry with port/pin info */
     digital_pin_to_pwm_index[pin] = used_pwm_port_pins[pwmIndex];
 
     /* free up pwm resource */
     used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
-    
-    /* Close PWM port */
-    PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
+
+    Hwi_restore(hwiKey);
 }
 
 /*
@@ -484,14 +502,9 @@ uint16_t analogRead(uint8_t pin)
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
 
-        Hwi_restore(hwiKey);
-
-        hwiKey = Hwi_disable();
-
         /* initialize top level ADC module if it hasn't been already */
         if (adc_module_enabled == false) {
             adc_module_enabled = true;
-            Hwi_restore(hwiKey);
 
             /* Initializing ADC (MCLK/1/1) */
             MAP_ADC14_enableModule();
@@ -514,6 +527,10 @@ uint16_t analogRead(uint8_t pin)
                                         GPIO_TERTIARY_MODULE_FUNCTION);
     }
 
+    /* minimize latency by re-enabling ints temporarily */
+    Hwi_restore(hwiKey);
+
+    /* Sadly, I think the following code must all be done thread safely */
     hwiKey = Hwi_disable();
 
     /* stop all current conversions */
