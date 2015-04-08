@@ -583,8 +583,6 @@ void Board_initPower(void)
  */
 void Board_init(void)
 {
-    PWM_Params params;
-
     /* driver-independent initialization */
     Board_initGeneral();
 
@@ -597,19 +595,4 @@ void Board_init(void)
     Board_initGPIO();
     Board_initPWM();
     Board_initPower();
-
-    /* Create PWM instances */
-    PWM_Params_init(&params);
-
-    params.period = 2040; /* arduino period is 2.04ms (490Hz) */
-    params.dutyMode = PWM_DUTY_COUNTS;
-
-    PWM_open(Board_PWM0, &params);
-    PWM_open(Board_PWM1, &params);
-    PWM_open(Board_PWM2, &params);
-    PWM_open(Board_PWM3, &params);
-    PWM_open(Board_PWM4, &params);
-    PWM_open(Board_PWM5, &params);
-    PWM_open(Board_PWM6, &params);
-    PWM_open(Board_PWM7, &params);
 }
