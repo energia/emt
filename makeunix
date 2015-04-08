@@ -7,7 +7,7 @@ include ./imports.mak
 
 TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
 
-MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS);$(DRVLIB)"
+MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS)"
 
 JOBS = --jobs=4
 
@@ -19,7 +19,6 @@ JOBS = --jobs=4
 	@echo "XDC          =" $(MYXDC)
 	@echo "TIRTOS       =" $(TIRTOS)
 	@echo "SYSBIOS      =" $(SYSBIOS)
-	@echo "DRVLIB       =" $(DRVLIB)
 	@echo "TIRTOS_REPOS =" "$(TIRTOS_REPOS)"
 
 # ======== .exports ========

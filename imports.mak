@@ -12,8 +12,6 @@ ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-f26
 # Specific required imports (referenced by makeunix, for example)
 #
 TIRTOS  = $(wildcard $(ZUMAPROD_TREE)/exports/tirtos_full_*)
-DRVLIB  = $(wildcard $(CURDIR)/imports/MSPWare*)
-DRVLIB  = $(wildcard $(TIRTOS)/products/MSPWare*)
 #SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6*)
 SYSBIOS = $(CURDIR)/imports/bios_6_41_03_51
 

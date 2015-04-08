@@ -2,9 +2,11 @@
 #  This file defines the installation location for products that are required
 #  for the use of the Energia MT
 #
-#  XDCROOT - XDCtools used to build a configuration of TI-RTOS suitable for EMT
-#  TIRTOS  - TI-RTOS
-#  DRVLIB  - MSP432 driverlib
+#  XDCROOT        - XDCtools used to build a configuration of TI-RTOS
+#                   suitable for EMT
+#  TIRTOS         - TI-RTOS
+#  DRVLIB.msp432  - MSP432 driverlib
+#  DRVLIB.cc3200  - CC3200 driverlib
 #  ti.targets.arm.elf.M4F - TI Arm compiler
 #  gnu.targets.arm.M4F    - Gnu Arm compiler
 #
@@ -55,5 +57,8 @@ ifeq (,$(wildcard $(TIRTOS)))
     $(error TIRTOS, '$(TIRTOS)', does not reference a valid directory)
 endif
 ifeq (,$(wildcard $(DRVLIB.msp432)))
-    $(error DRVLIB.msp432, '$(DRVLIB)', does not reference a valid directory)
+    $(error DRVLIB.msp432, '$(DRVLIB.msp432)', does not reference a valid directory)
+endif
+ifeq (,$(wildcard $(DRVLIB.cc3200)))
+    $(error DRVLIB.cc3200, '$(DRVLIB.cc3200)', does not reference a valid directory)
 endif
