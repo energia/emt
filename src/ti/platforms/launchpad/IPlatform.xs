@@ -188,7 +188,11 @@ function module$meta$init()
 {
     /* get source directory for generated files */
     var SourceDir = xdc.useModule("xdc.cfg.SourceDir");
-    this.$private.src = SourceDir.create("platform");
+
+    /* compute unique name for the platform sources */
+    var k = this.$package.$name.lastIndexOf('.');
+    var sdir = this.$package.$name.substring(k + 1);
+    this.$private.src = SourceDir.create(sdir);
 }
 
 /*
