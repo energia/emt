@@ -1,3 +1,23 @@
+/*
+ *  ======== Package.init ========
+ *  Called at initialization time (before user config script runs)
+ */
+function init()
+{
+    if (xdc.om.$name != 'cfg') {
+        return;
+    }
+
+    if (Program.sectMap[".bootVecs"] === undefined) {
+        Program.sectMap[".bootVecs"] = new Program.SectionSpec();
+        Program.sectMap[".bootVecs"].loadAddress = 0x20004000;
+    }
+}
+
+/*
+ *  ======== PackagegetLibs ========
+ *  Called during generation to get libraries to link with
+ */
 function getLibs(prog)
 {
     /* get Platform module */
