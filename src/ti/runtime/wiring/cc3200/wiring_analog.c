@@ -163,15 +163,22 @@ const uint16_t digital_pin_to_pin_num[] = {
 
 void analogWrite(uint8_t pin, int val) 
 {
-    uint8_t timer = digital_pin_to_timer[pin];
+    uint8_t timer;
+    uint32_t hwiKey;
 
-    if (timer == NOT_ON_TIMER) {
-        return;
-    }
+    hwiKey = Hwi_disable();
+
+    timer = digital_pin_to_timer[pin];
 
     /* re-configure pin if necessary */
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_UNUSED &&
-             digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
+    if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
+        PWM_Params params;
+
+        if (timer == NOT_ON_TIMER) {
+            Hwi_restore(hwiKey);
+            return;
+        }
+
         uint16_t pnum = digital_pin_to_pin_num[pin]; 
 
         switch(timer) {
@@ -197,9 +204,18 @@ void analogWrite(uint8_t pin, int val)
                 break;
         }
 
+        PWM_Params_init(&params);
+
+        /* Open the PWM port */
+        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
+        params.dutyMode = PWM_DUTY_COUNTS;
+        PWM_open(timer, &params);
+
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
 
+    Hwi_restore(hwiKey);
+    
     PWM_setDuty((PWM_Handle)&(PWM_config[timer]), (val * PWM_SCALE_FACTOR));
 }
 
@@ -213,8 +229,13 @@ void analogWrite(uint8_t pin, int val)
  */
 void stopAnalogWrite(uint8_t pin)
 {
+    uint16_t pwmIndex = digital_pin_to_timer[pin];
+
     /* stop the timer */
     analogWrite(pin, 0);
+
+    /* Close PWM port */
+    PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
 }
 
 /*

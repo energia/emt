@@ -41,7 +41,7 @@
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/gates/GateMutex.h>
 
-#define SERIAL_BUFFER_SIZE     1024
+#define SERIAL_BUFFER_SIZE     32
 
 class HardwareSerial : public Stream
 {
