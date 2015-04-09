@@ -35,10 +35,10 @@ metaonly interface IPlatform inherits xdc.platform.IPlatform
      *  to denote any sequence of characters except the directory
      *  separation character '/'.
      *
-     *  Suppose, For example, the directory /ti/msp430 on the
-     *  package path contains MSP430Ware_1_97_00_47b.  The pattern
+     *  Suppose, for example, the directory `/ti/msp430` on the
+     *  package path contains `MSP430Ware_1_97_00_47`.  The pattern
      *  "MSP43* /msp430ware/driverlib" will identify the directory
-     *  "/ti/msp430/MSP430Ware_1_97_00_47b/msp430ware/driverlib" as the 
+     *  "/ti/msp430/MSP430Ware_1_97_00_47/msp430ware/driverlib" as the 
      *  location of DriverLib.
      */
     config String driverLibPattern;
