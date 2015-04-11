@@ -1,4 +1,4 @@
-				emt-a30
+				emt-a31
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,31 +125,14 @@ DELETIONS
 
 CHANGES
 
-ti/runtime/wiring/msp432
-ti/runtime/wiring/cc3200
-	Reduce Serial input buffer size from 1024 to 32 bytes
+imports.mak, products.mak
+	import latest TI-RTOS to get fixes to SPI driver
 
-	Open and Close PWM ports as needed to save power. A bug in PWM_close()
-	needs to be fixed before switching pin modes dynamically will work
+config.bld
+	suppress wchar_t warnings (so we don't miss any "real" warnings)
 
-	Make MSP432 analogWrite() thread safe.
-
-bundles/energia/*/tests
-	remove bogus .bin file generation (on MSP432 it was creating 500 MB
-        file because objdump can only produce a single contigous memory image.)
-
-bundles/energia/cc3200
-	use HeapRem to eliminate fixed-size heap in BSS
-
-ti/platforms/*
-	rename Board_init.c output directory from 'platform' to a 
-	platform-specic name
-
-	"fix" ti.platforms.emt432LP's Board_init.c to "properly terminate"
-	_all_ GPIO pins (to save power).
-
-bundles/energia
-	minor enhancements to mapsum to improve ability to easily compare 
-	MSP432 to CC3200 tests
+ti.platforms.emt432LP
+	add workaround for MSP432 SRAM retension register silicon bug so
+	we can enter LPM3 without losing SRAM
 
 MRS
