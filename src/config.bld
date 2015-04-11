@@ -55,6 +55,9 @@ else {
     gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -fno-exceptions";
 }
 
+gnuTargets.M4F.lnkOpts.suffix += " -Wl,--no-wchar-size-warning";
+gnuTargets.M4.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
+
 /* define the set of targets for which to build */
 if (Pkg.name.match(/432/)) {
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
