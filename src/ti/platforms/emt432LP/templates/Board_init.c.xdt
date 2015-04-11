@@ -772,6 +772,9 @@ const PowerMSP432_Config PowerMSP432_config = {
  */
 void Board_initPower(void)
 {
+    /* Retain all SRAM banks prior to going to LPM3 (Deep-sleep) */
+    SYSCTL_SRAM_BANKRET |= 0xff; /* TODO: remove once TI-RTOS (or the device) does this by default */
+    
     Power_init();
     Power_enablePolicy();
 }
