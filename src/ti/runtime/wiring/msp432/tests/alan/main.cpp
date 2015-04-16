@@ -29,8 +29,8 @@ void (*func_ptr[][2])(void) = {
 //	{setup0, loop0},
 //	{setup1, loop1},
 //	{setup2, loop2},
-	{setup3, loop3},
-	{setup4, loop4},
+//	{setup3, loop3},
+//	{setup4, loop4},
 //	{setup5, loop5},
 //	{setup6, loop6},
 	{setup7, loop7}
@@ -40,8 +40,8 @@ const char *taskNames[] = {
 //	"loop0",
 //	"loop1",
 //	"loop2",
-	"loop3",
-	"loop4",
+//	"loop3",
+//	"loop4",
 //	"loop5",
 //	"loop6",
 	"loop7"

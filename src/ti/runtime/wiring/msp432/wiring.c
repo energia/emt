@@ -36,6 +36,15 @@
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
 
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
+
+#include <rom.h>
+#include <rom_map.h>
+#include <wdt_a.h>
+
 unsigned long micros(void)
 {
     Types_FreqHz freq;
@@ -86,7 +95,108 @@ void delayMicroseconds(unsigned int us)
     }
 }
 
+void clockTickFxn(uintptr_t arg)
+{
+    Clock_tick();
+}
+
+static void switchToWatchdogTimer()
+{
+    Clock_TimerProxy_Handle clockTimer;
+    static Hwi_Handle wdtHwi = NULL;
+
+    /* Stop Timer_A currrently being used by Clock */
+    clockTimer = Clock_getTimerHandle();
+    Clock_TimerProxy_stop(clockTimer);
+
+    /* Make Clock_getTickPeriod() return the correct value */
+    Clock_TimerProxy_setPeriodMicroSecs(clockTimer, 250000);
+
+    if (wdtHwi == NULL) {
+        /* Create watchdog Timer Hwi */
+        wdtHwi = Hwi_create(19, clockTickFxn, NULL, NULL);
+    }
+
+    /* don't allow deeper than DEEPSLEEP1 */
+    Power_setConstraint(PowerMSP432_DISALLOW_DEEPSLEEP_1);
+
+    /* Start watchdog Timer */
+    MAP_WDT_A_holdTimer();
+    MAP_WDT_A_clearTimer();
+    MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_XCLK, WDT_A_CLOCKITERATIONS_8192);
+    MAP_WDT_A_startTimer();
+
+    /* hence, Clock_tick() will be called from 250ms watchdog timer interrupt */
+}
+
+static void switchToTimerA()
+{
+    Clock_TimerProxy_Handle clockTimer;
+
+    /* Stop watchdog Timer */
+    MAP_WDT_A_holdTimer();
+    MAP_WDT_A_clearTimer();
+
+    /* Re-start Timer_A */
+    clockTimer = Clock_getTimerHandle();
+    Clock_TimerProxy_setPeriodMicroSecs(clockTimer, 1000);
+    Clock_TimerProxy_start(clockTimer);
+
+    /* hence, Clock_tick() will be called from 1ms Timer_A interrupt */
+}
+
+static delayMode = 0;
+
 void delay(uint32_t milliseconds)
 {
-    Task_sleep(milliseconds);
+    uint32_t sleepTime;
+
+    switch (delayMode) {
+        /* using Timer_A, check for opportunity to transition to WDT */
+        case 0:
+            if ((milliseconds % 250) <= 50) {
+                delayMode = 1;
+                switchToWatchdogTimer();
+                sleepTime = (milliseconds + 50) / 250;
+            }
+            else {
+                delayMode = 2;
+                switchToTimerA();
+                sleepTime = milliseconds;
+            }
+            break;
+        /* using WDT, check for need to transition to Timer_A */
+        case 1:
+            if ((milliseconds % 250) <= 50) {
+                sleepTime = (milliseconds + 50) / 250;
+            }
+            else {
+                delayMode = 2;
+                switchToTimerA();
+                sleepTime = milliseconds;
+            }
+            break;
+        /* always using Timer_A */
+        case 2:
+            sleepTime = milliseconds;
+            break;
+    }
+
+    Task_sleep(sleepTime);
+}
+
+void setDelayResolution(uint32_t milliseconds)
+{
+    if (milliseconds > 200) {
+        if ((delayMode == 0) || (delayMode == 2)) {
+            switchToWatchdogTimer();
+            delayMode = 1;
+        }
+    }
+    else {
+        if (delayMode == 1) {
+            switchToTimerA();
+            delayMode = 2;
+        }
+    }
 }
