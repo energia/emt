@@ -55,7 +55,7 @@ HardwareSerial::HardwareSerial(unsigned long module)
 /*
  * Private Methods
  */
- void HardwareSerial::init(unsigned long module)
+void HardwareSerial::init(unsigned long module)
 {
     rxWriteIndex = 0;
     rxReadIndex = 0;

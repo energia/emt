@@ -65,7 +65,7 @@ class HardwareSerial : public Stream
         void begin(unsigned long);
         void setModule(unsigned long);
         void setPins(unsigned long);
-        void seize(void);  /* sieze serial port for this thread */
+        void seize(void);    /* seize serial port for this thread */
         void release(void);  /* release serial port */
         void end(void);
         virtual int available(void);
@@ -78,10 +78,10 @@ class HardwareSerial : public Stream
 
 };
 
-//Create new HardwareSerial called Serial for use in Sketch.
+// Create new HardwareSerial called Serial for use in Sketch.
 extern HardwareSerial Serial;
 extern HardwareSerial Serial1;
 
-//I should delete this, but i need to check first
+// I should delete this, but I need to check first
 extern void serialEventRun(void) __attribute__((weak));
 #endif
