@@ -356,6 +356,11 @@ void Board_initGPIO(void)
     PJSEL0 |= BIT0 | BIT1;
     PJSEL1 &= ~(BIT0 | BIT1);
 
+    /* Turn off PSS high-side & low-side supervisors */
+    PSSKEY = PSS_KEY_KEY_VAL;
+    PSSCTL0 |= SVSMHOFF | SVSLOFF;         /* 823 (14) uA -> 809 (3) uA */
+    PSSKEY = 0;
+
     /* Configure Port PJ.4 and PJ.5 */
     ; /* do nothing (the reset default is to support JTAG) */
 
