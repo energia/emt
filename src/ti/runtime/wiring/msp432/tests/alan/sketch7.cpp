@@ -53,5 +53,11 @@ void setup7()
 
 void loop7()
 {
-    delay(1000);
+    delay(5000);
+    setDelayResolution(1);
+    delay(5000);
+    setDelayResolution(250);
+//    digitalWrite(RED_LED, 1);
+//    delay(10);
+//    digitalWrite(RED_LED, 0);
 }
