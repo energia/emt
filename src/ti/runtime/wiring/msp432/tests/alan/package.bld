@@ -10,10 +10,16 @@ var PLATFORM = "ti.platforms.emt432LP";
 
 var SRCS = getSources(".");
 var DEFS = "-Dxdc__nolocalstring=1";
+var MAIN = "main.cpp";
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
-    Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS}).addObjects(SRCS);
+
+    Pkg.addLibrary("lib/sketches", targ, {defs: DEFS}).addObjects(SRCS);
+
+    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS});
+    exe.addObjects([MAIN]);
+
     break;  /* comment this out to build using TI compiler */
 }
 
@@ -27,7 +33,7 @@ function getSources(dir)
     var list = java.io.File(dir).list();
     for (var i = 0; i < list.length; i++) {
         var file = String(list[i]);
-        if (file.match(/\.c$|\.cpp$/) && file[0] != '.') {
+        if (file.match(/\.c$|\.cpp$/) && file[0] != '.' && file != MAIN) {
             result.push(file);
         }
     }
