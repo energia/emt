@@ -8,9 +8,9 @@ print("  using DriverLib: " + DLIBROOT);
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
-var TI_CCOPTS = "--gcc --diag_warning=225";
+var TI_COPTS = "--gcc --diag_warning=225";
+var GCC_CXXOPTS = "-fno-rtti";
 
-//var DEFS = "-Dxdc__nolocalnames=1 -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX";
 var DEFS = "-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dxdc__nolocalnames=1";
 
 var INCS = '-I"' + DLIBROOT + '" '
@@ -22,26 +22,43 @@ var SRCS = getSources(".");
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
-    var ccopts = targ.$name.indexOf("ti.targets") == 0 ? TI_CCOPTS : "";
-    Pkg.addLibrary("lib/" + Pkg.name, targ, {
+
+    /* create a library for all the Wiring API sources */
+    var lib = Pkg.addLibrary("lib/" + Pkg.name, targ, {
 		       incs: INCS,
 		       defs: DEFS,
-		       copts: ccopts,
 		       suffix: ".lib"
-		   }).addObjects(SRCS);
+		   });
+
+    /* compute compiler-specific options for C and C++ code */
+    var copts = targ.$name.indexOf("ti.targets") == 0 ? TI_COPTS : "";
+    var cxxopts = targ.$name.indexOf("gnu.targets") == 0 ? GCC_CXXOPTS : "";
+
+    /* add C and C++ files separately to use of language-specific options */
+    lib.addObjects(SRCS.cxx, {copts: cxxopts});
+    lib.addObjects(SRCS.c, {copts: copts});
     break;
 }
 
 function getSources(dir)
 {
-    var result = [];
+    var result = {c: [], cxx: [], main: []};
+
     var list = java.io.File(dir).list();
     for (var i = 0; i < list.length; i++) {
         var file = String(list[i]);
-        if (file.match(/\.c$|\.cpp$/) && file[0] != '.') {
-            result.push(file);
-        }
+	if (file[0] != '.') {
+	    if (file == "main.c" || file == "main.cpp") {
+		result.main.push(file);
+	    }
+            else if (file.match(/\.c$/) ) {
+		result.c.push(file);
+            }
+	    else if (file.match(/\.cpp$/) ) {
+		result.cxx.push(file);
+            }
+	}
     }
-    result.push("avr/dtostrf.c");
+    result.c.push("avr/dtostrf.c");
     return (result);
 }
