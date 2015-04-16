@@ -223,8 +223,12 @@ function parseGnu(fileName)
         }
             
         var index = Math.max(key.lastIndexOf('/'), key.lastIndexOf('\\'));
+	var prefix = key.substring(0, index);
+	if (java.io.File(prefix).isAbsolute()) {
+	    prefix = String(java.io.File(prefix).getCanonicalPath());
+	}
         key = key.substring(index + 1) 
-	    + " (" + key.substring(0, index).replace(/\\/g, '/') + ")";
+	    + " (" + prefix.replace(/\\/g, '/') + ")";
 
         /* accumulate sizes for each "container" */
         if (result[key] == null) {
