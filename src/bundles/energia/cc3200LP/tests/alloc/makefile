@@ -74,5 +74,4 @@ clean:
 	-@$(RM) *.obj
 	-@$(RM) *.out
 	-@$(RM) *.map
-	-@$(RM) *.bin
 	-@$(RM) *.size

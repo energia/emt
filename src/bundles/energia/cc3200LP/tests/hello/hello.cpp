@@ -1,4 +1,4 @@
-/* BIOS Header files */
+/* SYS/BIOS Header files */
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
 

@@ -1,5 +1,5 @@
 #include <Energia.h> // Energia Wiring API
-#include <WString.h> // Energia Wiring API
+#include <WString.h> // Energia Wiring String API
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Memory.h>
 
