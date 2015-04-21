@@ -77,7 +77,7 @@ static Hwi_Struct hwiStruct;
  */
 static Void Board_errorDMAHwi(UArg arg)
 {
-    System_printf("DMA error code: %d\n", MAP_uDMAErrorStatusGet());
+//    System_printf("DMA error code: %d\n", MAP_uDMAErrorStatusGet());
     MAP_uDMAErrorStatusClear();
     System_abort("DMA error!!");
 }
@@ -585,11 +585,6 @@ void Board_init(void)
 {
     /* driver-independent initialization */
     Board_initGeneral();
-
-    /* initialize the DMA so that _all_ SPI transfers use DMA (including
-     * the internal drivers for the WiFi and serial flash)
-     */
-    Board_initDMA(); 
 
     /* driver-specific initialization */
     Board_initGPIO();

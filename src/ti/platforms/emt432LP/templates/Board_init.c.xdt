@@ -78,7 +78,7 @@ static Hwi_Struct dmaHwiStruct;
  */
 static Void Board_errorDMAHwi(UArg arg)
 {
-    System_printf("DMA error code: %d\n", MAP_DMA_getErrorStatus());
+//    System_printf("DMA error code: %d\n", MAP_DMA_getErrorStatus());
     MAP_DMA_clearErrorStatus();
     System_abort("DMA error!!");
 }
