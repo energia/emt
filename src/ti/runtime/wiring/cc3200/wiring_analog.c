@@ -31,6 +31,7 @@
  */
  
 #define ARDUINO_MAIN
+
 #include "wiring_private.h"
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
@@ -47,107 +48,6 @@
  */
 
 extern PWM_Config PWM_config[];
-
-#define NOT_ON_TIMER    128
-
-#define TIMERA0A 0
-#define TIMERA0B 1
-#define TIMERA1A 2
-#define TIMERA1B 3
-#define TIMERA2A 4
-#define TIMERA2B 5
-#define TIMERA3A 6
-#define TIMERA3B 7
-
-const uint8_t digital_pin_to_timer[] = {
-	NOT_ON_TIMER,	/*  dummy */
-	NOT_ON_TIMER,	/*  1  - 3.3V */
-	NOT_ON_TIMER,	/*  2  - GPIO_03 */
-	NOT_ON_TIMER,	/*  3  - GPIO_13 */
-	NOT_ON_TIMER,	/*  4  - GPIO_12 */
-	NOT_ON_TIMER,	/*  5  - GPIO_06 */
-	NOT_ON_TIMER,	/*  6  - GPIO_04 */
-	NOT_ON_TIMER,	/*  7  - GPIO_14 */
-	NOT_ON_TIMER,	/*  8  - GPIO_07 */
-	TIMERA3A, 		/*  9  -  port 0 */
-	TIMERA3B, 		/*  10 -  port 1 */
-	NOT_ON_TIMER,	/*  11 - GPIO_22 */
-	NOT_ON_TIMER,	/*  12 - GPIO_01 */
-	TIMERA1A, 		/*  13 -  port 0 */
-	NOT_ON_TIMER,	/*  14 - GPIO_15 */
-	NOT_ON_TIMER,	/*  15 - GPIO_16 */
-	NOT_ON_TIMER,	/*  16 - RESET */
-	NOT_ON_TIMER,	/*  17 - GPIO_31 */
-	NOT_ON_TIMER,	/*  18 - GPIO_17 */
-	NOT_ON_TIMER,	/*  19 - GPIO_28 */
-	NOT_ON_TIMER,	/*  20 - GND */
-	NOT_ON_TIMER,	/*  21 - 5V */
-	NOT_ON_TIMER,	/*  22 - GND */
-	NOT_ON_TIMER,	/*  23 - GPIO_02 */
-	NOT_ON_TIMER,	/*  24 - GPIO_05 */
-	NOT_ON_TIMER,	/*  25 - GPIO_03 */
-	NOT_ON_TIMER,	/*  26 - GPIO_04 */
-	NOT_ON_TIMER,	/*  27 - GPIO_08 */
-	NOT_ON_TIMER,	/*  28 - GPIO_30 */
-	TIMERA2B,		/*  29 -  port 1 */
-	NOT_ON_TIMER,	/*  30 - GPIO_00 */
-	TIMERA0A, 		/*  31 -  port 0 */
-	NOT_ON_TIMER,	/*  32 - GPIO_23 */
-	NOT_ON_TIMER,	/*  33 - GPIO_05 */
-	NOT_ON_TIMER,	/*  34 - GPIO_07 */
-	NOT_ON_TIMER,	/*  35 - GPIO_28 */
-	TIMERA1A, 		/*  36 -  port 0 */
-	TIMERA2B, 		/*  37 -  port 1 */
-	TIMERA0A, 		/*  38 -  port 0 */
-	TIMERA3A, 		/*  39 -  port 0 */
-	TIMERA3B, 		/*  40 -  port 1 */
-};
-
-#define NOT_A_PIN       0
-
-const uint16_t digital_pin_to_pin_num[] = {
-	NOT_A_PIN,	/*  dummy */
-	NOT_A_PIN,	/*  1  - 3.3V */
-	PIN_58,		/*  2  - GPIO_03 */
-	PIN_04,		/*  3  - GPIO_13 */
-	PIN_03,		/*  4  - GPIO_12 */
-	PIN_61,		/*  5  - GPIO_06 */
-	PIN_59,		/*  6  - GPIO_04 */
-	PIN_05,		/*  7  - GPIO_14 */
-	PIN_62,		/*  8  - GPIO_07 */
-	PIN_01,		/*  9  - GPIO_10 */
-	PIN_02,		/*  10 - GPIO_11 */
-	PIN_15,		/*  11 - GPIO_22 */
-	PIN_55,		/*  12 - GPIO_01 */
-	PIN_21,		/*  13 - GPIO_25 */
-	PIN_06,		/*  14 - GPIO_15 */
-	PIN_07,		/*  15 - GPIO_16 */
-	NOT_A_PIN,	/*  16 - RESET */
-	PIN_45,		/*  17 - GPIO_31 */
-	PIN_08,		/*  18 - GPIO_17 */
-	PIN_18,		/*  19 - GPIO_28 */
-	NOT_A_PIN,	/*  20 - GND */
-	NOT_A_PIN,	/*  21 - 5V */
-	NOT_A_PIN,	/*  22 - GND */
-	PIN_57,		/*  23 - GPIO_02 */
-	PIN_60,		/*  24 - GPIO_05 */
-	PIN_58,		/*  25 - GPIO_03 */
-	PIN_59,		/*  26 - GPIO_04 */
-	PIN_63,		/*  27 - GPIO_08 */
-	PIN_53,		/*  28 - GPIO_30 */
-	PIN_64,		/*  29 - GPIO_09 */
-	PIN_50,		/*  30 - GPIO_00 */
-	PIN_17,		/*  31 - GPIO_24 */
-	PIN_16,		/*  32 - GPIO_23 */
-	PIN_60,		/*  33 - GPIO_05 */
-	PIN_62,		/*  34 - GPIO_07 */
-	PIN_18,		/*  35 - GPIO_28 */
-	PIN_21,		/*  36 - GPIO_25 */
-	PIN_64,		/*  37 - GPIO_09 */
-	PIN_17,		/*  38 - GPIO_24 */
-	PIN_01,		/*  39 - GPIO_10 */
-	PIN_02		/*  40 - GPIO_11 */
-};
 
 /*
  * For the CC3200, the timers used for PWM are clocked at 80MHz.
@@ -231,9 +131,6 @@ void stopAnalogWrite(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_timer[pin];
 
-    /* stop the timer */
-    analogWrite(pin, 0);
-
     /* Close PWM port */
     PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
 }
@@ -242,53 +139,7 @@ void stopAnalogWrite(uint8_t pin)
  * analogRead() support
  */
 
-#define NOT_ON_ADC      0xFF
-
 static int8_t analogReadShift = 4;
-
-static const uint32_t digital_pin_to_analog_in[] = {
-    NOT_ON_ADC,     /*  dummy   */
-    NOT_ON_ADC,		/*  1	*/
-    ADC_CH_1,		/*  2 - P58	*/
-    NOT_ON_ADC,     /*  3	*/
-    NOT_ON_ADC, 	/*  4	*/
-    NOT_ON_ADC, 	/*  5	*/
-    ADC_CH_2,		/*  6 - P59	*/
-    NOT_ON_ADC,		/*  7 	*/
-    NOT_ON_ADC, 	/*  8 	*/
-    NOT_ON_ADC, 	/*  9 	*/
-    NOT_ON_ADC, 	/*  10 	*/
-    NOT_ON_ADC, 	/*  11 	*/
-    NOT_ON_ADC, 	/*  12 	*/
-    NOT_ON_ADC, 	/*  13 	*/
-    NOT_ON_ADC, 	/*  14 	*/
-    NOT_ON_ADC,		/*  15	*/
-    NOT_ON_ADC,     /*  16 	*/
-    NOT_ON_ADC,     /*  17 	*/
-    NOT_ON_ADC, 	/*  18 	*/
-    NOT_ON_ADC,     /*  19 	*/
-    NOT_ON_ADC, 	/*  20 	*/
-    NOT_ON_ADC, 	/*  21 	*/
-    NOT_ON_ADC, 	/*  22 	*/
-    ADC_CH_0,		/*  23 - P57	*/
-    ADC_CH_3,		/*  24 - P60	*/
-    NOT_ON_ADC,		/*  25 	*/
-    NOT_ON_ADC,		/*  26 	*/
-    NOT_ON_ADC, 	/*  27 	*/
-    NOT_ON_ADC, 	/*  28 	*/
-    NOT_ON_ADC, 	/*  29 	*/
-    NOT_ON_ADC,     /*  30 	*/
-    NOT_ON_ADC, 	/*  31 	*/
-    NOT_ON_ADC,     /*  32 	*/
-    NOT_ON_ADC,     /*  33 	*/
-    NOT_ON_ADC,     /*  34 	*/
-    NOT_ON_ADC,     /*  35 	*/
-    NOT_ON_ADC,     /*  36 	*/
-    NOT_ON_ADC,     /*  37 	*/
-    NOT_ON_ADC,  	/*  38 	*/
-    NOT_ON_ADC,		/*  39 	*/
-    NOT_ON_ADC,     /*  40 	*/
-};
 
 /*
  * \brief           Reads an analog value from the pin specified.
