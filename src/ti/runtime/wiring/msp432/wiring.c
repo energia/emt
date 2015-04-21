@@ -154,7 +154,7 @@ void delay(uint32_t milliseconds)
     switch (delayMode) {
         /* using Timer_A, check for opportunity to transition to WDT */
         case 0:
-            if ((milliseconds % 250) <= 50) {
+            if ( (milliseconds > 200) && (milliseconds % 250) <= 50) {
                 delayMode = 1;
                 switchToWatchdogTimer();
                 sleepTime = (milliseconds + 50) / 250;
@@ -167,7 +167,7 @@ void delay(uint32_t milliseconds)
             break;
         /* using WDT, check for need to transition to Timer_A */
         case 1:
-            if ((milliseconds % 250) <= 50) {
+            if ( (milliseconds > 200) && (milliseconds % 250) <= 50) {
                 sleepTime = (milliseconds + 50) / 250;
             }
             else {
