@@ -1,4 +1,4 @@
-				emt-a32
+				emt-a33
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,36 +125,19 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring.{msp432|cc3200}
+	added variant sub-directories to support multiple boards
+
 DELETIONS
 
 CHANGES
 
 *
-	add -fno-rtti as necessary to eliminate _all_ exception handling
+	re-worked the energia configurations to reduce footprint
 
-	misc cleanup and sync of cc3200 and msp432
+	added ti.sysbios.hal.Timer to closures
 
-*tests/alan
-	put sketches in a library to enable more complete deadcode elimination
-
-ti/runtime/wiring/msp432
-	provide "experimental" mechanism for switching to watchdog timer for
-	low power operation:
-	    void setDelayResolution(uint32_t milliseconds);
-
-ti/runtime/wiring/msp432/tests/alan
-	added example that illustrates putting the device in single-digit uA 
-	current consumption: simply call
-		 setDelayResolution(250);
-        in a sketch setup function.  If the delay resolution period is too
-	short (e.g., 1), timerA is used and *lots* more	current flows but at
-	multiple of 250 current consumption is minimal.
-
-bundles/energia/msp432
-	disable ClockMode_DYNAMIC to support switching between clock timer
-	tick sources
-
-ti/platforms/emt432
-	disable power monitors for even lower power when idle
+ti.runtime.wiring.*.tests.alan
+	tweaks to test size and power
 
 MRS
