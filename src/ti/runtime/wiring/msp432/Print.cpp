@@ -29,6 +29,8 @@
 
 // Public Methods //////////////////////////////////////////////////////////////
 
+// double-precision floating point operations were moved to PrintD.cpp ////////
+
 /* default implementation: may be overridden */
 size_t Print::write(const uint8_t *buffer, size_t size)
 {
@@ -38,7 +40,6 @@ size_t Print::write(const uint8_t *buffer, size_t size)
     }
     return (n);
 }
-
 
 size_t Print::print(const String &s)
 {
@@ -94,11 +95,6 @@ size_t Print::print(unsigned long n, int base)
 {
     if (base == 0) return write(n);
     else return printNumber(n, base);
-}
-
-size_t Print::print(double n, int digits)
-{
-    return (printFloat(n, digits));
 }
 
 size_t Print::print(float n, int digits)
@@ -174,13 +170,6 @@ size_t Print::println(unsigned long num, int base)
     return (n);
 }
 
-size_t Print::println(double num, int digits)
-{
-    size_t n = print(num, digits);
-    n += println();
-    return (n);
-}
-
 size_t Print::println(float num, int digits)
 {
     size_t n = print(num, digits);
@@ -217,45 +206,6 @@ size_t Print::printNumber(unsigned long n, uint8_t base)
     return (write(str));
 }
 
-size_t Print::printFloat(double number, uint8_t digits)
-{
-    size_t n = 0;
-
-    // Handle negative numbers
-    if (number < 0.0)
-    {
-        n += print('-');
-        number = -number;
-    }
-
-    // Round correctly so that print(1.999, 2) prints as "2.00"
-    double rounding = 0.5;
-    for (uint8_t i=0; i<digits; ++i)
-        rounding /= 10.0;
-
-    number += rounding;
-
-    // Extract the integer part of the number and print it
-    unsigned long int_part = (unsigned long)number;
-    double remainder = number - (double)int_part;
-    n += print(int_part);
-
-    // Print the decimal point, but only if there are digits beyond
-    if (digits > 0) {
-        n += print(".");
-    }
-
-    // Extract digits from the remainder one at a time
-    while (digits-- > 0)
-    {
-        remainder *= 10.0;
-        int toPrint = int(remainder);
-        n += print(toPrint);
-        remainder -= toPrint;
-    }
-
-    return (n);
-}
 
 size_t Print::printFloat(float number, uint8_t digits)
 {
