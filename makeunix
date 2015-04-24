@@ -11,7 +11,7 @@ MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS)"
 
 JOBS = --jobs=4
 
-.all-files: imports.mak .imports .exports .generated_files
+.all-files: .imports .exports .generated_files
 
 # ======== .debug ========
 # Echo build state variables
@@ -22,28 +22,29 @@ JOBS = --jobs=4
 	@echo "TIRTOS_REPOS =" "$(TIRTOS_REPOS)"
 
 # ======== .exports ========
-# Builds all packages and makes release archive files 
+# Builds all packages and release archives
 .exports: .local-release
+
+
+# ======== .local-release ========
+# Builds all packages and releases
+.local-release: .local-all imports.mak
+	@echo making energia closures ...
+	make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
 
 # ======== .local-all ========
 # Builds all packages
-.local-all: .imports
+.local-all: .imports imports.mak
 	-@mkdir -p exports
 	@echo "Building platforms ..."
 	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
 	@echo "Building packages ..."
 	$(MYXDC) $(JOBS) release -Pr src
 
-# ======== .local-release ========
-# Builds all packages and makes releases
-.local-release: .local-all
-	@echo making energia closures ...
-	make -C src/bundles/energia all msp432LP/closure.zip cc3200LP/closure.zip
-
 # ======== .local-regress ========
 # Test the packages in this tree
 .regress: .local-regress
-.local-regress: .imports
+.local-regress: .imports .local-all
 	$(MYXDC) test -Pr ./src
 
 # ======== .clean ========

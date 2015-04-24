@@ -84,7 +84,7 @@ release: .buildinfo all
 	-$(MAKE) --no-print-directory -C bundles/energia all
 
 clean:
-	$(XDCROOT)/xdc --jobs=4 -k $@ -Pr .
+	-$(XDCROOT)/xdc --jobs=4 -k $@ -Pr .
 	@echo removing generated product bundle ...
 	-$(RMDIR) $(PRODUCT)
 	@echo cleaning energia closures ...
