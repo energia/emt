@@ -36,7 +36,7 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #
 CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g -Dxdc__nolocalnames=1 -fno-exceptions
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
-LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CCROOT)/lib"
+LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" 
 
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 
@@ -76,5 +76,4 @@ clean:
 	-@$(RM) *.obj
 	-@$(RM) *.out
 	-@$(RM) *.map
-	-@$(RM) *.bin
 	-@$(RM) *.size
