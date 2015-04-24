@@ -1,4 +1,4 @@
-				emt-a33
+				emt-a34
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,19 +125,21 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.{msp432|cc3200}
-	added variant sub-directories to support multiple boards
-
 DELETIONS
 
 CHANGES
 
-*
-	re-worked the energia configurations to reduce footprint
+./imports.mak
+	import latest TI-RTOS with fixed BIOS headers + double-precision 
+	clean MSP432 driverlib
 
-	added ti.sysbios.hal.Timer to closures
+*/energia.cfg
+	removed %f format support from System_printf to enable even footprint 
+	savings (Wiring uses use the Print class to format data)
 
-ti.runtime.wiring.*.tests.alan
-	tweaks to test size and power
+ti.runtime.wiring.{cc3200|msp432}
+	refactored WString.cpp and Print.cpp to enable an additional 2K
+	footprint savings for MSP432 apps that don't use double-precision 
+	math.
 
 MRS
