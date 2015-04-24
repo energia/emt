@@ -51,8 +51,8 @@ if (false) {
     tiTargets.M4F.lnkOpts.suffix = " -c -m $(XDCCFGDIR)/$@.map -i $(rootDir)/lib --disable_auto_rts --library=rtsv7M4_T_le_v4SPD16_eabi_eh.lib";
 }
 else {
-    gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -fno-exceptions";
-    gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -fno-exceptions";
+    gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
+    gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
 }
 
 gnuTargets.M4F.lnkOpts.suffix += " -Wl,--no-wchar-size-warning";
