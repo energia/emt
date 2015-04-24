@@ -21,7 +21,8 @@
 
 #include "WString.h"
 #include "itoa.h"
-#include "avr/dtostrf.h"
+
+/* double-precision floating point operations were moved to StringD.cpp */
 
 /*********************************************/
 /*  Constructors                             */
@@ -105,20 +106,6 @@ String::String(unsigned long value, unsigned char base)
 	char buf[1 + 8 * sizeof(unsigned long)];
 	ultoa(value, buf, base);
 	*this = buf;
-}
-
-String::String(float value, unsigned char decimalPlaces)
-{
-	init();
-	char buf[33];
-	*this = dtostrf(value, (decimalPlaces + 2), decimalPlaces, buf);
-}
-
-String::String(double value, unsigned char decimalPlaces)
-{
-	init();
-	char buf[33];
-	*this = dtostrf(value, (decimalPlaces + 2), decimalPlaces, buf);
 }
 
 String::~String()
@@ -322,20 +309,6 @@ unsigned char String::concat(unsigned long num)
 	return concat(buf, strlen(buf));
 }
 
-unsigned char String::concat(float num)
-{
-	char buf[20];
-	char* string = dtostrf(num, 4, 2, buf);
-	return concat(string, strlen(string));
-}
-
-unsigned char String::concat(double num)
-{
-	char buf[20];
-	char* string = dtostrf(num, 4, 2, buf);
-	return concat(string, strlen(string));
-}
-
 unsigned char String::concat(const __FlashStringHelper * str)
 {
 	if (!str) return 0;
@@ -402,20 +375,6 @@ StringSumHelper & operator + (const StringSumHelper &lhs, long num)
 }
 
 StringSumHelper & operator + (const StringSumHelper &lhs, unsigned long num)
-{
-	StringSumHelper &a = const_cast<StringSumHelper&>(lhs);
-	if (!a.concat(num)) a.invalidate();
-	return a;
-}
-
-StringSumHelper & operator + (const StringSumHelper &lhs, float num)
-{
-	StringSumHelper &a = const_cast<StringSumHelper&>(lhs);
-	if (!a.concat(num)) a.invalidate();
-	return a;
-}
-
-StringSumHelper & operator + (const StringSumHelper &lhs, double num)
 {
 	StringSumHelper &a = const_cast<StringSumHelper&>(lhs);
 	if (!a.concat(num)) a.invalidate();
@@ -740,8 +699,3 @@ long String::toInt(void) const
 	return 0;
 }
 
-float String::toFloat(void) const
-{
-	if (buffer) return float(atof(buffer));
-	return 0;
-}
