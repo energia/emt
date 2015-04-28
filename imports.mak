@@ -1,7 +1,7 @@
 #
 # XDCtools used to build this tree
 #
-XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_01_31_eng/$(BUILD_HOST_OS)
+XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_01_32_eng/$(BUILD_HOST_OS)
 
 #
 # internal TISB trees containing imports
