@@ -46,7 +46,7 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos -i ti.runtime.wiring.cc3200.variants.emt3200LP $<
 	@echo patching $@ ...
 	@$(CURDIR)/../patch.ksh $@ ./src $<
 

@@ -28,7 +28,7 @@ SDK_LIBS = $(DRVLIB.msp432)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
-           -I "$(CLOSURE)/ti/runtime/wiring/msp432" 
+           -I "$(CLOSURE)/ti/runtime/wiring" 
 
 # C compiler-specific options and commands
 #    --cmd-file=...  - use the options defined in the specified file
