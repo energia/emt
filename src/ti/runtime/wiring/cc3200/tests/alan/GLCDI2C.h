@@ -2,7 +2,6 @@
 #ifndef GLCDI2C_h
 #define GLCDI2C_h
 
-#include <Wire.h>
 #include <inttypes.h>
 #include <Print.h>
 

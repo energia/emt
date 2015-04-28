@@ -1,0 +1,2 @@
+var Pkg = xdc.module("xdc.bld.PackageContents");
+Pkg.attrs.exportAll = true;

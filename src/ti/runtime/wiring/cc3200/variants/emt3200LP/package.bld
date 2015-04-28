@@ -1,0 +1,32 @@
+/*
+ *  ======== package.bld ========
+ */
+var Platform = xdc.module("ti.platforms.emt3200LP.Platform");
+var DLIBROOT = Platform.findDriverLib();
+print("  using DriverLib: " + DLIBROOT);
+
+Pkg.attrs.profile = "release";
+Pkg.attrs.exportAll = true;
+
+var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+
+var INCS = '-I"' + DLIBROOT + '" '
+       + '-I"' + DLIBROOT + '/driverlib" '
+       + '-I"' + DLIBROOT + '/inc" ';
+
+var SRCS = ["Board_init.c", "pins.c"];
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+    var toolchain = targ.$name.split(/\./)[0];
+
+    if (toolchain == "gnu") {
+	/* create a library for all the Wiring API sources */
+	var lib = Pkg.addLibrary("lib/emt3200LP", targ, {
+				     incs: INCS,
+				     defs: DEFS,
+				     suffix: ".lib"
+				 });
+	lib.addObjects(SRCS);
+    }
+}

@@ -30,7 +30,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Energia.h"
+#include <ti/runtime/wiring/Energia.h>
 #include <xdc/runtime/Timestamp.h>
 #include <xdc/runtime/Types.h>
 #include <ti/sysbios/knl/Clock.h>
