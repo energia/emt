@@ -36,10 +36,12 @@ instance:
      */
     override config xdc.platform.IExeContext.Cpu CPU = {
         id:             "0",
-        clockRate:      1.0,
+        clockRate:      48.0,
         catalogName:    "ti.catalog.arm.cortexm4",
         deviceName:     "MSP432",
         revision:       "",
     };
+
+    override config String variant = "emt432LP";
 }
 

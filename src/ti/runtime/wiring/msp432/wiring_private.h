@@ -33,7 +33,7 @@
 #ifndef WiringPrivate_h
 #define WiringPrivate_h
 
-#include "Energia.h"
+#include <ti/runtime/wiring/Energia.h>
 
 #ifdef __cplusplus
 extern "C" {

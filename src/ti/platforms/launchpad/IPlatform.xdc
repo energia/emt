@@ -61,6 +61,8 @@ metaonly interface IPlatform inherits xdc.platform.IPlatform
      */
     function findDriverLib();
 
+    config Bool generateSources = false;
+
 instance:
 
     /*
@@ -102,4 +104,6 @@ instance:
      *  selected device.
      */
     config Bool includeLinkCmdFile = false;
+
+    config String variant;
 }

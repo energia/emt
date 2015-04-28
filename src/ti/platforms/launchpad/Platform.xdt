@@ -1,4 +1,8 @@
 %%{
+    if (this.generateSources == false) {
+        return;
+    }
+    
     /* get the input template directory and the output directory */
     var inputDir  = this.$package.$name.replace(/\./g, '/') + "/templates";
     var outputDir = this.$private.src.getGenSourceDir();
