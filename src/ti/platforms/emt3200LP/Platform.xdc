@@ -41,5 +41,7 @@ instance:
         deviceName:     "CC32xx",
         revision:       "",
     };
+
+    override config String variant = "emt3200LP";
 }
 
