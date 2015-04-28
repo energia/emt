@@ -1,4 +1,4 @@
-				emt-a34
+				emt-a35
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,21 +125,25 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring.*.tests.sanity
+	added simple sanity test for the wiring library
+
 DELETIONS
 
 CHANGES
 
-./imports.mak
-	import latest TI-RTOS with fixed BIOS headers + double-precision 
-	clean MSP432 driverlib
-
-*/energia.cfg
-	removed %f format support from System_printf to enable even footprint 
-	savings (Wiring uses use the Print class to format data)
+./imports.mak ./product.mak
+	imported latest xdctools to pickup parallel build warning fix
 
 ti.runtime.wiring.{cc3200|msp432}
-	refactored WString.cpp and Print.cpp to enable an additional 2K
-	footprint savings for MSP432 apps that don't use double-precision 
-	math.
+	refactored wiring sources into device independent, device-specific, 
+	and board-specific packages:
+	    ti.runtime.wiring - generic
+	    ti.runtime.wiring.{cc3200|msp432} - device specific
+	    ti.runtime.wiring.*.variants.{emt432LP|emt3200LP} - board-specific
+
+ti.platforms.*
+	disabled board-specific file generation in favor of using static
+	board-specific packages (ti.runtime.wiring.*.variants.*)
 
 MRS
