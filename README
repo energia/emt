@@ -1,4 +1,4 @@
-				emt-a35
+				emt-a36
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,25 +125,17 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.*.tests.sanity
-	added simple sanity test for the wiring library
-
 DELETIONS
 
 CHANGES
 
-./imports.mak ./product.mak
-	imported latest xdctools to pickup parallel build warning fix
+*
+	minor cleanup
 
-ti.runtime.wiring.{cc3200|msp432}
-	refactored wiring sources into device independent, device-specific, 
-	and board-specific packages:
-	    ti.runtime.wiring - generic
-	    ti.runtime.wiring.{cc3200|msp432} - device specific
-	    ti.runtime.wiring.*.variants.{emt432LP|emt3200LP} - board-specific
+ti.platforms.launchpad
+	fixed stack allocation bug introduced in last tree
 
-ti.platforms.*
-	disabled board-specific file generation in favor of using static
-	board-specific packages (ti.runtime.wiring.*.variants.*)
+ti.runtime.wiring
+	wiring_digital.c: Fixed the pinMode(x,INPUT) problem.
 
 MRS
