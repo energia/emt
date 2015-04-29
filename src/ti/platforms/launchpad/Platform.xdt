@@ -1,7 +1,5 @@
 %%{
-    if (this.generateSources == false) {
-        return;
-    }
+if (this.generateSources) {
     
     /* get the input template directory and the output directory */
     var inputDir  = this.$package.$name.replace(/\./g, '/') + "/templates";
@@ -34,7 +32,8 @@
      * this directory to the project
      */
     var file = java.io.FileWriter(outputDir + "/.exclude");
-    file.close()
+    file.close();
+}
 %%}
 %if (Program.build.target.$name.match(/^gnu\.targets/)) {
 %    var prefix = this.$package.$name.replace(/\./g, '_');
