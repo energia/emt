@@ -21,6 +21,7 @@ XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
 
 PLATFORM = ti.platforms.emt432LP
 TARGET   = gnu.targets.arm.M4F
+CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
@@ -53,7 +54,7 @@ closure: configPkg
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
-	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) -p $(PLATFORM) -r release -c $(CCROOT) $<
+	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 
 # remove all generated files/directories
 clean:
