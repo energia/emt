@@ -8,7 +8,7 @@ print("  using DriverLib: " + DLIBROOT);
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
-var DEFS = "-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX";
+var DEFS = "-D__MSP432P401R__=1";
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '

@@ -4,15 +4,6 @@
  */
 
 /*
- * ======== module$meta$init ========
- */
-function module$meta$init()
-{
-    this.$super.module$meta$init();
-    this.driverLibPattern = "../products/MSPWare*/driverlib";
-}
-
-/*
  *  ======== Platform.instance$meta$init ========
  *  This function is called to initialize a newly created instance of a
  *  platform.  Platform instances are created just prior to running
