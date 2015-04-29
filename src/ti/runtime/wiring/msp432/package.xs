@@ -7,7 +7,7 @@ function getLibs(prog)
     var prefix = this.$name.replace(/\./g, "/");
 
     var platform = prog.platform.$orig;
-    if (! "variant" in platform) {
+    if ((!"variant" in platform) || platform.variant == null) {
 	this.$logError("platform: " + platform.$name 
             + " does not supply a variant name required for ti.runtime.wiring",
             this);
