@@ -81,7 +81,7 @@ SECTIONS {
 
 SECTIONS {
     /* create an empty sections at the end of SRAM and FLASH */
-    .empty : { *(.empty) } > SRAM
+    .empty : { *(.empty) KEEP(*(xdc.meta)) } > SRAM
     .emptyFlash : { *(.emptyFlash) } > FLASH
 
     /* the UNUSED symbols define reusable heap memory */
