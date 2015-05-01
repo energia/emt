@@ -4,8 +4,6 @@ int period = 1;
 
 __extern void blinkSetup(void)
 {
-    Serial.print(period);
-
     pinMode(RED_LED, OUTPUT);    // set ledPin pin as output
 }
 
