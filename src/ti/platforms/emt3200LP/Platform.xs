@@ -18,6 +18,9 @@
 function instance$meta$init(name)
 {
     this.includeLinkCmdFile = true;
+    if (name != "") {
+	this.variant = name;
+    }
 
     /* We use 'revision' to pass 'the real device name' to the generic
      * MSP432 device.
