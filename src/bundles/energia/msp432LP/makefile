@@ -23,6 +23,8 @@ PLATFORM = ti.platforms.emt432LP
 TARGET   = gnu.targets.arm.M4F
 CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 
+VARIANTS  = $(EMTROOT)/ti/runtime/wiring/msp432/variants
+
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
 else
@@ -47,7 +49,10 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos -i ti.runtime.wiring.msp432.variants.emt432LP $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
+
+	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
+
 	@echo patching $@ ...
 	@$(CURDIR)/../patch.ksh $@ ./src $<
 

@@ -21,6 +21,9 @@ XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
 
 PLATFORM = ti.platforms.emt3200LP
 TARGET   = gnu.targets.arm.M4
+CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
+
+VARIANTS  = $(EMTROOT)/ti/runtime/wiring/cc3200/variants
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
@@ -46,14 +49,17 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos -i ti.runtime.wiring.cc3200.variants.emt3200LP $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.drivers.ports -i ti.drivers.ports.tirtos $<
+
+	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
+
 	@echo patching $@ ...
 	@$(CURDIR)/../patch.ksh $@ ./src $<
 
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
-	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) -p $(PLATFORM) -r release -c $(CCROOT) $<
+	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 
 # remove all generated files/directories
 clean:
