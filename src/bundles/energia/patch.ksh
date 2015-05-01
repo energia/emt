@@ -12,7 +12,7 @@ t=".tmp$$,patch"
 # remove files that should have been removed via closure 
 echo "  removing build artifacts ..."
 find $1 \( -name "*.cfg.dot" -o -name "*.xdc.inc" -o -name "*.xdc.ninc" -o -name "*.dep" -o -name ".xdcenv.mak" -o -name "package.mak" \) -exec rm -f {} \;
-for f in `find $1 -name "*.mak" | grep /package/`; do
+for f in `find $1 -name "*.mak" | egrep '/package/|/lib/`; do
     echo "    removing $f ..."
     rm -f $f
 done
