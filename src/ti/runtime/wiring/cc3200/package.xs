@@ -3,24 +3,29 @@
  */
 function getLibs(prog)
 {
-    /* find board-specific variant library */
-    var prefix = this.$name.replace(/\./g, "/");
-
+    /* ensure platform supports specification of board variants */
     var platform = prog.platform.$orig;
     if ((!"variant" in platform) || platform.variant == null) {
-	this.$logError("platform: " + platform.$name 
+	prog.$logError("platform: " + platform.$name 
             + " does not supply a variant name required for ti.runtime.wiring",
             this);
 	return (null);
     }
 	
-    var vbase = xdc.findFile(prefix + "/variants/" + platform.variant);
-
-    if (vbase) {
-	var vlib = vbase + "/lib/" + platform.variant + ".lib";
-	return ("lib/" + this.$name + ".lib;" + vlib);
+    /* select board-specific variant package directory */
+    var prefix = this.$name.replace(/\./g, "/");
+    var ext = "." + prog.build.target.suffix + ".lib";
+    var vname = prefix + "/variants/" + platform.variant;
+    var vbase = xdc.findFile(vname);
+    if (vbase == null) {
+	prog.$logWarning("unknown board variant '" + platform.variant 
+			 + "': expected to find board support files in "
+			 + vname, this);
+	return (null);
     }
 
-    this.$logWarning("unknown board variant: " + platform.variant, this);
-    return (null);
+    /* return our lib + the pre-compiled board-support library */
+    var lib = this.$name.substring(this.$name.lastIndexOf('.') + 1) + ext;
+    var vlib = vbase + "/lib/" + platform.variant + ext;
+    return ("lib/" + lib + ";" + vlib);
 }
