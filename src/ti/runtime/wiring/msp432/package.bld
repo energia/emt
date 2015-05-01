@@ -1,64 +1,6 @@
 /*
  *  ======== package.bld ========
  */
-var Platform = xdc.module("ti.platforms.emt432LP.Platform");
-var DLIBROOT = Platform.findDriverLib();
-print("  using DriverLib: " + DLIBROOT);
+var msp432 = xdc.loadCapsule("msp432.bld");
 
-Pkg.attrs.profile = "release";
-Pkg.attrs.exportAll = true;
-
-var COPTS   = {ti: "--gcc --diag_warning=225", gcc: ""};
-var CXXOPTS = {ti: "",                         gcc: "-fno-rtti"};
-
-var DEFS = "-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dxdc__nolocalnames=1";
-
-var INCS = '-I"' + DLIBROOT + '" '
-       + '-I"' + DLIBROOT + '/inc" '
-       + '-I"' + DLIBROOT + '/inc/CMSIS" '
-       + '-I"' + DLIBROOT + '/MSP432P4xx"';
-
-var SRCS = getSources([".", "..", "../avr"]);
-
-for (var i = 0; i < Build.targets.length; i++) {
-    var targ = Build.targets[i];
-
-    var toolchain = targ.$name.split(/\./)[0];
-
-    /* create a library for all the Wiring API sources */
-    var lib = Pkg.addLibrary("lib/" + Pkg.name, targ, {
-		       incs: INCS,
-		       defs: DEFS,
-		       suffix: ".lib"
-		   });
-
-    /* add C and C++ files separately to use of language-specific options */
-    lib.addObjects(SRCS.cxx, {copts: CXXOPTS[toolchain]});
-    lib.addObjects(SRCS.c,   {copts: COPTS[toolchain]});
-    break;
-}
-
-function getSources(dirs)
-{
-    var result = {c: [], cxx: [], main: []};
-
-    for (var k = 0; k < dirs.length; k++) {
-	var list = java.io.File(dirs[k]).list();
-	var prefix = dirs[k] + "/";
-	for (var i = 0; i < list.length; i++) {
-            var file = String(list[i]);
-	    if (file[0] != '.') {
-		if (file == "main.c" || file == "main.cpp") {
-		    result.main.push(prefix + file);
-		}
-		else if (file.match(/\.c$/) ) {
-		    result.c.push(prefix + file);
-		}
-		else if (file.match(/\.cpp$/) ) {
-		    result.cxx.push(prefix + file);
-		}
-	    }
-	}
-    }
-    return (result);
-}
+msp432.addLibs([".", "..", "../avr"], {defs: " -Dxdc__nolocalnames=1"});

@@ -1,33 +1,5 @@
 /*
  *  ======== package.bld ========
  */
-var Platform = xdc.module("ti.platforms.emt432LP.Platform");
-var DLIBROOT = Platform.findDriverLib();
-print("  using DriverLib: " + DLIBROOT);
-
-Pkg.attrs.profile = "release";
-Pkg.attrs.exportAll = true;
-
-var DEFS = "-D__MSP432P401R__=1";
-
-var INCS = '-I"' + DLIBROOT + '" '
-       + '-I"' + DLIBROOT + '/inc" '
-       + '-I"' + DLIBROOT + '/inc/CMSIS" '
-       + '-I"' + DLIBROOT + '/MSP432P4xx"';
-
-var SRCS = ["Board_init.c", "pins.c"];
-
-for (var i = 0; i < Build.targets.length; i++) {
-    var targ = Build.targets[i];
-    var toolchain = targ.$name.split(/\./)[0];
-
-    if (toolchain =="gnu") {
-	/* create board-specific library for the Wiring API */
-	var lib = Pkg.addLibrary("lib/emt432LP", targ, {
-		       incs: INCS,
-		       defs: DEFS,
-		       suffix: ".lib"
-		   });
-	lib.addObjects(SRCS);
-    }
-}
+var msp432 = xdc.loadCapsule("ti/runtime/wiring/msp432/msp432.bld");
+msp432.addLibs(["."]);
