@@ -1,4 +1,4 @@
-				emt-a36
+				emt-a37
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,13 +129,26 @@ DELETIONS
 
 CHANGES
 
-*
-	minor cleanup
+src/bundles/energia
+	fix mapsum to account for alignment holes; we now exactly match size 
+	computed by size
 
-ti.platforms.launchpad
-	fixed stack allocation bug introduced in last tree
+ti.platforms.*
+	fix variant error handling in getLibs
 
-ti.runtime.wiring
-	wiring_digital.c: Fixed the pinMode(x,INPUT) problem.
+	variant names can be specified as part of the platform name; e.g.,
+	"ti.platforms.emt3200LP:redbear_wifi_mini" identifies the 
+	red_bear_wifi_mini variant.
+
+	We still need to rename the emt432LP platform to just emt432.
+
+ti.platforms.launchpad + *.cfg
+	add placement of xdc.meta to remove last bit of wasted flash and
+	update all .cfg scripts to allow this explicit placement
+
+ti.runtime.wiring.*
+	we now build all variants and export to the appropriate closure
+
+	library names have been changed to include target suffix
 
 MRS
