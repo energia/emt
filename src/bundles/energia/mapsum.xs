@@ -15,10 +15,11 @@ var symbolNamesGnu = {
 };
 
 var symbolTable = {};
+var objectTable = {};
+var toolChain = null;
 
 function main(arguments)
 {
-    var toolChain = null;
     var verbose = 0;
 
     for (;;) {
@@ -57,6 +58,8 @@ function main(arguments)
 
     print(arguments[0] + " summary:");
     display(carray, arguments[0], verbose);
+
+    //findRef(carray, "_aeabi_(ddiv|dmul|dadd|dsub|dcmp)");
 }
 
 /*
@@ -108,12 +111,12 @@ function getToolChain(fileName)
 /*
  *  ======== parse ========
  */
-function parse(fileName, toolChain)
+function parse(fileName, tools)
 {
     var result = null;
 
     /* if toolchain is not specified, try to figure it out from the map file */
-    if (toolChain == null) {
+    if (tools == null) {
 	toolChain = getToolChain(fileName);
     }
 
@@ -155,12 +158,18 @@ function parseGnu(fileName)
 
     var header = true;
     var continuation = false;
+    var fill = 0;
     while ((line = file.readLine()) != null) {
 	line = String(line);
+
         if (line.indexOf("Linker script and memory map") == 0) {
             header = false;
         }
-        if (header) continue;
+
+        if (header) {
+	    objectDepsGnu(line, objectTable);
+	    continue;
+	}
 
 	/* look for symbol values for the symbols defined in symbolNamesGnu */
 	if (symbolValueGnu(line, symbolNamesGnu, symbolTable)) {
@@ -178,11 +187,20 @@ function parseGnu(fileName)
          *    "^ <section_name>", or
          *    "^     0x<addr> 0x<size> <container>(<object>)" immediately followed by the form above
          */
-        var tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
+        var tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+\/\\\-]+)(\(.+\))?/);
         if (tokens == null) {
+
+	    /* check for fill sections (alignment padding) */
+	    tokens = line.match(/^\s+\*fill\*\s+0x[0-9a-f]+\s+(0x[\0-9a-f]+)/);
+	    if (tokens != null && tokens[1] != null) {
+		fill = tokens[1] - 0;
+		continue;
+	    }
+
+	    /* are we expecting a continuation line? */
             if (continuation == true) {
                 continuation = false;
-                tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_\/\\\-]+)(\(.+\))?/);
+                tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+\/\\\-]+)(\(.+\))?/);
                 if (tokens == null) {
                     print("warning: expected a continuation of section '" + section + "', skipping line: " + line);
                     continue;
@@ -193,7 +211,7 @@ function parseGnu(fileName)
                 key = tokens[3];
             }
             else {
-                tokens = line.match(/^ ([\.a-zA-Z0-9_:\*]+)$/);
+                tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)$/);
                 if (tokens != null && tokens[1] != "CREATE_OBJECT_SYMBOLS") {
                     continuation = true;
                     section = tokens[1];
@@ -232,13 +250,19 @@ function parseGnu(fileName)
 
         /* accumulate sizes for each "container" */
         if (result[key] == null) {
-            result[key] = {name: key, total: 0, sections: {}};
+            result[key] = {name: key, total: 0, sections: {}, fill: 0};
         }
-        result[key].total += size;
+        result[key].total += size + fill;
+        result[key].fill += fill;
 
         /* accumulate sizes of each contained section */
         var ssize = result[key].sections[section];
         result[key].sections[section] = size + (ssize != null ? ssize : 0);
+	if (fill) {
+	    /* add a separate fill section so we can see who needs alignment */
+	    result[key].sections[section + "(*fill*)"] = fill;
+	    fill = 0;
+	}
     }
 
     /* close file stream */
@@ -359,7 +383,7 @@ function parseTI(fileName)
  */
 function symbolValueGnu(line, symbolNames, symbolTable)
 {
-    var tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+([a-zA-Z_]+[a-zA-Z0-9_]*)/);
+    var tokens = line.match(/^\s+(0x[a-fA-F0-9]+)\s+([a-zA-Z_]+[a-zA-Z0-9_+]*)/);
     if (tokens != null && tokens[1] != null && tokens[2] != null) {
 	if (symbolNames[tokens[2]] != null) {
 	    symbolTable[symbolNames[tokens[2]]] = Number(tokens[1]);
@@ -367,6 +391,128 @@ function symbolValueGnu(line, symbolNames, symbolTable)
 	}
     }
     return (false);
+}
+
+/*
+ *  ======== objectDepsGnu ========
+ */
+var cam = null;
+function objectDepsGnu(line, objectTable)
+{
+    if (line.indexOf("Archive member ") == 0 || line == "") {
+	return;
+    }
+
+    var amp = /^\s*([a-zA-Z-0-9_+\\\/:]+)\(([a-zA-Z-0-9_+\\\/\.:]+)\)(\s+\(([a-zA-Z-0-9_+\.]+)\))$/;
+    var tokens = line.match(amp);
+    if (tokens) {
+	if (line[0] == ' ') {
+	    objectTable.push({member: cam, referer: am, symbol: tokens[4]});
+	}
+	else {
+	    cam = {name: line, archive: tokens[1], object: tokens[2]};
+	}
+    }
+}
+
+/*
+ *  ======== findRef ========
+ */
+function findRef(carray, name)
+{
+    print("\n  scanning for " + name + " ...");
+    if (toolChain != "gnu") {
+	print("    can't parse non-gcc map files (yet).");
+	return;
+    }
+
+    /* create a hash table of all objects linked into the program */
+    var objects = {};
+    for (var i = 0; i < carray.length; i++) {
+        var c = carray[i];
+
+	var isLib = false;
+	var objName;
+        for (var k in c.sections) {
+	    var names = k.match(/^([a-zA-Z-0-9_+\.:]+)\(([a-zA-Z-0-9_+\.\\\/]*)\)/);
+	    if (names && names[2] != null) {
+		isLib = true;
+		objName = names[2];
+		if (objects[objName] == null) {
+		    objects[objName] = {name: objName, sections: {}};
+		}
+		objects[objName].sections[names[1]] = 1;
+	    }
+	    else {
+		//print("warning: skipped " + k);
+	    }
+        }
+	if (!isLib) {
+	    objName = c.name.split(/\s/)[0];
+	    objects[objName] = {name: objName, sections: {}};
+	}
+    }
+
+    /* run nm on all top-level libraries and objects */
+    for (var i = 0; i < carray.length; i++) {
+        var c = carray[i];
+	var tokens = c.name.match(/([a-zA-Z-0-9+_\.]+)\s\(([a-zA-Z-0-9_+\.\\\/]*)\)/);
+	if (tokens == null) {
+	    print("can't parse " + c.name);
+	    continue;
+	}
+	/* skip over internal section names */
+	if (tokens[1] == "COMMON") {
+	    continue;
+	}
+
+	var prefix = (tokens[2] == "" || tokens[2] == null) ? "." : tokens[2];
+	var fileName = prefix + '/' + tokens[1];
+
+        if (java.io.File(fileName).exists()) {
+
+	    /* run nm */
+	    var options = {useEnv: true};
+	    var result = {};
+	    xdc.exec(["nm", fileName], options, result);
+	    if (result.exitStatus != 0) {
+		print(result.output);
+		java.lang.System.exit(result.exitStatus);
+	    }
+
+	    /* parse the output of nm */
+	    var header = "  nm " + tokens[1] + " ...";
+	    var lines = result.output.split(/[\n\r]+/);
+	    var curObj = tokens[1];
+	    for (var j = 0; j < lines.length; j++) {
+		var line = lines[j];
+
+		/* skip over object file name lines (from "nm <archive>") */
+		var tokens = line.match(/^([a-zA-Z-0-9_+\.\\\/]*):$/);
+		if (tokens && tokens[1]) {
+		    curObj = tokens[1];
+		    continue;
+		}
+
+		/* skip over curObj if it's not in the executable */
+		if (objects[curObj] == null) {
+		    continue;
+		}
+
+		/* if the line matches a reference, print it */
+		if (line.match(name)) {
+		    if (header != null) {
+			print(header);
+			header = null;
+		    }
+		    print("    " + curObj + " : " + line + "\n");
+		}
+	    }
+	}
+	else {
+	    print("can't find " + fileName + " (" + c.name + ")");
+	}
+    }
 }
 
 /*
