@@ -39,13 +39,21 @@
 #include <ti/drivers/SPI.h>
 #include <ti/sysbios/gates/GateMutex.h>
 
-#define SPI_MODE0 0
-#define SPI_MODE1 1
-#define SPI_MODE2 2
-#define SPI_MODE3 4
+#define SPI_MODE0 SPI_POL0_PHA0
+#define SPI_MODE1 SPI_POL0_PHA1
+#define SPI_MODE2 SPI_POL1_PHA0
+#define SPI_MODE3 SPI_POL1_PHA1
 
 #define MSBFIRST 1
 #define LSBFIRST 0
+
+#define SPI_CLOCK_MAX 16000000L
+#define SPI_CLOCK_DIV1 1
+#define SPI_CLOCK_DIV2 2
+#define SPI_CLOCK_DIV4 4
+#define SPI_CLOCK_DIV8 8
+#define SPI_CLOCK_DIV16 16
+#define SPI_CLOCK_DIV32 32
 
 class SPIClass
 {
@@ -53,7 +61,11 @@ class SPIClass
         bool begun;
         uint8_t slaveSelect;
         uint8_t spiModule;
+        uint8_t bitOrder;
+        uint8_t dataMode;
+        uint8_t clockDivider;
         SPI_Handle spi;
+        SPI_Params params;
         SPI_Transaction transaction;
         GateMutex_Struct gate;
         void init(unsigned long);

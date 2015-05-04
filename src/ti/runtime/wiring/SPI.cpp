@@ -32,6 +32,8 @@
 
 #include "wiring_private.h"
 #include "SPI.h"
+#include <inc/hw_types.h>
+#include <driverlib/spi.h>
 
 SPIClass::SPIClass(void)
 {
@@ -49,7 +51,11 @@ SPIClass::SPIClass(unsigned long module)
 void SPIClass::init(unsigned long module)
 {
     spiModule = module;
-    begun = false;
+    begun = FALSE;
+    dataMode = SPI_MODE0;
+    bitOrder = MSBFIRST;
+    clockDivider = SPI_CLOCK_DIV4;
+    SPI_Params_init(&params);
 }
 
 /*
@@ -57,14 +63,14 @@ void SPIClass::init(unsigned long module)
  */
 void SPIClass::begin(uint8_t ssPin)
 {
-    SPI_Params params;
-
     /* return if SPI already started */
     if (begun == TRUE) return;
 
+    SPI_Params_init(&params);
     Board_initSPI();
 
-    SPI_Params_init(&params);
+    params.bitRate = SPI_CLOCK_MAX / clockDivider;
+    params.frameFormat = (SPI_FrameFormat) dataMode;
 
     spi = SPI_open(spiModule, &params);
 
@@ -85,6 +91,7 @@ void SPIClass::begin() {
 }
 
 void SPIClass::end(uint8_t ssPin) {
+    begun = FALSE;
     SPI_close(spi);
     if (slaveSelect != 0) {
         pinMode(slaveSelect, INPUT);
@@ -97,29 +104,62 @@ void SPIClass::end() {
 
 void SPIClass::setBitOrder(uint8_t ssPin, uint8_t bitOrder)
 {
+
+    if(bitOrder < LSBFIRST || bitOrder > MSBFIRST)
+        return;
+
+    this->bitOrder = bitOrder;
 }
 
 void SPIClass::setBitOrder(uint8_t bitOrder)
 {
+    setBitOrder(0, bitOrder);
 }
 
 void SPIClass::setDataMode(uint8_t mode)
 {
+    dataMode = mode;
+
+    if (begun == TRUE) {
+        SPI_close(spi);
+        params.frameFormat = (SPI_FrameFormat) dataMode;
+        spi = SPI_open(spiModule, &params);
+    }
 }
 
 void SPIClass::setClockDivider(uint8_t divider)
 {
+    clockDivider = divider;
+
+    if (begun == TRUE) {
+        SPI_close(spi);
+        params.bitRate = SPI_CLOCK_MAX / clockDivider;
+        spi = SPI_open(spiModule, &params);
+    }
 }
 
 uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode)
 {
-    char data_in;
+    uint32_t rxtxData;
+    uint8_t rxData;
+
+    if(bitOrder == LSBFIRST) {
+        rxtxData = data_out;
+        /* reverse order of 32 bits */
+        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+        /* reverse order of bytes to get original bits into lowest byte */
+        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+        data_out = (uint8_t) rxtxData;
+    }
+
+    uint8_t data_in;
 
     GateMutex_enter(GateMutex_handle(&gate));
 
     if (slaveSelect != 0) {
         digitalWrite(ssPin, LOW);
     }
+
     transaction.txBuf = &data_out;
     transaction.rxBuf = &data_in;
     transaction.count = 1;
@@ -129,7 +169,17 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
         digitalWrite(ssPin, HIGH);
     }
 
+    if(bitOrder == LSBFIRST) {
+        rxtxData = data_in;
+        /* reverse order of 32 bits */
+        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+        /* reverse order of bytes to get original bits into lowest byte */
+        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+        data_in = (uint8_t) rxtxData;
+    }
+
     GateMutex_leave(GateMutex_handle(&gate), 0);
+
     return ((uint8_t)data_in);
 }
 
