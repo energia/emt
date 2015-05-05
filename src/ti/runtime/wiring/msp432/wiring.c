@@ -33,6 +33,7 @@
 #include <ti/runtime/wiring/Energia.h>
 #include <xdc/runtime/Timestamp.h>
 #include <xdc/runtime/Types.h>
+#define ti_sysbios_knl_Clock__internalaccess
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
 
@@ -45,6 +46,11 @@
 #include <rom_map.h>
 #include <wdt_a.h>
 
+static delayMode = 0; /* determines  which tick source is driving Clock_tick */
+
+/*
+ *  ======== micros ========
+ */
 unsigned long micros(void)
 {
     Types_FreqHz freq;
@@ -57,12 +63,18 @@ unsigned long micros(void)
     return (t64/(freq.lo/1000000));
 }
 
+/*
+ *  ======== millis ========
+ */
 unsigned long millis(void)
 {
     return (Clock_getTicks());
 }
 
-/* Delay for the given number of microseconds. */
+/*
+ *  ======== delayMicroseconds ========
+ *  Delay for the given number of microseconds.
+ */
 void delayMicroseconds(unsigned int us)
 {
     if (us <7) {
@@ -95,11 +107,28 @@ void delayMicroseconds(unsigned int us)
     }
 }
 
-void clockTickFxn(uintptr_t arg)
+/*
+ *  ======== clockTickFxn ========
+ *
+ *  250ms Watchdog Timer interrupt handler.
+ */
+static void clockTickFxn(uintptr_t arg)
 {
+    /*
+     * Bump Clock tick count by 249. 
+     * Clock_tick() will bump it one more
+     */
+    ((ti_sysbios_knl_Clock_Module_State *)(&ti_sysbios_knl_Clock_Module__state__V))->ticks += 249;
+
     Clock_tick();
 }
 
+/*
+ *  ======== switchToWatchdogTimer ========
+ *
+ *  Use 250ms watchdog timer interrupt to drive the Clock tick
+ *  Stop the default Timer_A then start the watchdog timer.
+ */
 static void switchToWatchdogTimer()
 {
     Clock_TimerProxy_Handle clockTimer;
@@ -109,85 +138,93 @@ static void switchToWatchdogTimer()
     clockTimer = Clock_getTimerHandle();
     Clock_TimerProxy_stop(clockTimer);
 
-    /* Make Clock_getTickPeriod() return the correct value */
-    Clock_TimerProxy_setPeriodMicroSecs(clockTimer, 250000);
+    MAP_WDT_A_holdTimer();
 
     if (wdtHwi == NULL) {
         /* Create watchdog Timer Hwi */
         wdtHwi = Hwi_create(19, clockTickFxn, NULL, NULL);
+        
+        /* set WDT to use 32KHz input, 250ms period */
+        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_XCLK, WDT_A_CLOCKITERATIONS_8192);
     }
 
     /* don't allow deeper than DEEPSLEEP1 */
     Power_setConstraint(PowerMSP432_DISALLOW_DEEPSLEEP_1);
 
     /* Start watchdog Timer */
-    MAP_WDT_A_holdTimer();
     MAP_WDT_A_clearTimer();
-    MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_XCLK, WDT_A_CLOCKITERATIONS_8192);
     MAP_WDT_A_startTimer();
 
     /* hence, Clock_tick() will be called from 250ms watchdog timer interrupt */
 }
 
+/*
+ *  ======== switchToTimerA ========
+ *
+ *  Use 1ms Timer_A interrupt to drive the Clock tick
+ *  By default, the Timer_A Hwi object has already been
+ *  statically created and configured to call Clock_tick().
+ *  Simply stop the watchdog timer and restart the Timer_A.
+ */
 static void switchToTimerA()
 {
     Clock_TimerProxy_Handle clockTimer;
 
     /* Stop watchdog Timer */
     MAP_WDT_A_holdTimer();
-    MAP_WDT_A_clearTimer();
 
     /* Re-start Timer_A */
     clockTimer = Clock_getTimerHandle();
-    Clock_TimerProxy_setPeriodMicroSecs(clockTimer, 1000);
     Clock_TimerProxy_start(clockTimer);
 
     /* hence, Clock_tick() will be called from 1ms Timer_A interrupt */
 }
 
-static delayMode = 0;
-
+/* 
+ *  ======== delay ========
+ */
 void delay(uint32_t milliseconds)
 {
-    uint32_t sleepTime;
-
     switch (delayMode) {
         /* using Timer_A, check for opportunity to transition to WDT */
         case 0:
-            if ( (milliseconds > 200) && (milliseconds % 250) <= 50) {
+            if ( (milliseconds >= 250) && (milliseconds % 250) == 0) {
                 delayMode = 1;
                 switchToWatchdogTimer();
-                sleepTime = (milliseconds + 50) / 250;
             }
             else {
                 delayMode = 2;
                 switchToTimerA();
-                sleepTime = milliseconds;
             }
             break;
         /* using WDT, check for need to transition to Timer_A */
         case 1:
-            if ( (milliseconds > 200) && (milliseconds % 250) <= 50) {
-                sleepTime = (milliseconds + 50) / 250;
+            if ( (milliseconds >= 250) && (milliseconds % 250) == 0) {
+                /* stay in mode 1 */
             }
             else {
+                /* switch to Timer_A and never look back */
                 delayMode = 2;
                 switchToTimerA();
-                sleepTime = milliseconds;
             }
             break;
         /* always using Timer_A */
         case 2:
-            sleepTime = milliseconds;
             break;
     }
 
-    Task_sleep(sleepTime);
+    /* timeout is always in milliseconds so that Clock_workFunc() behaves properly */
+    Task_sleep(milliseconds); 
 }
 
-void setDelayResolution(uint32_t milliseconds)
+/* 
+ *  ======== setDelayResolution ========
+ *
+ *  For now, only two resolutions are supported: 1ms and 250ms
+ */
+ void setDelayResolution(uint32_t milliseconds)
 {
-    if (milliseconds > 200) {
+    if (milliseconds == 250) {
         if ((delayMode == 0) || (delayMode == 2)) {
             switchToWatchdogTimer();
             delayMode = 1;
