@@ -19,7 +19,7 @@ SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
 
 XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
 
-PLATFORM = ti.platforms.emt432LP
+PLATFORM = ti.platforms.emt432
 TARGET   = gnu.targets.arm.M4F
 CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 

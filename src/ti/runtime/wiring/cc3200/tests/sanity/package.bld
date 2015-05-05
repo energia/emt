@@ -6,7 +6,7 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200LP";
+var PLATFORM = "ti.platforms.emt3200";
 
 var SRCS = getSources(".");
 var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200LP";

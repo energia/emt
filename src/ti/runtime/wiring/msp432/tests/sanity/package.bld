@@ -6,7 +6,7 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt432LP";
+var PLATFORM = "ti.platforms.emt432";
 
 var SRCS = getSources(".");
 var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_MSP432LP";

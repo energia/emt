@@ -1,7 +1,7 @@
 /*
  *  ======== cc3200.bld ========
  */
-var Platform = xdc.module("ti.platforms.emt3200LP.Platform");
+var Platform = xdc.module("ti.platforms.emt3200.Platform");
 var DLIBROOT = Platform.findDriverLib();
 print("  using DriverLib: " + DLIBROOT);
 

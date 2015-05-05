@@ -86,11 +86,11 @@ else {
     Build.useTargets = null;
 }
 
-gnuTargets.M4F.platform = "ti.platforms.emt432LP";
-tiTargets.M4F.platform =  "ti.platforms.emt432LP";
+gnuTargets.M4F.platform = "ti.platforms.emt432";
+tiTargets.M4F.platform =  "ti.platforms.emt432";
 
-gnuTargets.M4.platform = "ti.platforms.emt3200LP";
-tiTargets.M4.platform =  "ti.platforms.emt3200LP";
+gnuTargets.M4.platform = "ti.platforms.emt3200";
+tiTargets.M4.platform =  "ti.platforms.emt3200";
 
 /* For now, the default is to export everthing */
 Pkg.attrs.exportAll = true;

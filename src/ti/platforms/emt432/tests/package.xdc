@@ -9,11 +9,11 @@
  *      Texas Instruments - initial implementation
  * 
  * --/COPYRIGHT--*/
-requires ti.platforms.emt3200LP;
+requires ti.platforms.emt432;
 
 /*!
- *  ======== ti.platforms.emt3200LP.tests ========
- *  Test package for the Energia MT CC3200LP platform
+ *  ======== ti.platforms.emt432.tests ========
+ *  Test package for the Energia MT MSP432LP platform
  */
-package ti.platforms.emt3200LP.tests [1, 0, 0] {
+package ti.platforms.emt432.tests [1,0,0] {
 }
