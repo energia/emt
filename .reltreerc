@@ -2,11 +2,11 @@
 
 echo "pushing to energia.nu ..."
 base=./src/bundles/energia
-$base/push.exp $base/msp432LP/closure.zip MSP-EXP432P401R-closure.zip \
-               $base/cc3200LP/closure.zip CC3200-LAUNCHXL-closure.zip
+$base/push.exp $base/msp432/closure.zip msp432-closure.zip \
+               $base/cc3200/closure.zip cc3200-closure.zip
 
 echo "removing uncompressed closures ..."
-rm -rf $base/msp432LP/closure $base/cc3200LP/closure
+rm -rf $base/msp432/closure $base/cc3200/closure
 
 echo "pushing to gitorious ..."
 cd ../emt.git
