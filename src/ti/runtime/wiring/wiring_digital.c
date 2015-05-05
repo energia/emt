@@ -39,7 +39,7 @@ GPIO_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
    switch (mode) {
         case INPUT:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
-            return (GPIO_CFG_INPUT);
+            return (GPIO_CFG_IN_NOPULL);
 	    
         case INPUT_PULLUP:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
