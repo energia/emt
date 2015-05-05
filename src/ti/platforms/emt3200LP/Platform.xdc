@@ -42,6 +42,6 @@ instance:
         revision:       "",
     };
 
-    override config String variant = "emt3200LP";
+    override config String variant = "CC3200_LAUNCHXL";
 }
 

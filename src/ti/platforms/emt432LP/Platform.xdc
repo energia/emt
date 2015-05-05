@@ -42,6 +42,6 @@ instance:
         revision:       "",
     };
 
-    override config String variant = "emt432LP";
+    override config String variant = "MSP_EXP432P401R";
 }
 
