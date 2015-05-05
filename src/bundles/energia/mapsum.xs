@@ -59,6 +59,10 @@ function main(arguments)
     print(arguments[0] + " summary:");
     display(carray, arguments[0], verbose);
 
+    //printDepChains(objectTable, "lib_a-gdtoa-gethex.o");
+    //printDepChains(objectTable, "lib_a-er_gamma.o");
+    //printDepChains(objectTable, "unwind-arm.o");
+
     //findRef(carray, "_aeabi_(ddiv|dmul|dadd|dsub|dcmp)");
 }
 
@@ -157,6 +161,7 @@ function parseGnu(fileName)
     var result = {};
 
     var header = true;
+    var deps = true;
     var continuation = false;
     var fill = 0;
     while ((line = file.readLine()) != null) {
@@ -166,13 +171,15 @@ function parseGnu(fileName)
             header = false;
         }
 
-        if (header) {
-	    objectDepsGnu(line, objectTable);
+	/* look for symbol values for the symbols defined in symbolNamesGnu */
+	if (symbolValueGnu(line, symbolNamesGnu, symbolTable)) {
 	    continue;
 	}
 
-	/* look for symbol values for the symbols defined in symbolNamesGnu */
-	if (symbolValueGnu(line, symbolNamesGnu, symbolTable)) {
+        if (header) {
+	    if (deps) {
+		deps = objectDepsGnu(line, objectTable);
+	    }
 	    continue;
 	}
 
@@ -395,23 +402,123 @@ function symbolValueGnu(line, symbolNames, symbolTable)
 
 /*
  *  ======== objectDepsGnu ========
+ *  looks for the dependency chains described by line pairs of the form:
+ *     library(obj_in_library)
+ *         {obj (symbol)|library(obj_in_library) (symbol)}
+ *
+ *  The "library(obj_in_library)" string can be used as a key to trace 
+ *  dependency chains; it's both unique and appears as both an included
+ *  archive member and as a "because of" file.
  */
 var cam = null;
+var depsState = 0;
 function objectDepsGnu(line, objectTable)
 {
-    if (line.indexOf("Archive member ") == 0 || line == "") {
-	return;
+    if (depsState >= 3) {
+	return (false);
+    }
+    else if (line.indexOf("Archive member ") == 0) {
+	depsState++;
+	return (true);
+    }
+    else if (line == "") {
+	depsState++;
+	return (true);
     }
 
-    var amp = /^\s*([a-zA-Z-0-9_+\\\/:]+)\(([a-zA-Z-0-9_+\\\/\.:]+)\)(\s+\(([a-zA-Z-0-9_+\.]+)\))$/;
+    /* library(obj_in_library) (symbol) */
+    var amp = /(([a-zA-Z-0-9_+\\\/:\.]+)\(([a-zA-Z-0-9_+\.]+)\))( \(([a-zA-Z-0-9_+]+)\))?/;
     var tokens = line.match(amp);
     if (tokens) {
 	if (line[0] == ' ') {
-	    objectTable.push({member: cam, referer: am, symbol: tokens[4]});
+	    objectTable[cam.name] = {member: cam, referer: tokens[1], symbol: tokens[5]};
 	}
 	else {
 	    cam = {name: line, archive: tokens[1], object: tokens[2]};
 	}
+    }
+    else {
+	tokens = line.match(/([a-zA-Z-0-9_+\\\/:\.]+) \(([a-zA-Z-0-9_+\.]+)\)/);
+	if (line[0] != ' ') {
+	    print("error: " + line);
+	}
+	else if (tokens != null) {
+	    objectTable[cam.name] = {member: cam, referer: tokens[1], symbol: tokens[2]};
+	}
+	else {
+	    tokens = line.match(/\s+\(([a-zA-Z-0-9_+\.]+)\)/);
+	    if (tokens != null) {
+		objectTable[cam.name] = {member: cam, referer: null, symbol: tokens[1]};
+	    }
+	}
+    }
+    return (true);
+}
+
+/*
+ *  ======== printDeps ========
+ */
+function printDeps(ot)
+{
+    for (var name in ot) {
+	var shortName = name.substring(name.lastIndexOf('/') + 1);
+	print(shortName + ": is required to define " + ot[name].symbol + " from "
+              + ot[name].referer);
+    }
+}
+
+/*
+ *  ======== printDepChains ========
+ *  print sequence of objects that leads to the inclusion of each object matching
+ *  the start pattern
+ */
+function printDepChains(ot, startPattern)
+{
+    var name = null;
+    var i = 0;
+
+    print("\ndependency chains for objects matching '" + startPattern + "':");
+    /* look for objects in the object table that match startPattern */
+    for (name in ot) {
+	if (name.match(startPattern) != null) {
+	    i++;
+	    printDepChain(ot, name);
+            print("");
+	}
+    }
+
+    if (name != null && i == 0) {
+        print(" no objects match the pattern '" + startPattern + "'");
+    }
+}
+
+/*
+ *  ======== printDepChain ========
+ *  Print the dependency chain for the object file whose full name is specified
+ */
+function printDepChain(ot, fullName)
+{
+    /* define start to be the canonical short fullName */
+    var start = fullName.substring(fullName.lastIndexOf('/') + 1);
+
+    /* follow the chain of referers back to an initial obj file or undefined symbol */
+    var prefix = " ";
+    var obj = ot[fullName];
+    for (var ref = obj.referer; ref; ref = obj.referer) {
+	var shortRef = ref.substring(ref.lastIndexOf('/') + 1);
+	print(prefix + start + ": required by " + shortRef 
+	      + " for " + (obj.symbol == null ? "<???>" : obj.symbol));
+        prefix += " ";
+        start = shortRef;
+        obj = ot[ref];
+        if (obj == null) {
+            print(prefix + ref + " is required because it's on the command line");
+            break;
+        }
+    }
+    if (obj != null) {
+        print(prefix + start + " is required to define initially undefined symbol "
+              + obj.symbol);
     }
 }
 
@@ -526,7 +633,8 @@ function display(carray, fileName, verbose)
     for (var i = 0; i < carray.length; i++) {
         var c = carray[i];
         var len = String(c.total).length;
-        print("  " + c.total + pad.substring(len) + c.name);
+	var name = verbose > 1 ? c.name : c.name.replace(/ \(.*\)/, '');
+        print("  " + pad.substring(len) + c.total + " " + name);
         total += c.total;
 
         if (verbose) {
@@ -539,13 +647,14 @@ function display(carray, fileName, verbose)
             var nlines = verbose > 1 ? sections.length : Math.min(5, sections.length);
             for (var j = 0; j < nlines; j++) {
                 len = String(sections[j].total).length;
-                print("    " + sections[j].total + pad.substring(len) + sections[j].name);
+                print("    " + pad.substring(len) + sections[j].total 
+		      + " " + sections[j].name);
             }
         }
     }
 
     var len = String(total).length;
-    print("  " + total + pad.substring(len) + "TOTAL: " + fileName);
+    print("  " + pad.substring(len) + total + " TOTAL: " + fileName);
 
     var targ = getTargetSuffix(carray);
     
@@ -576,7 +685,7 @@ function displayMem(name, fileName, targ)
         }
 
         len = String(unused).length;
-        print("  " + unused + pad.substring(len) + "UNUSED "
+        print("  " + pad.substring(len) + unused + " UNUSED "
               + name + suffix + ": " + fileName);
     }
 }
