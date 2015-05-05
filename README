@@ -1,4 +1,4 @@
-				emt-a37
+				emt-a38
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,26 +129,20 @@ DELETIONS
 
 CHANGES
 
+./config.bld
+	replace -O2 optimization with -Os (save about 100 bytes)
+
 src/bundles/energia
-	fix mapsum to account for alignment holes; we now exactly match size 
-	computed by size
+	rename device-specific bundles to remove the now misleading 'LP' 
+	suffix; our platforms now support more than just LaunchPads (LP)
 
 ti.platforms.*
-	fix variant error handling in getLibs
-
-	variant names can be specified as part of the platform name; e.g.,
-	"ti.platforms.emt3200LP:redbear_wifi_mini" identifies the 
-	red_bear_wifi_mini variant.
-
-	We still need to rename the emt432LP platform to just emt432.
-
-ti.platforms.launchpad + *.cfg
-	add placement of xdc.meta to remove last bit of wasted flash and
-	update all .cfg scripts to allow this explicit placement
+	rename platforms to remove the now misleading 'LP' 
+	suffix; our platforms now support more than just LaunchPads (LP)
 
 ti.runtime.wiring.*
-	we now build all variants and export to the appropriate closure
+	add support for LSB and MSB SPI transfers
 
-	library names have been changed to include target suffix
+	Use NOPULL for non-qualified INPUTS in pinmode()
 
 MRS
