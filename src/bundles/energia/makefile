@@ -1,5 +1,5 @@
 # define default set of platforms, compiler toolchains, and tests to build
-PLATFORMS ?= msp432LP cc3200LP
+PLATFORMS ?= msp432 cc3200
 TESTS     ?= blink hello alloc string
 
 # define (optional) tools to run on output files to summarize footprint

@@ -3,7 +3,7 @@
 ## set flist to the list of files to transfer
 set flist $argv
 if {$argc == 0} then {
-    set flist [list "msp432LP/closure.zip" "MSP-EXP432P401R-closure.zip"]
+    set flist [list "msp432/closure.zip" "MSP-EXP432P401R-closure.zip"]
 } elseif { [expr {$argc % 2}] != 0 } then {
     send_user "usage: $argv0 [local-file remote-file] ..."
     exit 1
