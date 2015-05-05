@@ -8,8 +8,8 @@ print("  using DriverLib: " + DLIBROOT);
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
-var COPTS   = {ti: "--gcc --diag_warning=225", gcc: ""};
-var CXXOPTS = {ti: "",                         gcc: "-fno-rtti"};
+var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
+var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
 var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
 
