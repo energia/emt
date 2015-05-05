@@ -39,7 +39,7 @@
 #include <driverlib/rom_map.h>
 #include <driverlib/pin.h>
 #include <driverlib/timer.h>
-#include "driverlib/adc.h"
+#include <driverlib/adc.h>
 
 #include <ti/drivers/PWM.h>
 

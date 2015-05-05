@@ -32,8 +32,6 @@
 
 #include "wiring_private.h"
 #include "SPI.h"
-#include <inc/hw_types.h>
-#include <driverlib/spi.h>
 
 SPIClass::SPIClass(void)
 {
@@ -64,7 +62,9 @@ void SPIClass::init(unsigned long module)
 void SPIClass::begin(uint8_t ssPin)
 {
     /* return if SPI already started */
-    if (begun == TRUE) return;
+    if (begun == TRUE) {
+        return;
+    }
 
     SPI_Params_init(&params);
     Board_initSPI();
@@ -85,7 +85,8 @@ void SPIClass::begin(uint8_t ssPin)
     }
 }
 
-void SPIClass::begin() {
+void SPIClass::begin()
+{
     /* default CS is under user control */
     begin(0);
 }
@@ -98,15 +99,16 @@ void SPIClass::end(uint8_t ssPin) {
     }
 }
 
-void SPIClass::end() {
+void SPIClass::end()
+{
     end(slaveSelect);
 }
 
 void SPIClass::setBitOrder(uint8_t ssPin, uint8_t bitOrder)
 {
-
-    if(bitOrder < LSBFIRST || bitOrder > MSBFIRST)
+    if (bitOrder < LSBFIRST || bitOrder > MSBFIRST) {
         return;
+    }
 
     this->bitOrder = bitOrder;
 }
@@ -141,15 +143,18 @@ void SPIClass::setClockDivider(uint8_t divider)
 uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode)
 {
     uint32_t rxtxData;
-    uint8_t rxData;
 
-    if(bitOrder == LSBFIRST) {
+    if (bitOrder == LSBFIRST) {
+#if defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)
         rxtxData = data_out;
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
         asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         data_out = (uint8_t) rxtxData;
+#else
+#error unsupported ISA        
+#endif
     }
 
     uint8_t data_in;
@@ -169,13 +174,17 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
         digitalWrite(ssPin, HIGH);
     }
 
-    if(bitOrder == LSBFIRST) {
+    if (bitOrder == LSBFIRST) {
         rxtxData = data_in;
+#if defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
         asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         data_in = (uint8_t) rxtxData;
+#else
+#error unsupported ISA        
+#endif
     }
 
     GateMutex_leave(GateMutex_handle(&gate), 0);
@@ -193,7 +202,8 @@ uint8_t SPIClass::transfer(uint8_t data)
     return (transfer(slaveSelect, data, SPI_LAST));
 }
 
-void SPIClass::setModule(uint8_t module) {
+void SPIClass::setModule(uint8_t module)
+{
     spiModule = module;
     begin(slaveSelect);
 }
