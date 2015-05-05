@@ -1,4 +1,5 @@
 #include <Energia.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
 
 void buttonFxn0()
 {
@@ -53,11 +54,16 @@ void setup7()
 
 void loop7()
 {
-    delay(7000);
-    setDelayResolution(250);
-    delay(5000);
-    delay(50);
-//    digitalWrite(RED_LED, 1);
-//    delay(10);
+    delay(2500);
 //    digitalWrite(RED_LED, 0);
+    digitalWrite(RED_LED, 1);
+//    digitalWrite(RED_LED, 0);
+    delay(2500);
+    digitalWrite(RED_LED, 0);
+//    delay(2499);
+//    digitalWrite(RED_LED, 1);
+//    digitalWrite(RED_LED, 0);
+//    delay(2501);
+//    digitalWrite(RED_LED, 1);
+//    setDelayResolution(250);
 }
