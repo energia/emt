@@ -1,11 +1,12 @@
 #include <Energia.h> // Energia Wiring API
 
 // Pin   Function
-//  43 - red tri-color LED 02
-//  44 - green tri-color LED 02
-//  45 - blue tri-color LED 02
-//  46 - red LED 01
-int ledPin = 45;
+//  11 - push button SW 2
+//   3 - push button SW 3
+//  10 - green  LED 05
+//   9 - yellow LED 06
+//  29 - red    LED 07
+int ledPin = RED_LED;
 
 __extern void blinkSetup(void)
 {
