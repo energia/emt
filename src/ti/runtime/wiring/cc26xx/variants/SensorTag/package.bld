@@ -1,0 +1,5 @@
+/*
+ *  ======== package.bld ========
+ */
+var cc26xx = xdc.loadCapsule("ti/runtime/wiring/cc26xx/cc26xx.bld");
+cc26xx.addLibs(["."]);
