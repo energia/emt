@@ -26,7 +26,7 @@ const char *taskNames[] = {
     "blinkLoop"
 };
 
-#define NUM_SKETCHES (sizeof(taskNames) / 4)
+#define NUM_SKETCHES (sizeof(taskNames) / sizeof (char *))
 
 /*
  *  ======== main task ========
