@@ -46,7 +46,7 @@
 #include <rom_map.h>
 #include <wdt_a.h>
 
-static delayMode = 0; /* determines  which tick source is driving Clock_tick */
+static uint8_t delayMode = 0; /* determines  which tick source is driving Clock_tick */
 
 /*
  *  ======== micros ========
