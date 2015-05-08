@@ -106,11 +106,9 @@ void SPIClass::end()
 
 void SPIClass::setBitOrder(uint8_t ssPin, uint8_t bitOrder)
 {
-    if (bitOrder < LSBFIRST || bitOrder > MSBFIRST) {
-        return;
+    if (bitOrder == LSBFIRST || bitOrder == MSBFIRST) {
+        this->bitOrder = bitOrder;
     }
-
-    this->bitOrder = bitOrder;
 }
 
 void SPIClass::setBitOrder(uint8_t bitOrder)
@@ -145,16 +143,16 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     uint32_t rxtxData;
 
     if (bitOrder == LSBFIRST) {
-#if defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)
         rxtxData = data_out;
+#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) && (!defined(__TI_COMPILER_VERSION__) && defined(__GNUC__))
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
         asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-        data_out = (uint8_t) rxtxData;
 #else
-#error unsupported ISA        
+#warning LSB first SPI transfers are not supported for this target
 #endif
+        data_out = (uint8_t) rxtxData;
     }
 
     uint8_t data_in;
@@ -176,15 +174,15 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 
     if (bitOrder == LSBFIRST) {
         rxtxData = data_in;
-#if defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)
+#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) && (!defined(__TI_COMPILER_VERSION__) && defined(__GNUC__))
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
         asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-        data_in = (uint8_t) rxtxData;
 #else
-#error unsupported ISA        
+#warning LSB first SPI transfers are not supported for this target
 #endif
+        data_in = (uint8_t) rxtxData;
     }
 
     GateMutex_leave(GateMutex_handle(&gate), 0);
