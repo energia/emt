@@ -2,7 +2,7 @@
  *  ======== mapsum.xs ========
  */
 
-var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] mapfile";
+var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] [-f <object>] mapfile";
 
 var symbolNamesGnu = {
     __UNUSED_SRAM_start__: "SRAM_UNUSED_start",
@@ -21,6 +21,7 @@ var toolChain = null;
 function main(arguments)
 {
     var verbose = 0;
+    var follow = {};
 
     for (;;) {
         var arg = arguments[0];
@@ -42,6 +43,15 @@ function main(arguments)
                 arguments.shift();
                 break;
             }
+	    case 'f': {
+                if (arguments[1] == null) {
+                    print(usage);
+                    return;
+                }
+                follow[arguments[1]] = 1;
+                arguments.shift();
+                break;
+            }
             default: {
                 print(usage);
                 return;
@@ -59,6 +69,9 @@ function main(arguments)
     print(arguments[0] + " summary:");
     display(carray, arguments[0], verbose);
 
+    for (oname in follow) {
+        printDepChains(objectTable, oname);
+    }
     //printDepChains(objectTable, "lib_a-gdtoa-gethex.o");
     //printDepChains(objectTable, "lib_a-er_gamma.o");
     //printDepChains(objectTable, "unwind-arm.o");
@@ -427,7 +440,7 @@ function objectDepsGnu(line, objectTable)
     }
 
     /* library(obj_in_library) (symbol) */
-    var amp = /(([a-zA-Z-0-9_+\\\/:\.]+)\(([a-zA-Z-0-9_+\.]+)\))( \(([a-zA-Z-0-9_+]+)\))?/;
+    var amp = /(([a-zA-Z-0-9_+\\\/:\.]+)\(([a-zA-Z-0-9_+\.]+)\))( \(([a-zA-Z-0-9_+\.:\(\)]+)\))?/;
     var tokens = line.match(amp);
     if (tokens) {
 	if (line[0] == ' ') {
@@ -438,7 +451,7 @@ function objectDepsGnu(line, objectTable)
 	}
     }
     else {
-	tokens = line.match(/([a-zA-Z-0-9_+\\\/:\.]+) \(([a-zA-Z-0-9_+\.]+)\)/);
+	tokens = line.match(/([a-zA-Z-0-9_+\\\/:\.]+) \(([a-zA-Z-0-9_+\.:\(\)]+)\)/);
 	if (line[0] != ' ') {
 	    print("error: " + line);
 	}
@@ -446,7 +459,7 @@ function objectDepsGnu(line, objectTable)
 	    objectTable[cam.name] = {member: cam, referer: tokens[1], symbol: tokens[2]};
 	}
 	else {
-	    tokens = line.match(/\s+\(([a-zA-Z-0-9_+\.]+)\)/);
+	    tokens = line.match(/\s+\(([a-zA-Z-0-9_+\.:\(\)]+)\)/);
 	    if (tokens != null) {
 		objectTable[cam.name] = {member: cam, referer: null, symbol: tokens[1]};
 	    }
@@ -498,7 +511,7 @@ function printDepChains(ot, startPattern)
  */
 function printDepChain(ot, fullName)
 {
-    /* define start to be the canonical short fullName */
+    /* define start to be the canonical shortened fullName */
     var start = fullName.substring(fullName.lastIndexOf('/') + 1);
 
     /* follow the chain of referers back to an initial obj file or undefined symbol */
@@ -512,12 +525,12 @@ function printDepChain(ot, fullName)
         start = shortRef;
         obj = ot[ref];
         if (obj == null) {
-            print(prefix + ref + " is required because it's on the command line");
+            print(prefix + ref + ": required because it's on the command line");
             break;
         }
     }
     if (obj != null) {
-        print(prefix + start + " is required to define initially undefined symbol "
+        print(prefix + start + ": required to define initially undefined symbol "
               + obj.symbol);
     }
 }
