@@ -33,10 +33,29 @@ SECTIONS
     .init_array : > SRAM
 
     .vtable :   > 0x20004000
-    .data   :   > SRAM
-    .bss    :   > SRAM
-    .sysmem :   > SRAM
-    .stack  :   > SRAM
+
+    /* start stack at the highest physical address (since it grows to lower
+     * addresses.
+     *
+     * start heap at the end of all RAM data and extend downward wward the
+     * stack top
+     *
+     * define __UNUSED_SRAM_start__ and __UNUSED_SRAM_end__ to identify
+     * unused memory to be used as {extra heap space, stack overrun check
+     * boundary, ...}
+     */
+    GROUP {
+        .data
+        .bss
+        .sysmem
+        empty: {
+            __UNUSED_SRAM_start__ = .;
+            __UNUSED_SRAM_end__ = __stack;
+            __SRAM_LENGTH__ = size(SRAM);
+        }
+    } > SRAM
+
+    .stack  : > SRAM (HIGH)
 }
 
 __STACK_TOP = __stack + 512;
