@@ -24,6 +24,33 @@ metaonly interface IPlatform inherits xdc.platform.IPlatform
     config xdc.platform.IPlatform.Board BOARD;
 
     /*!
+     *  ======== variantPath ========
+     *  Optional path prefix to use to locate variant libraries
+     *
+     *  In order to support multiple board variants with a single
+     *  closure, the library name provided ti.runtime.wiring.<device>
+     *  has a variant-independent name (because it's used in a
+     *  linker command file common to all variants.  In order to use
+     *  this linker command file, it's necessary for the user to
+     *  supply a variant-specific library search path to ensure that
+     *  the right variant library is used.
+     *
+     *  This path is only used to enable the creation of longer
+     *  variant-independent name for the library.  For example,
+     *  setting variantPath to "variants/" will cause the the
+     *  following line to appear in the generated linker command
+     *  file:
+     *  @p(code)
+     *      variant/lib/board.<target suffix>.lib
+     *  @p
+     *  rather than the default of just:
+     *  @p(code)
+     *      lib/board.<target suffix>.lib
+     *  @p
+     */
+    config String variantPath = "";
+    
+    /*!
      *  ======== driverLibPattern ========
      *  A pattern used to locate DriverLib along the package path
      *

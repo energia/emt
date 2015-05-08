@@ -18,7 +18,7 @@ var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc/CMSIS" '
        + '-I"' + DLIBROOT + '/MSP432P4xx"';
 
-var DEF_OPTS = {defs: "", incs: ""};
+var DEF_OPTS = {name: null, defs: "", incs: ""};
 
 function addLibs(srcDirs, opts) 
 {
@@ -29,11 +29,14 @@ function addLibs(srcDirs, opts)
 	}
     }
 
-    var libName = "lib/" + Pkg.name.substring(Pkg.name.lastIndexOf('.') + 1);
+    var libName = opts.name ? opts.name : ("lib/" + Pkg.name.substring(Pkg.name.lastIndexOf('.') + 1));
     var srcs = getSources(srcDirs);
 
     for (var i = 0; i < Build.targets.length; i++) {
 	var targ = Build.targets[i];
+	if (targ.name != "M4F") {
+	    continue;
+	}
 
 	var toolchain = targ.$name.split(/\./)[0];
 
@@ -47,7 +50,6 @@ function addLibs(srcDirs, opts)
 	/* add C & C++ files separately to use language-specific options */
 	lib.addObjects(srcs.cxx, {copts: CXXOPTS[toolchain]});
 	lib.addObjects(srcs.c,   {copts: COPTS[toolchain]});
-	break;
     }
 }
 

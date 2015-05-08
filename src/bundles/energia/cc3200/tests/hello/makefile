@@ -23,8 +23,17 @@ CLOSURE ?= ../../closure
 vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
 
+# Supported variants include:
+#    CC3200_LAUNCHXL	  - TI LaunchPad
+#    RedBearLab_WiFi_Mini - RedBear WiFi Mini
+#    RedBearLab_CC3200    - RedBear CC3200 (arduino UNO clone)
+VARIANT ?= CC3200_LAUNCHXL
+
 # define CC3200 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB.cc3200)/driverlib/ccs/Release/driverlib.a
+
+#define board-specific library path
+BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/cc3200/variants/$(VARIANT)
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src"
@@ -33,9 +42,9 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src"
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -g -Dxdc__nolocalnames=1 -fno-exceptions
+CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalnames=1 -fno-exceptions -DBOARD_$(VARIANT)
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
-LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CCROOT)/lib"
+LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(BRD_LIBS)"
 
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 

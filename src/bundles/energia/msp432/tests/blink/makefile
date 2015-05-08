@@ -23,8 +23,13 @@ CLOSURE ?= ../../closure
 vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
 
+VARIANT ?= MSP_EXP432P401R
+
 # define MSP432 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB.msp432)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
+
+#define board-specific library path
+BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/msp432/variants/$(VARIANT)
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
@@ -34,9 +39,9 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalnames=1 -fno-exceptions -D__MSP432P401R__=1
+CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalnames=1 -fno-exceptions -D__MSP432P401R__=1 -DBOARD_$(VARIANT)
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
-LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)"
+LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(BRD_LIBS)"
 
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 

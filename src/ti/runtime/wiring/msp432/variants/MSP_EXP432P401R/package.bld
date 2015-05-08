@@ -1,5 +1,5 @@
 /*
  *  ======== package.bld ========
  */
-var msp432 = xdc.loadCapsule("ti/runtime/wiring/msp432/msp432.bld");
-msp432.addLibs(["."]);
+var build = xdc.loadCapsule("ti/runtime/wiring/msp432/msp432.bld");
+build.addLibs(["."], {name: "lib/board"});

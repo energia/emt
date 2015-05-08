@@ -1,5 +1,5 @@
 /*
  *  ======== package.bld ========
  */
-var cc3200 = xdc.loadCapsule("ti/runtime/wiring/cc3200/cc3200.bld");
-cc3200.addLibs(["."]);
+var build = xdc.loadCapsule("ti/runtime/wiring/cc3200/cc3200.bld");
+build.addLibs(["."], {name: "lib/board"});
