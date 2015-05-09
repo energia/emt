@@ -1,4 +1,4 @@
-				emt-a38
+				emt-a39
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,20 +129,35 @@ DELETIONS
 
 CHANGES
 
-./config.bld
-	replace -O2 optimization with -Os (save about 100 bytes)
+./imports.mak, product.mak
+	update to GA release of TI-RTOS and xdctools
+
+	NOTE: this tree currently generates a warning for the CC3200 
+	 ("The Power policy that can activate sleep modes has been
+	 automatically disabled.") because it's not possible to go into 
+	 low power _and_ retain millisond accuracy.  For now, we are
+	 opting to not go into low power until we can determine the 
+	 best approach for the cc3200.
 
 src/bundles/energia
-	rename device-specific bundles to remove the now misleading 'LP' 
-	suffix; our platforms now support more than just LaunchPads (LP)
+	fix makefiles to work with latest variant library naming
 
-ti.platforms.*
-	rename platforms to remove the now misleading 'LP' 
-	suffix; our platforms now support more than just LaunchPads (LP)
+	workaround closure bug removing all libs
 
-ti.runtime.wiring.*
-	add support for LSB and MSB SPI transfers
+ti.runtime.wiring.*.variants, ti.platforms.*
+	renamed variant libraries to _not_ include any variant-specific
+	names (to allow a single closure linker command file to work with
+	any variant by simply adding a variant linker search path)
 
-	Use NOPULL for non-qualified INPUTS in pinmode()
+ti.runtime.wiring, ti.runtime.wiring.*
+	portability + coding convention cleanup; in addition to enabing
+	build using TI compiler without any warnings, we saved 3 bytes
+
+	NOTE: due to non-portability of the LSB support we get a warning 
+	from the TI compiler.  This will be resolved by elimination of this 
+        workaround when the SPI driver supports this capability.
+
+ti.platforms.emt3200
+	fix TI linker command file to support HeapRem
 
 MRS
