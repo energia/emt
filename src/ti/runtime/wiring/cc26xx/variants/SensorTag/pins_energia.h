@@ -36,24 +36,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-static const uint8_t RED_LED = 13;
-static const uint8_t GREEN_LED = 13;
-static const uint8_t YELLOW_LED = 13;
-
-static const uint8_t PUSH1 = 20;
-static const uint8_t PUSH2 = 21;
-
-static const uint8_t SDA = 14;
-static const uint8_t SCL = 15;
-
-static const uint8_t SS   = 10;
-static const uint8_t MOSI = 22;
-static const uint8_t MISO = 23;
-static const uint8_t SCK  = 24;
-
-static const uint8_t A0 = 16;
-static const uint8_t A1 = 17;
-static const uint8_t A2 = 18;
-static const uint8_t A3 = 19;
+static const uint8_t RED_LED = 29;
+static const uint8_t GREEN_LED = 10;
+static const uint8_t BLUE_LED = 10; /* mapped to same as GREEN_LED */
+static const uint8_t YELLOW_LED = 9;
+static const uint8_t PUSH1 = 3;
+static const uint8_t PUSH2 = 11;
 
 #endif

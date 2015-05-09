@@ -1,0 +1,76 @@
+/*
+ *  ======== cc2600.bld ========
+ */
+var Platform = xdc.module("ti.platforms.emt3200.Platform");
+var DLIBROOT = Platform.findDriverLib();
+print("  using DriverLib: " + DLIBROOT);
+
+Pkg.attrs.profile = "release";
+Pkg.attrs.exportAll = true;
+
+var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
+var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
+
+var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+
+var INCS = '-I"' + DLIBROOT + '" '
+       + '-I"' + DLIBROOT + '/driverlib" '
+       + '-I"' + DLIBROOT + '/inc" ';
+
+var DEF_OPTS = {defs: "", incs: ""};
+
+function addLibs(srcDirs, opts) 
+{
+    if (opts == null) opts = {};
+    for (p in DEF_OPTS) {
+	if (opts[p] == null) {
+	    opts[p] = DEF_OPTS[p];
+	}
+    }
+
+    var libName = "lib/" + Pkg.name.substring(Pkg.name.lastIndexOf('.') + 1);
+    var srcs = getSources(srcDirs);
+
+    for (var i = 0; i < Build.targets.length; i++) {
+	var targ = Build.targets[i];
+
+	var toolchain = targ.$name.split(/\./)[0];
+
+	/* create a library for all the Wiring API sources */
+	var lib = Pkg.addLibrary(libName, targ, {
+				     incs: INCS + opts.incs,
+				     defs: DEFS + opts.defs,
+				     suffix: "." + targ.suffix + ".lib"
+				 });
+
+	/* add C & C++ files separately to use language-specific options */
+	lib.addObjects(srcs.cxx, {copts: CXXOPTS[toolchain]});
+	lib.addObjects(srcs.c,   {copts: COPTS[toolchain]});
+	break;
+    }
+}
+
+function getSources(dirs)
+{
+    var result = {c: [], cxx: [], main: []};
+
+    for (var k = 0; k < dirs.length; k++) {
+	var list = java.io.File(dirs[k]).list();
+	var prefix = dirs[k] + "/";
+	for (var i = 0; i < list.length; i++) {
+            var file = String(list[i]);
+	    if (file[0] != '.') {
+		if (file == "main.c" || file == "main.cpp") {
+		    result.main.push(prefix + file);
+		}
+		else if (file.match(/\.c$/) ) {
+		    result.c.push(prefix + file);
+		}
+		else if (file.match(/\.cpp$/) ) {
+		    result.cxx.push(prefix + file);
+		}
+	    }
+	}
+    }
+    return (result);
+}

@@ -30,30 +30,63 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Pins_Energia_h
-#define Pins_Energia_h
+#include <ti/runtime/wiring/Energia.h>
+#include <xdc/runtime/Timestamp.h>
+#include <xdc/runtime/Types.h>
+#include <ti/sysbios/knl/Clock.h>
+#include <ti/sysbios/knl/Task.h>
 
-#include <stdbool.h>
-#include <stdint.h>
+unsigned long micros(void)
+{
+    Types_FreqHz freq;
+    Types_Timestamp64 time;
+    uint64_t t64;
 
-static const uint8_t RED_LED = 13;
-static const uint8_t GREEN_LED = 13;
-static const uint8_t YELLOW_LED = 13;
+    Timestamp_getFreq(&freq);
+    Timestamp_get64(&time);
+    t64 = ((uint64_t)time.hi << 32) | time.lo;
+    return (t64/(freq.lo/1000000));
+}
 
-static const uint8_t PUSH1 = 20;
-static const uint8_t PUSH2 = 21;
+unsigned long millis(void)
+{
+    return (Clock_getTicks());
+}
 
-static const uint8_t SDA = 14;
-static const uint8_t SCL = 15;
+/* Delay for the given number of microseconds. */
+void delayMicroseconds(unsigned int us)
+{
+    if (us <7) {
+        //The overhead in calling and returning from this function takes about 6us
+    }
+    else if (us <=20) {
+        int time;
+        for (time = 5*(us-6); time > 0; time--) {
+            asm("   nop");
+        }
+    }
+    else if (us < 70) {
+        int time;
+        for (time = 5*us; time > 0; time--) {
+            asm("   nop");
+        }
+    }
+    else {
+        uint32_t t0, deltaT;
+        Types_FreqHz freq;
 
-static const uint8_t SS   = 10;
-static const uint8_t MOSI = 22;
-static const uint8_t MISO = 23;
-static const uint8_t SCK  = 24;
+        Timestamp_getFreq(&freq);
+        deltaT = us * (freq.lo/1000000);
 
-static const uint8_t A0 = 16;
-static const uint8_t A1 = 17;
-static const uint8_t A2 = 18;
-static const uint8_t A3 = 19;
+        t0 = Timestamp_get32();
 
-#endif
+        while ((Timestamp_get32()-t0) < deltaT) {
+            ;
+        }
+    }
+}
+
+void delay(uint32_t milliseconds)
+{
+    Task_sleep(milliseconds);
+}

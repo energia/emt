@@ -1,0 +1,6 @@
+/*
+ *  ======== package.bld ========
+ */
+var cc26xx = xdc.loadCapsule("cc26xx.bld");
+
+cc26xx.addLibs([".", "..", "../avr"], {defs: " -Dxdc__nolocalnames=1"});

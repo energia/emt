@@ -30,30 +30,45 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Pins_Energia_h
-#define Pins_Energia_h
+#ifndef WiringPrivate_h
+#define WiringPrivate_h
 
-#include <stdbool.h>
-#include <stdint.h>
+#include <ti/runtime/wiring/Energia.h>
 
-static const uint8_t RED_LED = 13;
-static const uint8_t GREEN_LED = 13;
-static const uint8_t YELLOW_LED = 13;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-static const uint8_t PUSH1 = 20;
-static const uint8_t PUSH2 = 21;
+#define PIN_FUNC_UNUSED             0
+#define PIN_FUNC_DIGITAL_OUTPUT     1
+#define PIN_FUNC_DIGITAL_INPUT      2
+#define PIN_FUNC_ANALOG_OUTPUT      3
+#define PIN_FUNC_ANALOG_INPUT       4
 
-static const uint8_t SDA = 14;
-static const uint8_t SCL = 15;
+#define NOT_ON_TIMER    128
 
-static const uint8_t SS   = 10;
-static const uint8_t MOSI = 22;
-static const uint8_t MISO = 23;
-static const uint8_t SCK  = 24;
+#define TIMERA0A 0
+#define TIMERA0B 1
+#define TIMERA1A 2
+#define TIMERA1B 3
+#define TIMERA2A 4
+#define TIMERA2B 5
+#define TIMERA3A 6
+#define TIMERA3B 7
 
-static const uint8_t A0 = 16;
-static const uint8_t A1 = 17;
-static const uint8_t A2 = 18;
-static const uint8_t A3 = 19;
+#define NOT_A_PIN       0
+#define NOT_ON_ADC      0xff
+
+extern void stopAnalogWrite(uint8_t pin);
+extern void stopAnalogRead(uint8_t pin);
+
+extern uint8_t digital_pin_to_pin_function[];
+extern const uint8_t digital_pin_to_timer[];
+extern const uint16_t digital_pin_to_pin_num[];
+extern const uint32_t digital_pin_to_analog_in[];
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
