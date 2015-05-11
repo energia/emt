@@ -123,30 +123,3 @@ const uint16_t digital_pin_to_pin_num[] = {
     PIN_05,         // D24 - IO14
 };
 
-const uint32_t digital_pin_to_analog_in[] = {
-    NOT_ON_ADC,     // D0 - IO02
-    NOT_ON_ADC,     // D1 - IO01
-    NOT_ON_ADC,     // D2 - IO06
-    NOT_ON_ADC,     // D3 - IO07
-    NOT_ON_ADC,     // D4 - IO00
-    NOT_ON_ADC,     // D5 - IO09
-    NOT_ON_ADC,     // D6 - IO24
-    NOT_ON_ADC,     // D7 - IO28
-    NOT_ON_ADC,     // D8 - IO29
-    NOT_ON_ADC,     // D9 - IO23
-    NOT_ON_ADC,     // D10 - IO22
-    NOT_ON_ADC,     // D11 - IO13
-    NOT_ON_ADC,     // D12 - IO17
-    NOT_ON_ADC,     // D13 - IO30
-    NOT_ON_ADC,     // D14 - IO11
-    NOT_ON_ADC,     // D15 - IO10
-    ADC_CH_0,       // D16/A0 - IO02  P57
-    ADC_CH_3,       // D17/A1 - IO05  P60
-    ADC_CH_2,       // D18/A2 - IO04  P59
-    ADC_CH_1,       // D19/A3 - IO03  P58
-    NOT_ON_ADC,     // D20 - IO08
-    NOT_ON_ADC,     // D21 - IO12
-    NOT_ON_ADC,     // D22 - IO16
-    NOT_ON_ADC,     // D23 - IO15
-    NOT_ON_ADC,     // D24 - IO14
-};

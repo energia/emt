@@ -148,42 +148,47 @@ static int8_t analogReadShift = 4;
  */
 uint16_t analogRead(uint8_t pin)
 {
-    uint32_t channel = digital_pin_to_analog_in[pin];
+    uint16_t channel, val;
+    uint16_t pinNum = digital_pin_to_pin_num[pin];
+    uint32_t hwiKey;
 
-    if (channel == NOT_ON_ADC) { // invalid ADC pin
-        return (0);
+    switch(pinNum) {
+        case PIN_57: {channel = ADC_CH_0;}break;
+        case PIN_58: {channel = ADC_CH_1;}break;
+        case PIN_59: {channel = ADC_CH_2;}break;
+        case PIN_60: {channel = ADC_CH_3;}break;
+        default: return 0;
     }
+
+    hwiKey = Hwi_disable();
 
     /* re-configure pin if necessary */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
         // Pinmux the pin to be analog
         MAP_PinTypeADC(digital_pin_to_pin_num[pin], 0xff);
-
-        // Enable the channel
-        MAP_ADCChannelEnable(ADC_BASE, channel);
-
-        // Enable ADC module
-        MAP_ADCEnable(ADC_BASE);
-
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
     }
 
-    // Get the sample
-    uint16_t sample = 0;
-    while (true){
-        if (MAP_ADCFIFOLvlGet(ADC_BASE, channel)) {
-            sample = (MAP_ADCFIFORead(ADC_BASE, channel) & 0x3ffc) >> analogReadShift;
-            break;
-        }
+    while(MAP_ADCFIFOLvlGet(ADC_BASE, channel)) { // flush the channel's FIFO if not empty
+        MAP_ADCFIFORead(ADC_BASE, channel);
     }
 
-    // Disable ADC module to save power
+    MAP_ADCChannelEnable(ADC_BASE, channel);
+    MAP_ADCTimerConfig(ADC_BASE,2^17);
+    MAP_ADCTimerEnable(ADC_BASE);
+    MAP_ADCEnable(ADC_BASE);
+
+    while(!MAP_ADCFIFOLvlGet(ADC_BASE, channel));
+    val = MAP_ADCFIFORead(ADC_BASE, channel) & 0x3FFF;
+
     MAP_ADCDisable(ADC_BASE);
-
-    // Disable the channel
     MAP_ADCChannelDisable(ADC_BASE, channel);
+    MAP_ADCTimerDisable(ADC_BASE);
+    
+    Hwi_restore(hwiKey);
 
-    return (sample);
+    val = val >> analogReadShift;
+    return (val);
 }
 
 /*
