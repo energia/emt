@@ -3,12 +3,7 @@
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Memory.h>
 
-// Pin   Function
-//  43 - red tri-color LED 02
-//  44 - green tri-color LED 02
-//  45 - blue tri-color LED 02
-//  46 - red LED 01
-int ledPin = 45;
+int ledPin = RED_LED;
 
 String stringOne = String("Hello: ");
 

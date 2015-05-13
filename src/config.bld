@@ -27,7 +27,7 @@ var tiTargets = xdc.loadPackage('ti.targets.arm.elf');
 tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi --display_error_number ";
 if (tiTargets.M4F.rootDir == null) {
-    tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.2/" + os;
+    tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.4/" + os;
 }
 tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 

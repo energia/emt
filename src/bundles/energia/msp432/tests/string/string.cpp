@@ -3,14 +3,7 @@
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Memory.h>
 
-// Pin   Function
-//  73 - push button 1
-//  74 - push button 2
-//  75 - red tri-color LED 02
-//  76 - green tri-color LED 02
-//  77 - blue tri-color LED 02
-//  78 - yellow LED
-int ledPin = 77;
+int ledPin = RED_LED;
 
 String stringOne = String("Hello: ");
 
