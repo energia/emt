@@ -81,7 +81,7 @@ void analogWrite(uint8_t pin, int val)
 
         uint16_t pnum = digital_pin_to_pin_num[pin]; 
 
-        switch(timer) {
+        switch (timer) {
             /* PWM0/1 */
             case TIMERA0A:
             case TIMERA0B:
@@ -152,11 +152,11 @@ uint16_t analogRead(uint8_t pin)
     uint16_t pinNum = digital_pin_to_pin_num[pin];
     uint32_t hwiKey;
 
-    switch(pinNum) {
-        case PIN_57: {channel = ADC_CH_0;}break;
-        case PIN_58: {channel = ADC_CH_1;}break;
-        case PIN_59: {channel = ADC_CH_2;}break;
-        case PIN_60: {channel = ADC_CH_3;}break;
+    switch (pinNum) {
+        case PIN_57: {channel = ADC_CH_0;} break;
+        case PIN_58: {channel = ADC_CH_1;} break;
+        case PIN_59: {channel = ADC_CH_2;} break;
+        case PIN_60: {channel = ADC_CH_3;} break;
         default: return 0;
     }
 
@@ -169,16 +169,18 @@ uint16_t analogRead(uint8_t pin)
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
     }
 
-    while(MAP_ADCFIFOLvlGet(ADC_BASE, channel)) { // flush the channel's FIFO if not empty
+    /* flush the channel's FIFO if not empty */
+    while (MAP_ADCFIFOLvlGet(ADC_BASE, channel)) {
         MAP_ADCFIFORead(ADC_BASE, channel);
     }
 
     MAP_ADCChannelEnable(ADC_BASE, channel);
-    MAP_ADCTimerConfig(ADC_BASE,2^17);
+    MAP_ADCTimerConfig(ADC_BASE, 0x1FFFF);
     MAP_ADCTimerEnable(ADC_BASE);
     MAP_ADCEnable(ADC_BASE);
 
-    while(!MAP_ADCFIFOLvlGet(ADC_BASE, channel));
+    /* Yikes! Poll for ADC value to appear with interrupts disabled! */
+    while (!MAP_ADCFIFOLvlGet(ADC_BASE, channel));
     val = MAP_ADCFIFORead(ADC_BASE, channel) & 0x3FFF;
 
     MAP_ADCDisable(ADC_BASE);
