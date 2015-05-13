@@ -21,13 +21,15 @@ REGION_ALIAS("REGION_ARM_EXTAB", SRAM);
 
 SECTIONS {
 
-    PROVIDE (_intvecs_base_address = 0x20004000);
+    PROVIDE (_intvecs_base_address =
+        DEFINED(_intvecs_base_address) ? _intvecs_base_address : 0x20004000);
 
     .intvecs (_intvecs_base_address) : AT (_intvecs_base_address) {
         KEEP (*(.intvecs))
     } > REGION_TEXT
 
-    PROVIDE (_vtable_base_address = 0x20004000);
+    PROVIDE (_vtable_base_address =
+        DEFINED(_vtable_base_address) ? _vtable_base_address : 0x20004000);
 
     .vtable (_vtable_base_address) : AT (_vtable_base_address) {
         KEEP (*(.vtable))
@@ -47,7 +49,7 @@ SECTIONS {
         __init_array_end = .;
         *(.init)
         *(.fini*)
-    } > REGION_TEXT
+    } > REGION_TEXT AT> REGION_TEXT
 
     PROVIDE (__etext = .);
     PROVIDE (_etext = .);
@@ -56,7 +58,7 @@ SECTIONS {
     .rodata : {
         *(.rodata)
         *(.rodata*)
-    } > REGION_TEXT
+    } > REGION_TEXT AT> REGION_TEXT
 
     .data : ALIGN (4) {
         __data_load__ = LOADADDR (.data);
@@ -71,11 +73,11 @@ SECTIONS {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
-    } > REGION_ARM_EXIDX
+    } > REGION_ARM_EXIDX AT> REGION_ARM_EXIDX
 
     .ARM.extab : {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > REGION_ARM_EXTAB
+    } > REGION_ARM_EXTAB AT> REGION_ARM_EXTAB
 
     .bss : {
         __bss_start__ = .;
@@ -85,7 +87,7 @@ SECTIONS {
         *(COMMON)
         . = ALIGN (4);
         __bss_end__ = .;
-    } > REGION_BSS
+    } > REGION_BSS AT> REGION_BSS
 
     .heap : {
         __heap_start__ = .;
@@ -95,11 +97,11 @@ SECTIONS {
         KEEP(*(.heap))
         __heap_end__ = .;
         __HeapLimit = __heap_end__;
-    } > REGION_HEAP
+    } > REGION_HEAP AT> REGION_HEAP
 
-    .stack : ALIGN(0x8) {
+    .stack (NOLOAD) : ALIGN(0x8) {
         _stack = .;
         __stack = .;
         KEEP(*(.stack))
-    } > REGION_STACK
+    } > REGION_STACK AT> REGION_STACK
 }
