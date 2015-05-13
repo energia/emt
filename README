@@ -1,4 +1,4 @@
-				emt-a39
+				emt-a40
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,35 +129,12 @@ DELETIONS
 
 CHANGES
 
-./imports.mak, product.mak
-	update to GA release of TI-RTOS and xdctools
-
-	NOTE: this tree currently generates a warning for the CC3200 
-	 ("The Power policy that can activate sleep modes has been
-	 automatically disabled.") because it's not possible to go into 
-	 low power _and_ retain millisond accuracy.  For now, we are
-	 opting to not go into low power until we can determine the 
-	 best approach for the cc3200.
-
 src/bundles/energia
-	fix makefiles to work with latest variant library naming
 
-	workaround closure bug removing all libs
-
-ti.runtime.wiring.*.variants, ti.platforms.*
-	renamed variant libraries to _not_ include any variant-specific
-	names (to allow a single closure linker command file to work with
-	any variant by simply adding a variant linker search path)
-
-ti.runtime.wiring, ti.runtime.wiring.*
-	portability + coding convention cleanup; in addition to enabing
-	build using TI compiler without any warnings, we saved 3 bytes
-
-	NOTE: due to non-portability of the LSB support we get a warning 
-	from the TI compiler.  This will be resolved by elimination of this 
-        workaround when the SPI driver supports this capability.
+ti.runtime.wiring.cc3200
+	fix analogRead()
 
 ti.platforms.emt3200
-	fix TI linker command file to support HeapRem
+	update GNU linker script to be in sync with the latest platform tree
 
 MRS
