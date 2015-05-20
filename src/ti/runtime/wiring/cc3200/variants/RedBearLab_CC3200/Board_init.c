@@ -150,15 +150,15 @@ void Board_initGeneral(void)
 
     /*
      * Configure LaunchPad P2.9 as a UART1: UART1 TX (via USB port)
-     *     device pin: 55 (UART0_TX)
-     *     Wiring id : 12
+     *     device pin: 55 (UART1_TX)
+     *     Wiring id : 1
      */
     MAP_PinTypeUART(PIN_55, PIN_MODE_6);
 
     /*
      * Configure LaunchPad P3.3 as a UART1: UART1 RX (via USB port)
-     *     device pin: 57 (UART0_RX)
-     *     Wiring id : 23
+     *     device pin: 57 (UART1_RX)
+     *     Wiring id : 0
      */
     MAP_PinTypeUART(PIN_57, PIN_MODE_6);
 
@@ -167,14 +167,14 @@ void Board_initGeneral(void)
     /*
      * Configure LaunchPad P1.4 as a UART0: UART0 TX
      *     device pin: 3 (UART0_TX)
-     *     Wiring id : 4
+     *     Wiring id : 11
      */
     MAP_PinTypeUART(PIN_03, PIN_MODE_7);
 
     /*
      * Configure LaunchPad P1.3 as a UART0: UART0 RX
      *     device pin: 4 (UART0_RX)
-     *     Wiring id : 3
+     *     Wiring id : 8
      */
     MAP_PinTypeUART(PIN_04, PIN_MODE_7);
 
