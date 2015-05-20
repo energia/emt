@@ -1,4 +1,4 @@
-				emt-a40
+				emt-a41
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,16 +125,14 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring.cc3200.variants
+	initial added SensorTag support
+
 DELETIONS
 
 CHANGES
 
-src/bundles/energia
-
-ti.runtime.wiring.cc3200
-	fix analogRead()
-
-ti.platforms.emt3200
-	update GNU linker script to be in sync with the latest platform tree
+ti.runtime.wiring.cc3200.tests
+	switch sanity test to build for SensorTag
 
 MRS
