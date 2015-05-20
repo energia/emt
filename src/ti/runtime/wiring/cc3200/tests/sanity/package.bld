@@ -4,9 +4,11 @@
 Pkg.attrs.profile = "release";
 Pkg.attrs.exportAll = true;
 
+Pkg.attrs.profile = "debug";
+
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200";
+var PLATFORM = "ti.platforms.emt3200:CC3200STK_WIFI";
 
 var SRCS = getSources(".");
 var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200LP";
