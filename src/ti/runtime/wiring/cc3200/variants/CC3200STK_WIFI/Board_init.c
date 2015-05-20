@@ -33,7 +33,7 @@
 /*
  *  ======== Board.c ========
  *  This file is responsible for setting up the board specific items for the
- *  CC3200_LP Launch Pad board.
+ *  CC3200 Sensor Tag.
  */
  
 #include <stdint.h>
@@ -149,13 +149,13 @@ void Board_initGeneral(void)
     /* Serial */
 
     /*
-     * Configure LaunchPad P2.9 as a UART1: UART1 TX (via USB port)
+     * Configure SensorTag UART1: UART1 TX (via USB port)
      *     device pin: 55 (UART1_TX)
      */
     MAP_PinTypeUART(PIN_55, PIN_MODE_6);
 
     /*
-     * Configure LaunchPad P3.3 as a UART1: UART1 RX (via USB port)
+     * Configure SensorTag UART1: UART1 RX (via USB port)
      *     device pin: 57 (UART1_RX)
      */
     MAP_PinTypeUART(PIN_57, PIN_MODE_6);
@@ -163,34 +163,33 @@ void Board_initGeneral(void)
     /* ======== SPI Pin Configuration ======== */
 
     /*
-     * Configure LaunchPad P1.7 as a SPI pin: SPI CLK
+     * Configure SensorTag SPI pin: SPI CLK
      *     device pin: 5 (GSPI_CLK)
      */
     MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
 
     /*
-     * Configure LaunchPad P2.6 as a SPI pin: SPI MOSI
+     * Configure SensorTag SPI pin: SPI MOSI
      *     device pin: 7 (GSPI_MOSI)
      */
     MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
 
     /*
-     * Configure LaunchPad P2.7 as a SPI pin: SPI MISO
+     * Configure SensorTag SPI pin: SPI MISO
      *     device pin: 6 (GSPI_MISO)
      */
     MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
 
-
     /* ======== I2C Pin Configuration ======== */
 
     /*
-     * Configure LaunchPad P1.9 as a I2C pin: LaunchPad Sensor Data (via I2C)
+     * Configure SensorTag I2C pin: MPU Data (via I2C)
      *     device pin: 3 (I2C_SCL)
      */
     MAP_PinTypeI2C(PIN_03, PIN_MODE_5);
 
     /*
-     * Configure LaunchPad P1.10 as a I2C pin: LaunchPad Sensor Data (via I2C)
+     * Configure Configure SensorTag I2C pin: MPU Data (via I2C)
      *     device pin: 4 (I2C_SDA)
      */
     MAP_PinTypeI2C(PIN_04, PIN_MODE_5);
