@@ -151,12 +151,14 @@ void Board_initGeneral(void)
     /*
      * Configure SensorTag UART1: UART1 TX (via USB port)
      *     device pin: 55 (UART1_TX)
+     *     energia pin: 10
      */
     MAP_PinTypeUART(PIN_55, PIN_MODE_6);
 
     /*
      * Configure SensorTag UART1: UART1 RX (via USB port)
      *     device pin: 57 (UART1_RX)
+     *     energia pin: 12
      */
     MAP_PinTypeUART(PIN_57, PIN_MODE_6);
 
@@ -165,18 +167,21 @@ void Board_initGeneral(void)
     /*
      * Configure SensorTag SPI pin: SPI CLK
      *     device pin: 5 (GSPI_CLK)
+     *     energia pin: 15
      */
     MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
 
     /*
      * Configure SensorTag SPI pin: SPI MOSI
      *     device pin: 7 (GSPI_MOSI)
+     *     energia pin: 11
      */
     MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
 
     /*
      * Configure SensorTag SPI pin: SPI MISO
      *     device pin: 6 (GSPI_MISO)
+     *     energia pin: 13
      */
     MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
 
@@ -185,12 +190,14 @@ void Board_initGeneral(void)
     /*
      * Configure SensorTag I2C pin: MPU Data (via I2C)
      *     device pin: 3 (I2C_SCL)
+     *     energia pin: 3
      */
     MAP_PinTypeI2C(PIN_03, PIN_MODE_5);
 
     /*
      * Configure Configure SensorTag I2C pin: MPU Data (via I2C)
      *     device pin: 4 (I2C_SDA)
+     *     energia pin: 4
      */
     MAP_PinTypeI2C(PIN_04, PIN_MODE_5);
 }
@@ -215,52 +222,40 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  0  - dummy */
                           
     /* pins 1-10 */
-    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - 3.3V */
-    GPIOCC3200_GPIO_03 | GPIO_DO_NOT_CONFIG,    /*  2  - GPIO_03 */
-    GPIOCC3200_GPIO_13 | GPIO_DO_NOT_CONFIG,    /*  3  - GPIO_13 */
-    GPIOCC3200_GPIO_12 | GPIO_DO_NOT_CONFIG,    /*  4  - GPIO_12 */
-    GPIOCC3200_GPIO_06 | GPIO_DO_NOT_CONFIG,    /*  5  - GPIO_06 */
-    GPIOCC3200_GPIO_04 | GPIO_DO_NOT_CONFIG,    /*  6  - GPIO_04 */
-    GPIOCC3200_GPIO_14 | GPIO_DO_NOT_CONFIG,    /*  7  - GPIO_14 */
-    GPIOCC3200_GPIO_07 | GPIO_DO_NOT_CONFIG,    /*  8  - GPIO_07 */
-    GPIOCC3200_GPIO_10 | GPIO_DO_NOT_CONFIG,    /*  9  - GPIO_10 */
-    GPIOCC3200_GPIO_11 | GPIO_DO_NOT_CONFIG,    /*  10 - GPIO_11 */
+    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - VDD */
+    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  2  - GND */
+    GPIOCC3200_GPIO_12 | GPIO_DO_NOT_CONFIG,    /*  3  - GPIO_12 SCL */
+    GPIOCC3200_GPIO_13 | GPIO_DO_NOT_CONFIG,    /*  4  - GPIO_13 SDA */
+    GPIOCC3200_GPIO_08 | GPIO_DO_NOT_CONFIG,    /*  5  - GPIO_08 DP12 AUDIO FS */
+    GPIOCC3200_GPIO_30 | GPIO_DO_NOT_CONFIG,    /*  6  - GPIO_30 DP7 AUDIO CLK */
+    GPIOCC3200_GPIO_17 | GPIO_DO_NOT_CONFIG,    /*  7  - GPIO_17 DP11 CSN */
+    GPIOCC3200_GPIO_31 | GPIO_DO_NOT_CONFIG,    /*  8  - GPIO_31 DP6 */
+    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  9  - VDD */
+    GPIOCC3200_GPIO_01 | GPIO_DO_NOT_CONFIG,    /*  10 - GPIO_01 DP5 UART TX */
                           
     /* pins 11-20 */
-    GPIOCC3200_GPIO_22 | GPIO_DO_NOT_CONFIG,    /*  11 - GPIO_22 */
-    GPIOCC3200_GPIO_01 | GPIO_DO_NOT_CONFIG,    /*  12 - GPIO_01 */
-    GPIOCC3200_GPIO_25 | GPIO_DO_NOT_CONFIG,    /*  13 - GPIO_25 */
-    GPIOCC3200_GPIO_15 | GPIO_DO_NOT_CONFIG,    /*  14 - GPIO_15 */
-    GPIOCC3200_GPIO_16 | GPIO_DO_NOT_CONFIG,    /*  15 - GPIO_16 */
-    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  16 - RESET */
-    GPIOCC3200_GPIO_31 | GPIO_DO_NOT_CONFIG,    /*  17 - GPIO_31 */
-    GPIOCC3200_GPIO_17 | GPIO_DO_NOT_CONFIG,    /*  18 - GPIO_17 */
-    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  19 - GPIO_28 */
-    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  20 - GND */
+    GPIOCC3200_GPIO_16 | GPIO_DO_NOT_CONFIG,    /*  11 - GPIO_16 DP10 MOSI */
+    GPIOCC3200_GPIO_02 | GPIO_DO_NOT_CONFIG,    /*  12 - GPIO_01 DP4 UART_RX */
+    GPIOCC3200_GPIO_15 | GPIO_DO_NOT_CONFIG,    /*  13 - GPIO_15 DP9 MISO */
+    GPIOCC3200_GPIO_25 | GPIO_DO_NOT_CONFIG,    /*  14 - GPIO_25 DP3 SOP2 */
+    GPIOCC3200_GPIO_14 | GPIO_DO_NOT_CONFIG,    /*  15 - GPIO_14 DP8 SCLK */
+    GPIOCC3200_GPIO_09 | GPIO_DO_NOT_CONFIG,    /*  16 - GPIO_09 DP2 */
+    GPIOCC3200_GPIO_05 | GPIO_DO_NOT_CONFIG,    /*  17 - GPIO_05 DP ID */
+    GPIOCC3200_GPIO_04 | GPIO_DO_NOT_CONFIG,    /*  18 - GPIO_04 DP1 BUTTON2 */
+    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  19 - POWER GOOD */
+    GPIOCC3200_GPIO_10 | GPIO_DO_NOT_CONFIG,    /*  20 - GPIO_10 DP0/LED2 */
                           
-    /* pins 21-30 */
-    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  21 - 5V */
-    GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  22 - GND */
-    GPIOCC3200_GPIO_02 | GPIO_DO_NOT_CONFIG,    /*  23 - GPIO_02 */
-    GPIOCC3200_GPIO_05 | GPIO_DO_NOT_CONFIG,    /*  24 - GPIO_05 */
-    GPIOCC3200_GPIO_03 | GPIO_DO_NOT_CONFIG,    /*  25 - GPIO_03 */
-    GPIOCC3200_GPIO_04 | GPIO_DO_NOT_CONFIG,    /*  26 - GPIO_04 */
-    GPIOCC3200_GPIO_08 | GPIO_DO_NOT_CONFIG,    /*  27 - GPIO_08 */
-    GPIOCC3200_GPIO_30 | GPIO_DO_NOT_CONFIG,    /*  28 - GPIO_30 */
-    GPIOCC3200_GPIO_09 | GPIO_DO_NOT_CONFIG,    /*  29 - GPIO_09 */
-    GPIOCC3200_GPIO_00 | GPIO_DO_NOT_CONFIG,    /*  30 - GPIO_00 */
-                          
-    /* pins 31-40 */
-    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  31 - GPIO_24 */
-    GPIOCC3200_GPIO_23 | GPIO_DO_NOT_CONFIG,    /*  32 - GPIO_23 */
-    GPIOCC3200_GPIO_05 | GPIO_DO_NOT_CONFIG,    /*  33 - GPIO_05 */
-    GPIOCC3200_GPIO_07 | GPIO_DO_NOT_CONFIG,    /*  34 - GPIO_07 */
-    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  35 - GPIO_28 */
-    GPIOCC3200_GPIO_25 | GPIO_DO_NOT_CONFIG,    /*  36 - GPIO_25 */
-    GPIOCC3200_GPIO_09 | GPIO_DO_NOT_CONFIG,    /*  37 - GPIO_09 */
-    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  38 - GPIO_24 */
-    GPIOCC3200_GPIO_10 | GPIO_DO_NOT_CONFIG,    /*  39 - GPIO_10 */
-    GPIOCC3200_GPIO_11 | GPIO_DO_NOT_CONFIG,    /*  40 - GPIO_11 */
+    /* virtual pins 21-30 */
+    GPIOCC3200_GPIO_00 | GPIO_DO_NOT_CONFIG,    /*  21 - GPIO_00 AUDIO DI */
+    GPIOCC3200_GPIO_03 | GPIO_DO_NOT_CONFIG,    /*  22 - GPIO_03 BATTMON */
+    GPIOCC3200_GPIO_06 | GPIO_DO_NOT_CONFIG,    /*  23 - GPIO_06 BUZZER */
+    GPIOCC3200_GPIO_07 | GPIO_DO_NOT_CONFIG,    /*  24 - GPIO_07 REED */
+    GPIOCC3200_GPIO_11 | GPIO_DO_NOT_CONFIG,    /*  25 - GPIO_11 BUTTON1 */
+    GPIOCC3200_GPIO_22 | GPIO_DO_NOT_CONFIG,    /*  26 - GPIO_22 TMP RDY */
+    GPIOCC3200_GPIO_23 | GPIO_DO_NOT_CONFIG,    /*  27 - GPIO_23 TDI/LED1 */
+    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  28 - GPIO_24 TDO/MPU INT */
+    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  29 - GPIO_28 MIC PWR */
+    GPIOCC3200_GPIO_29 | GPIO_DO_NOT_CONFIG,    /*  30 - GPIO_29 JTAG TMS */
 };
 
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
@@ -268,52 +263,40 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  0  - dummy */
 
     /* pins 1-10 */
-    NULL,  /*  1  - 3.3V */
-    NULL,  /*  2  - GPIO_03 */
-    NULL,  /*  3  - GPIO_13 */
-    NULL,  /*  4  - GPIO_12 */
-    NULL,  /*  5  - GPIO_06 */
-    NULL,  /*  6  - GPIO_04 */
-    NULL,  /*  7  - GPIO_14 */
-    NULL,  /*  8  - GPIO_07 */
-    NULL,  /*  9  - GPIO_10 */
-    NULL,  /*  10 - GPIO_11 */
+    NULL,  /*  1  - VDD */
+    NULL,  /*  2  - GND */
+    NULL,  /*  3  - GPIO_12 SCL */
+    NULL,  /*  4  - GPIO_13 SDA */
+    NULL,  /*  5  - GPIO_08 DP12 AUDIO FS */
+    NULL,  /*  6  - GPIO_30 DP7 AUDIO CLK */
+    NULL,  /*  7  - GPIO_17 DP11 CSN */
+    NULL,  /*  8  - GPIO_31 DP6 */
+    NULL,  /*  9  - VDD */
+    NULL,  /*  10 - GPIO_01 DP5 UART TX */
                     
     /* pins 11-20 */
-    NULL,  /*  11 - GPIO_22 */
-    NULL,  /*  12 - GPIO_01 */
-    NULL,  /*  13 - GPIO_25 */
-    NULL,  /*  14 - GPIO_15 */
-    NULL,  /*  15 - GPIO_16 */
-    NULL,  /*  16 - RESET */
-    NULL,  /*  17 - GPIO_31 */
-    NULL,  /*  18 - GPIO_17 */
-    NULL,  /*  19 - GPIO_28 */
-    NULL,  /*  20 - GND */
+    NULL,  /*  11 - GPIO_16 DP10 MOSI */
+    NULL,  /*  12 - GPIO_01 DP4 UART_RX */
+    NULL,  /*  13 - GPIO_15 DP9 MISO */
+    NULL,  /*  14 - DP3 */
+    NULL,  /*  15 - GPIO_14 DP8 SCLK */
+    NULL,  /*  16 - GPIO_09 DP2 */
+    NULL,  /*  17 - GPIO_05 DP ID */
+    NULL,  /*  18 - GPIO_04 DP1 BUTTON2 */
+    NULL,  /*  19 - POWER GOOD */
+    NULL,  /*  20 - GPIO_10 DP0/LED2 */
                     
-    /* pins 21-30 */
-    NULL,  /*  21 - 5V */
-    NULL,  /*  22 - GND */
-    NULL,  /*  23 - GPIO_02 */
-    NULL,  /*  24 - GPIO_05 */
-    NULL,  /*  25 - GPIO_03 */
-    NULL,  /*  26 - GPIO_04 */
-    NULL,  /*  27 - GPIO_08 */
-    NULL,  /*  28 - GPIO_30 */
-    NULL,  /*  29 - GPIO_09 */
-    NULL,  /*  30 - GPIO_00 */
-                    
-    /* pins 31-40 */
-    NULL,  /*  31 - GPIO_24 */
-    NULL,  /*  32 - GPIO_23 */
-    NULL,  /*  33 - GPIO_05 */
-    NULL,  /*  34 - GPIO_07 */
-    NULL,  /*  35 - GPIO_28 */
-    NULL,  /*  36 - GPIO_25 */
-    NULL,  /*  37 - GPIO_09 */
-    NULL,  /*  38 - GPIO_24 */
-    NULL,  /*  39 - GPIO_10 */
-    NULL,  /*  40 - GPIO_11 */
+    /* virtual pins 21-30 */
+    NULL,  /*  21 - GPIO_00 AUDIO DI */
+    NULL,  /*  22 - GPIO_03 BATTMON */
+    NULL,  /*  23 - GPIO_06 BUZZER */
+    NULL,  /*  24 - GPIO_07 REED */
+    NULL,  /*  25 - GPIO_11 BUTTON1 */
+    NULL,  /*  26 - GPIO_22 TMP RDY */
+    NULL,  /*  27 - GPIO_23 TDI/LED1 */
+    NULL,  /*  28 - GPIO_24 TDO/MPU INT */
+    NULL,  /*  29 - GPIO_28 MIC PWR */
+    NULL,  /*  30 - GPIO_29 JTAG TMS */
 };
 
 /* User requested callback functions for the GPIO input signals */
