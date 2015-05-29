@@ -3,4 +3,14 @@
  */
 var cc3200 = xdc.loadCapsule("cc3200.bld");
 
-cc3200.addLibs([".", "..", "../avr"], {defs: " -Dxdc__nolocalnames=1"});
+// options required for multi-threaded support
+//var base = xdc.getPackageBase(Pkg.name) + "/libraries/sdk";
+//var INCS = "-I" + base + "/oslib";
+//var DEFS = "-DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+
+/* _POSIX_SOURCE is needed to work around a duplicate symbol
+ * definition in socket.h: GCC wants to define it (unless 
+ * _POSIX_SOURCE is defined) but it's also defind by our socket.h
+ */
+var DEFS = " -Dxdc__nolocalnames=1 -D_POSIX_SOURCE";
+cc3200.addLibs([".", "..", "../avr", "./libraries/WiFi", "./libraries/WiFi/utility"], {defs: DEFS});
