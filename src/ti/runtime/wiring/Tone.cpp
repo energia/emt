@@ -30,76 +30,76 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include <Energia.h>
+#include "Energia.h"
 #include <ti/sysbios/hal/Timer.h>
 #include <xdc/runtime/Types.h>
 #include <xdc/runtime/Error.h>
 
-Timer_Params timerParams;
-Timer_Handle timerHandle;
+static Timer_Params timerParams;
+static Timer_Handle timerHandle;
 
-bool initTimer = true;
-bool playing = false;
-bool togglePin = true;
-uint8_t tonePin;
-bool toneState;
-unsigned long toneDuration;
-unsigned long mark;
+static bool initTimer = true;
+static bool playing = false;
+static bool togglePin = true;
+static uint8_t tonePin;
+static bool toneState;
+static unsigned long toneDuration;
+static unsigned long mark;
 
-Void ToneIntHandler(UArg arg0)
+static void ToneIntHandler(UArg arg0)
 {
-	if(millis() - mark > toneDuration && toneDuration != 0) {
-		Timer_stop(timerHandle);
-		digitalWrite(tonePin, LOW);
-		playing = false;
-		return;
-	}
+    if (millis() - mark > toneDuration && toneDuration != 0) {
+        Timer_stop(timerHandle);
+        digitalWrite(tonePin, LOW);
+        playing = false;
+        return;
+    }
 
-	if(togglePin)
-		digitalWrite(tonePin, toneState);
-
-	toneState = !toneState;
+    if (togglePin) {
+        digitalWrite(tonePin, toneState);
+    }
+    toneState = !toneState;
 }
 
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
-	if(playing && tonePin != _pin)
-		return;
+    if (playing && tonePin != _pin) {
+        return;
+    }
 
-	playing = true;
-	toneDuration = duration;
-	tonePin = _pin;
+    playing = true;
+    toneDuration = duration;
+    tonePin = _pin;
 
-	togglePin = true;
+    togglePin = true;
 
-	if(frequency == 0) {
-		togglePin = false;
-		frequency = 1000;
-	}
+    if (frequency == 0) {
+        togglePin = false;
+        frequency = 1000;
+    }
 
-	pinMode(tonePin, OUTPUT);
+    pinMode(tonePin, OUTPUT);
 
-	if(initTimer) {
-		Error_Block eb;
-		Error_init(&eb);
-		Timer_Params_init(&timerParams);
-		timerParams.period = (1000000L / frequency) / 2;
-		timerParams.runMode = Timer_RunMode_CONTINUOUS;
-		timerHandle = Timer_create(Timer_ANY, ToneIntHandler, &timerParams, &eb);
-		initTimer = false;
-	}
+    if (initTimer) {
+        Error_Block eb;
+        Error_init(&eb);
+        Timer_Params_init(&timerParams);
+        timerParams.period = (1000000L / frequency) / 2;
+        timerParams.runMode = Timer_RunMode_CONTINUOUS;
+        timerHandle = Timer_create(Timer_ANY, ToneIntHandler, &timerParams, &eb);
+        initTimer = false;
+    }
 
-	Timer_stop(timerHandle);
-	Timer_setPeriodMicroSecs(timerHandle, (1000000L / frequency) / 2);
-	Timer_start(timerHandle);
+    Timer_stop(timerHandle);
+    Timer_setPeriodMicroSecs(timerHandle, (1000000L / frequency) / 2);
+    Timer_start(timerHandle);
 
-	mark = millis();
+    mark = millis();
 }
 
 void noTone(uint8_t _pin)
 {
-	Timer_stop(timerHandle);
-	digitalWrite(tonePin, LOW);
-	playing = false;
+    Timer_stop(timerHandle);
+    digitalWrite(tonePin, LOW);
+    playing = false;
 }
