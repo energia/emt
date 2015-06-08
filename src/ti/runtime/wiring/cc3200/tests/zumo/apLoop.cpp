@@ -56,12 +56,24 @@ __extern void apSetup()
     }
     Serial.println();
     printWifiData();
-    Serial.println("AP active.");
   
+    /*
+     * Expected device firmware versions from servicepack_1.0.0.10.0.bin:
+     *   NWP version: 2.4.0.2
+     *   MAC version: 1.3.0.1
+     *   PHY version: 1.0.3.34
+     *
+     *   RedBear output was: 2.2.0.1.31.1.2.0.2.1.0.3.23
+     *           and now is: 2.4.0.2.31.1.3.0.1.1.0.3.34
+     */
+    Serial.print(" firmware version: ");
+    Serial.println(WiFi.firmwareVersion());
+    Serial.println("AP active.");
+
     /* start a data server on port number PORTNUM */
     Serial.print("Starting dataserver on port: "); Serial.println(PORTNUM);
     server.begin();
-    Serial.println("dataserver started!");
+    Serial.println("dataserver started.");
 }
 
 /*
@@ -76,9 +88,9 @@ __extern void apLoop()
             int i;
             digitalWrite(MAIN_LED_PIN, !digitalRead(MAIN_LED_PIN));
             /* display all clients on the network */
-            Serial.println("Client connected! All clients:");
+            Serial.println("New client connected. All clients:");
             for (i = 0; i < a; i++) {
-                Serial.print("Client #");
+                Serial.print("  Client #");
                 Serial.print(i);
                 Serial.print(" at IP address = ");
                 Serial.print(WiFi.deviceIpAddress(i));
@@ -88,37 +100,45 @@ __extern void apLoop()
         } 
         else {                  // a Client disconnected
             digitalWrite(MAIN_LED_PIN, !digitalRead(MAIN_LED_PIN));
-            Serial.println("Client disconnected.");
+            Serial.print("Client disconnected, ");
+            Serial.print(a);
+            Serial.println(" clients remaining.");
         }    
         num_clients = a;
     }
 
     if (num_clients > 0) {
+
         /* listen for incoming clients */
         WiFiClient client = server.available();
-
         if (client) {
             /* if there's a client, read and process commands */
             Serial.print("new client socket: ");
-            Serial.println(num_sockets++);
+            Serial.println(++num_sockets);
 
             static char buffer[256] = {0};
             int bufLen = 0;
 
             /* while connected to the client, read commands and send results */
+            unsigned int lapse = 0;
+            unsigned int start = millis();
             while (client.connected()) {
-
+                
                 /* if there's a byte to read from the client .. */
-                if (client.available()) {    
-
+                if (client.available()) {
                     /* copy it to the command buffer, byte at a time */
                     char c = client.read();
 
+                    /* ignore bogus characters */
+                    if (c == '\0' || c == '\r') continue;
+                    
                     /* never overrun the command buffer */
                     if (bufLen >= (int)(sizeof (buffer))) { 
                         bufLen = sizeof (buffer) - 1;
                     }
                     buffer[bufLen++] = c;
+                    //Serial.print(num_sockets); Serial.print(": ");
+                    //Serial.println((int)c);
 
                     /* if there's a new line, we have a complete command */
                     if (c == '\n') {
@@ -126,12 +146,20 @@ __extern void apLoop()
                         /* reset command buffer index to get next command */
                         bufLen = 0;
                     }
+
+                    lapse = 0;
+                    start = millis();
+                }
+                else {
+                    lapse = millis() - start;
                 }
             }
 
-            /* client disconnected, close the connection */
+            Serial.print("client socket disconnected: lapse = ");
+            Serial.println(lapse);
+
+            /* client disconnected or timed out, close the connection */
             client.stop();
-            Serial.println("client socket disconnected");
 
             /* disconnect => implicitly stop the motor */
             motorWASD = ' ';
@@ -147,26 +175,30 @@ __extern void apLoop()
  */
 static void doCommand(char *buffer, int len, WiFiClient client)
 {
-    long int addr = 0;
-    int cnt = 0;
-    char *ptr;
-
     if (buffer[1] == '\n' || buffer[1] == '\r') {
         doWASD(buffer[0], client);
     }
     else {
+#if 0
+        long int addr = 0;
+        int cnt = 0;
+        char *ptr;
+
         /* get the address and count from the command */
         getAddrCnt(buffer, len, &addr, &cnt);
 
         /* send client cnt bytes starting from addr */
         ptr = (char *)addr;
         while (cnt-- > 0) {
-            client.write(*ptr);
+            int status;
+            if ((status = client.write(*ptr)) != 1) {
+                return;
+            }
             ptr++;
         }
-        client.flush();
-
-        Serial.println();
+#else
+        doWASD(' ', client);
+#endif
     }
 }
 
@@ -175,7 +207,6 @@ static void doCommand(char *buffer, int len, WiFiClient client)
  */
 static void doWASD(char wasd, WiFiClient client)
 {
-    int i;
     static char report[80];
 
     motorWASD = wasd;
@@ -184,11 +215,22 @@ static void doWASD(char wasd, WiFiClient client)
                     imuCompass.a.x, imuCompass.a.y, imuCompass.a.z,
                     imuGyro.g.x,    imuGyro.g.y,    imuGyro.g.z, 
                     imuCompass.m.x, imuCompass.m.y, imuCompass.m.z);
-    
-    for (i = 0; i < 75; i++) {
-        client.write(report[i]);
+
+#if 0
+    //Serial.print("replying: client status = "); Serial.println(client.status());
+    for (int i = 0; i < 72; i++) {
+        //Serial.print(" "); Serial.println((int)report[i]);
+        if (client.write(report[i]) != 1) {
+            Serial.print("Error: reply failed: only sent "); Serial.println(i);
+            return;
+        }
     }
-    client.flush();
+    //Serial.print(i);Serial.print(" bytes sent: client status = ");Serial.println(client.status());
+#else
+    if (client.write((unsigned char *)report, 72) != 72) {
+        Serial.println("Error: reply failed, status != 72");
+    }
+#endif
 }
 
 /*

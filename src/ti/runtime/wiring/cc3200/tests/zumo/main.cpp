@@ -25,12 +25,13 @@ typedef struct Sketch {
     SFxn    loop;
     CString name;
     Uns     stackSize;
+    Int     priority;
 } Sketch;
 
 Sketch sketchTab[] = {
-    {imuSetup,   imuLoop,   "imu",   0xc00},
-    {motorSetup, motorLoop, "motor", 0xc00},
-    {apSetup,    apLoop,    "ap",    0x1000},
+    {imuSetup,   imuLoop,   "imu",   0xc00, 2},
+    {motorSetup, motorLoop, "motor", 0xc00, 2},
+    {apSetup,    apLoop,    "ap",    0x1000, 1},
     //    {shellSetup, shellLoop, "shell", 0x1000},
 };
 
@@ -64,15 +65,14 @@ int main()
 
     System_printf(" Startup\r\n");
 
-    /* initialize taskParams and set to default */
+    /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
-
-    /* all tasks have the same priority */
-    taskParams.priority = Task_numPriorities - 1;
 
     Int i = 0;
     for (i = 0; i < NUM_SKETCHES; i++) {
         taskParams.stackSize = sketchTab[i].stackSize;
+        taskParams.priority =  sketchTab[i].priority;
+        
         taskParams.arg0 = (xdc_UArg)sketchTab[i].setup;
         taskParams.arg1 = (xdc_UArg)sketchTab[i].loop;
         taskParams.instance->name = (xdc_String)sketchTab[i].name;

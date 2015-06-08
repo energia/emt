@@ -52,7 +52,7 @@ __extern void imuLoop()
     imuGyro.read();
     imuCompass.read();
 
-    if (++count >= 20) {
+    if (++count >= 40) {
         count = 0;
         System_snprintf(report, sizeof(report),
                         "A: %6d %6d %6d   G: %6d %6d %6d   M: %6d %6d %6d",
