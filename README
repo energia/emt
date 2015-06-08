@@ -1,4 +1,4 @@
-				emt-a42
+				emt-a43
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,27 +125,19 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring
-	initial Tone implementation
-
-ti.runtime.wiring.cc3200.libraries
-	added WiFi library (so we can build WiFi tests/examples)
-
-ti.runtime.wiring.cc3200.tests.zumo
-	added Zumo + RedBear CC3200 example example
+ti.runtime.wiring.cc3200.tests.wifi
+	added simple wifi test that illustrates byte-by-byte "bug" in 
+	simplelink 1.1 stack; transfers greater than 55 bytes cause a hang 
+	with the new simplelink, no such problem with "old" implementation.
 
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.*
-	now building without SL_PLATFORM_MULTI_THREADED (so we can build WiFi)
-	now build with _POSIX_SOURCE to work around SYS/BIOS vs GCC conflict
+ti.runtime.wiring.cc3200.tests.zumo
+	fixed a few edge conditions and added firmware version display
 
-	now building with full xdc types (except String) to support tone 
-	implementation
-	
-ti.runtime.wiring.cc3200.varients
-	fixed CC3200STK_WIFI variant files to work (including Serial)
+ti.runtime.wiring.cc3200.libraries
+	updated to the SimpleLink 1.1 sources
 
 MRS
