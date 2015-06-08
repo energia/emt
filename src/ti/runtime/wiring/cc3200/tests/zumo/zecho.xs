@@ -7,9 +7,24 @@
  *  If log_file is specified, IMU data is appended to the specified file;
  *  otherwise, this data is printed to the console.
  */
+ 
+/* driving direction options */
+var FORWARD  = 'w';
+var RIGHT    = 'd';
+var LEFT     = 'a';
+var BACKWARD = 's';
+var STOP     = ' ';
 
+
+/* data arrays returned from Zumo */
 var word = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 4);
-var line = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 75);
+var line = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 72);
+
+/* command and reply streams to/from Zumo */
+var cmd;
+var reply;
+
+/* optional IMU data log */
 var log  = null;
 
 /*
@@ -22,8 +37,10 @@ function main(args)
 
     /* open a socket to the zumo */
     var socket = java.net.Socket(host, port);
-    var out = java.io.PrintWriter(socket.getOutputStream(), true);
-    var ins = java.io.DataInputStream(socket.getInputStream());
+
+    /* create command stream to the Zumo and data stream from the Zumo */
+    cmd = java.io.PrintWriter(socket.getOutputStream(), true);
+    reply = java.io.DataInputStream(socket.getInputStream());
 
     /* open an IMU data log (if specified on the command line) */
     if (args.length > 0) {
@@ -31,11 +48,11 @@ function main(args)
     }
 
     /* run a test */
-    //    testWASD(ins, out);
-    testDrive(ins, out);
+    testDrive();
 
     /* close the socket and flush IMU data to the log */
     socket.close();
+
     if (log) {
         logLine("-------------- done ---------------");
         log.flush();
@@ -43,18 +60,29 @@ function main(args)
     }
 }
 
-main(arguments);
+/*
+ *  ======== drive ========
+ */
+function drive(direction, duration, msg)
+{
+    if (msg) logLine(msg);
+    
+    for (var i = 0; i < duration; i++) {
+	getIMU(direction);
+        java.lang.Thread.sleep(5);
+    }
+}
 
 /*
  *  ======== getIMU ========
  */
-function getIMU(wasd, ins, out)
+function getIMU(wasd)
 {
     /* send command to zumo */
-    out.println(wasd);
+    cmd.println(wasd);
 
     /* read results */
-    ins.readFully(line);
+    reply.readFully(line);
 
     /* print/log results */
     logLine(java.lang.String(line));
@@ -76,52 +104,38 @@ function logLine(line)
 /*
  *  ======== testDrive ========
  */
-function testDrive(ins, out)
+function testDrive()
 {
-    logLine("------------- driving forward ------------");
-    for (var i = 0; i < 35; i++) {
-	getIMU("w", ins, out);
-        java.lang.Thread.sleep(5);
-    }
+    do {
+	drive(STOP,     15, "------------- calibrating ------------");
+	drive(FORWARD,  15, "------------- driving forward ------------");
+	drive(RIGHT,    55, "------------- turning right ------------");
+	drive(BACKWARD, 15, "------------- driving backward ------------");
+	drive(LEFT,     55, "------------- turning left ------------");
+	drive(STOP,     15, "------------- stopping ------------");
+    } while (java.lang.System.in.available() == 0);
 
-    logLine("------------- turning right ------------");
-    for (var i = 0; i < 55; i++) {
-	getIMU("d", ins, out);
-        java.lang.Thread.sleep(5);
+    while (java.lang.System.in.available() > 0) {
+	java.lang.System.in.read();
     }
-
-    logLine("------------- driving backward ------------");
-    for (var i = 0; i < 35; i++) {
-	getIMU("s", ins, out);
-        java.lang.Thread.sleep(5);
-    }
-
-    logLine("------------- turning left ------------");
-    for (var i = 0; i < 55; i++) {
-	getIMU("a", ins, out);
-        java.lang.Thread.sleep(5);
-    }
-
-    logLine("------------- stopping ------------");
-    getIMU(" ", ins, out);
 }
 
 /*
  *  ======== testROV ========
  */
-function testROV(ins, out)
+function testROV()
 {
     for (var i = 10; i < 5; i++) {
         print("reading word " + i + " ...");
-	out.println("20004000,4");
-	ins.readFully(word);
+	cmd.println("20004000,4");
+	reply.readFully(word);
     }
 }
 
 /*
  *  ======== testWASD ========
  */
-function testWASD(ins, out)
+function testWASD()
 {
     var wasd = " ";
     var reader = java.io.BufferedReader(
@@ -141,7 +155,7 @@ function testWASD(ins, out)
         }
 
         /* repeat latest command, get and display IMU data */
-        getIMU(wasd, ins, out);
+        getIMU(wasd);
 
         /* pause a bit */
         java.lang.Thread.sleep(1);
