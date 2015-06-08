@@ -24,7 +24,7 @@
 #include <ti/runtime/wiring/IPAddress.h>
 #include <ti/runtime/wiring/MACAddress.h>
 #include "utility/wl_definitions.h"
-#include "utility/SimpleLink.h"
+#include "utility/simplelink.h"
 #include "WiFiClient.h"
 #include "WiFiServer.h"
 #include "WiFiUdp.h"

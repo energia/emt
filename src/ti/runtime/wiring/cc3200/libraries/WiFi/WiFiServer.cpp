@@ -20,7 +20,7 @@
 #include <string.h>
 
 extern "C" {
-    #include "utility/SimpleLink.h"
+    #include "utility/simplelink.h"
     #include "utility/socket.h"
     #include "utility/wl_definitions.h"
     #include "utility/netapp.h"
@@ -125,7 +125,7 @@ WiFiClient WiFiServer::available(byte* status)
     //create the client address structure to be filled in by sl_accept
     //
     SlSockAddrIn_t clientAddress = {0};
-    unsigned int clientAddressSize = sizeof(clientAddress);
+    unsigned short int clientAddressSize = sizeof(clientAddress);
     
     //
     //get the client handle, if there's a queued client. If no client, return 0

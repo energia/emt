@@ -113,7 +113,6 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
         return false;
     }
     
-    
     //
     //get a socket index and attempt to create a socket
     //note that the socket is intentionally left as BLOCKING. This allows an
@@ -124,7 +123,6 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
     if (socketIndex == NO_SOCKET_AVAIL) {
         return false;
     }
-
 
     int socketHandle = sl_Socket(SL_AF_INET, SL_SOCK_STREAM, SL_IPPROTO_TCP);
     if (socketHandle < 0) {

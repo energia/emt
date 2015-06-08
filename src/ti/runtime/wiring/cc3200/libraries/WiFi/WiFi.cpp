@@ -33,12 +33,13 @@
 #define DEBUG
 
 #include <ti/runtime/wiring/Energia.h>
+#include <xdc/runtime/System.h>
 #include "WiFi.h"
 #include "utility/wl_definitions.h"
 
 
 extern "C" {
-    #include "utility/SimpleLink.h"
+    #include "utility/simplelink.h"
     #include <string.h>
     #include "utility/wlan.h"
     #include "utility/netcfg.h"
@@ -184,7 +185,8 @@ const char* WiFiClass::firmwareVersion()
     sl_DevGet(SL_DEVICE_GENERAL_CONFIGURATION, &ucConfigOpt, 
                                 &ucConfigLen, (unsigned char *)(&ver));
     
-    sprintf(fwVersion, "%ld.%ld.%ld.%ld.31.%ld.%ld.%ld.%ld.%d.%d.%d.%d",
+    System_snprintf(fwVersion, sizeof(fwVersion),
+             "%ld.%ld.%ld.%ld:%ld.%ld.%ld.%ld:%d.%d.%d.%d",
     ver.NwpVersion[0], ver.NwpVersion[1], ver.NwpVersion[2], ver.NwpVersion[3],
     ver.ChipFwAndPhyVersion.FwVersion[0], ver.ChipFwAndPhyVersion.FwVersion[1],
     ver.ChipFwAndPhyVersion.FwVersion[2], ver.ChipFwAndPhyVersion.FwVersion[3],
@@ -247,7 +249,7 @@ int WiFiClass::begin(char* ssid)
     //Connect to the access point (non enterprise, so 5th argument is NULL);
     //also mac address parameter set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect(ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((const signed char *)ssid, NameLen, NULL, &SecParams, NULL);
     
     //
     //return appropriate status as described by arduino wifi library
@@ -255,7 +257,7 @@ int WiFiClass::begin(char* ssid)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd(ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((const signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -300,14 +302,14 @@ int WiFiClass::begin(char* ssid, uint8_t key_idx, char* key)
     int NameLen = strlen(ssid);
     SlSecParams_t SecParams = {0};
     SecParams.Type = SL_SEC_TYPE_WEP;
-    SecParams.Key = key;
+    SecParams.Key = (signed char *)key;
     SecParams.KeyLen = strlen(key);
     
     //
     //Connect to the access point (non enterprise, so 5th argument is NULL);
     //also mac address parameter set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect(ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((const signed char*)ssid, NameLen, NULL, &SecParams, NULL);
     
     //
     //return appropriate status as described by arduino wifi library
@@ -315,7 +317,7 @@ int WiFiClass::begin(char* ssid, uint8_t key_idx, char* key)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd(ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((const signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -359,14 +361,14 @@ int WiFiClass::begin(char* ssid, char *passphrase)
     int NameLen = strlen(ssid);
     SlSecParams_t SecParams = {0};
     SecParams.Type = SL_SEC_TYPE_WPA;
-    SecParams.Key = passphrase;
+    SecParams.Key = (signed char *)passphrase;
     SecParams.KeyLen = strlen(passphrase);
     
     //
     //connect to the access point (non enterprise, so 5th argument is NULL)
     //also mac address parameters set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect(ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((const signed char *)ssid, NameLen, NULL, &SecParams, NULL);
 
     //
     //return appropriate status as described by arduino wifi library
@@ -374,7 +376,7 @@ int WiFiClass::begin(char* ssid, char *passphrase)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd(ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((const signed char *)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -464,8 +466,8 @@ void WiFiClass::config(IPAddress local_ip)
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -473,7 +475,7 @@ void WiFiClass::config(IPAddress local_ip)
     //and use netcfgset to set the new configuration in memory
     //
     config.ipV4 = sl_Ntohl((uint32_t)local_ip);
-    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(_NetCfgIpV4Args_t), (unsigned char*)&config);
+    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(SlNetCfgIpV4Args_t), (unsigned char*)&config);
 }
 
 void WiFiClass::config(IPAddress local_ip, IPAddress dns_server)
@@ -491,8 +493,8 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server)
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -501,7 +503,7 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server)
     //
     config.ipV4 = sl_Ntohl((uint32_t)local_ip);
     config.ipV4DnsServer = sl_Ntohl((uint32_t)dns_server);
-    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(_NetCfgIpV4Args_t), (unsigned char*)&config);
+    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(SlNetCfgIpV4Args_t), (unsigned char*)&config);
     
 }
 
@@ -520,8 +522,8 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -531,7 +533,7 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
     config.ipV4 = sl_Ntohl((uint32_t)local_ip);
     config.ipV4DnsServer = sl_Ntohl((uint32_t)dns_server);
     config.ipV4Gateway = sl_Ntohl((uint32_t)gateway);
-    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(_NetCfgIpV4Args_t), (unsigned char*)&config);
+    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(SlNetCfgIpV4Args_t), (unsigned char*)&config);
     
 }
 
@@ -550,8 +552,8 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -562,7 +564,7 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
     config.ipV4DnsServer = sl_Ntohl((uint32_t)dns_server);
     config.ipV4Gateway = sl_Ntohl((uint32_t)gateway);
     config.ipV4Mask = sl_Ntohl((uint32_t)subnet);
-    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(_NetCfgIpV4Args_t), (unsigned char*)&config);
+    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(SlNetCfgIpV4Args_t), (unsigned char*)&config);
     
 }
 
@@ -575,8 +577,8 @@ void WiFiClass::setDNS(IPAddress dns_server1)
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -584,7 +586,7 @@ void WiFiClass::setDNS(IPAddress dns_server1)
     //and use netcfgset to set the new configuration in memory
     //
     config.ipV4DnsServer = (uint32_t)SL_IPV4_VAL(dns_server1[0], dns_server1[1], dns_server1[2], dns_server1[3]);
-    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(_NetCfgIpV4Args_t), (unsigned char*)&config);
+    sl_NetCfgSet(SL_IPV4_STA_P2P_CL_STATIC_ENABLE, 1, sizeof(SlNetCfgIpV4Args_t), (unsigned char*)&config);
 }
 
 
@@ -650,8 +652,8 @@ IPAddress WiFiClass::localIP()
     //
     _SlNonOsMainLoopTask();
 
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
 
     //
@@ -671,8 +673,8 @@ IPAddress WiFiClass::subnetMask()
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -693,8 +695,8 @@ IPAddress WiFiClass::gatewayIP()
     //
     //get current configuration
     //
-    _NetCfgIpV4Args_t config = {0};
-    unsigned char len = sizeof(_NetCfgIpV4Args_t);
+    SlNetCfgIpV4Args_t config = {0};
+    unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
     
     //
@@ -787,7 +789,7 @@ int8_t WiFiClass::scanNetworks()
     // set the scan policy for ten seconds. This starts the scan.
     //
     policyVal.uiPolicyLen = 10;
-    iRet = sl_WlanPolicySet(SL_POLICY_SCAN , SL_SCAN_POLICY(1), (UINT8*)(policyVal.ucPolicy), sizeof(policyVal));
+    iRet = sl_WlanPolicySet(SL_POLICY_SCAN , SL_SCAN_POLICY(1), (unsigned char *)(policyVal.ucPolicy), sizeof(policyVal));
     if(iRet != 0)
     {
         return 0;
@@ -927,7 +929,7 @@ int WiFiClass::hostByName(char* aHostname, IPAddress& aResult)
     //Use the netapp api to resolve an IP for the requested hostname
     //
     unsigned long DestinationIP;
-    int iRet = sl_NetAppDnsGetHostByName(aHostname, strlen(aHostname), &DestinationIP, SL_AF_INET);
+    int iRet = sl_NetAppDnsGetHostByName((signed char *)aHostname, strlen(aHostname), &DestinationIP, SL_AF_INET);
     aResult = sl_Htonl(DestinationIP);
     
     if (iRet >= 0) {
