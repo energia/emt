@@ -249,7 +249,7 @@ int WiFiClass::begin(char* ssid)
     //Connect to the access point (non enterprise, so 5th argument is NULL);
     //also mac address parameter set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect((const signed char *)ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((signed char*)ssid, NameLen, NULL, &SecParams, NULL);
     
     //
     //return appropriate status as described by arduino wifi library
@@ -257,7 +257,7 @@ int WiFiClass::begin(char* ssid)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd((const signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -309,7 +309,7 @@ int WiFiClass::begin(char* ssid, uint8_t key_idx, char* key)
     //Connect to the access point (non enterprise, so 5th argument is NULL);
     //also mac address parameter set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect((const signed char*)ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((signed char*)ssid, NameLen, NULL, &SecParams, NULL);
     
     //
     //return appropriate status as described by arduino wifi library
@@ -317,7 +317,7 @@ int WiFiClass::begin(char* ssid, uint8_t key_idx, char* key)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd((const signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((signed char*)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -368,7 +368,7 @@ int WiFiClass::begin(char* ssid, char *passphrase)
     //connect to the access point (non enterprise, so 5th argument is NULL)
     //also mac address parameters set as null (3rd argument)
     //
-    int iRet = sl_WlanConnect((const signed char *)ssid, NameLen, NULL, &SecParams, NULL);
+    int iRet = sl_WlanConnect((signed char *)ssid, NameLen, NULL, &SecParams, NULL);
 
     //
     //return appropriate status as described by arduino wifi library
@@ -376,7 +376,7 @@ int WiFiClass::begin(char* ssid, char *passphrase)
     //in SimpleLinkCallbacks.cpp. However, if iRet < 0, there was an error
     //
     if (iRet == 0) {
-        sl_WlanProfileAdd((const signed char *)ssid, NameLen, 0, &SecParams, 0, 6, 0);
+        sl_WlanProfileAdd((signed char *)ssid, NameLen, 0, &SecParams, 0, 6, 0);
         _connecting = true;
         return status();
     } else {
@@ -833,7 +833,7 @@ char* WiFiClass::SSID(uint8_t networkItem)
     memset(&netInfo, 0, sizeof(netInfo));
     sl_WlanGetNetworkList(0, network_count, (Sl_WlanNetworkEntry_t*)&netInfo);
 
-    strcpy(string_output_buffer, (const char*)netInfo[networkItem].ssid);
+    strcpy(string_output_buffer, (char*)netInfo[networkItem].ssid);
     return  string_output_buffer;
     
 }
@@ -1006,7 +1006,7 @@ void WiFiClass::_registerNewDeviceIP(unsigned char *ip, unsigned char *mac)
 
     // Have we seen this client attach yet?
     for (i=0; i < MAX_AP_DEVICE_REGISTRY; i++) {
-        if (_connectedDevices[i].in_use && !memcmp((const uint8_t *)(_connectedDevices[i].mac), mac, 6)) {
+        if (_connectedDevices[i].in_use && !memcmp((uint8_t *)(_connectedDevices[i].mac), mac, 6)) {
             // We have; update the IP and exit.
             memcpy((uint8_t *)(_connectedDevices[i].ipAddress), ip, 4);
             _latestConnect = i;
@@ -1037,7 +1037,7 @@ void WiFiClass::_unregisterDevice(unsigned char *mac)
 
     // Find the client
     for (i=0; i < MAX_AP_DEVICE_REGISTRY; i++) {
-        if (_connectedDevices[i].in_use && !memcmp((const uint8_t *)(_connectedDevices[i].mac), mac, 6)) {
+        if (_connectedDevices[i].in_use && !memcmp((uint8_t *)(_connectedDevices[i].mac), mac, 6)) {
             // We have; set in_use to false.
             _connectedDevices[i].in_use = false;
             return;
@@ -1075,7 +1075,7 @@ MACAddress WiFiClass::deviceMacAddress(unsigned int idx)
     do {
         if (_connectedDevices[i].in_use) {
             if (j == idx) {
-                return MACAddress((const uint8_t *)_connectedDevices[i].mac);
+                return MACAddress((uint8_t *)_connectedDevices[i].mac);
             }
             j++;
         }
@@ -1094,7 +1094,7 @@ IPAddress WiFiClass::deviceIpByMacAddress(MACAddress mac)
     // Search by MAC
     for (i=0; i < MAX_AP_DEVICE_REGISTRY; i++) {
         if (_connectedDevices[i].in_use) {
-            if ( mac == (const uint8_t *)_connectedDevices[i].mac ) {
+            if ( mac == (uint8_t *)_connectedDevices[i].mac ) {
                 return IPAddress((uint8_t *)_connectedDevices[i].ipAddress);
             }
         }
@@ -1112,8 +1112,8 @@ MACAddress WiFiClass::deviceMacByIpAddress(IPAddress ip)
     // Search by IP
     for (i=0; i < MAX_AP_DEVICE_REGISTRY; i++) {
         if (_connectedDevices[i].in_use) {
-            if ( ip == (const uint8_t *)_connectedDevices[i].ipAddress ) {
-                return MACAddress((const uint8_t *)_connectedDevices[i].mac);
+            if ( ip == (uint8_t *)_connectedDevices[i].ipAddress ) {
+                return MACAddress((uint8_t *)_connectedDevices[i].mac);
             }
         }
     }
