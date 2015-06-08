@@ -19,6 +19,9 @@ var INCS = '-I"' + DLIBROOT + '" '
 
 var DEF_OPTS = {name: null, defs: "", incs: ""};
 
+/*
+ *  ======== addLibs ========
+ */
 function addLibs(srcDirs, opts) 
 {
     if (opts == null) opts = {};
@@ -52,6 +55,9 @@ function addLibs(srcDirs, opts)
     }
 }
 
+/*
+ *  ======== getSources ========
+ */
 function getSources(dirs)
 {
     var result = {c: [], cxx: [], main: []};
