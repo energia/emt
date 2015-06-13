@@ -61,7 +61,7 @@
 
 //OSLib includes
 #if defined(SL_PLATFORM_MULTI_THREADED)
-#include <osi.h>
+#include "osi.h"
 #endif
 
 
