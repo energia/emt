@@ -10,10 +10,10 @@ Pkg.makeEpilogue = "include custom.mak";
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200:RedBearLab_CC3200";
+var PLATFORM = "ti.platforms.emt3200:CC3200_LAUNCHXL";
 
 var SRCS = getSources(".");
-var DEFS = "-Dxdc__nolocalstring=1";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200_LAUNCHXL";
 var MAIN = "main.cpp";
 
 for (var i = 0; i < Build.targets.length; i++) {

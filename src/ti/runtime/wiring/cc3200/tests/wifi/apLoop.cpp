@@ -53,7 +53,7 @@ __extern void apSetup()
         Serial.print('.');
         delay(300);
     }
-    Serial.println();
+    Serial.println('.');
     printWifiData();
     Serial.println("AP active.");
   
@@ -146,7 +146,6 @@ static void doCommand(char *buffer, int len, WiFiClient client)
     long int addr = 0;
     int cnt = 0;
     char *ptr;
-    int status;
 
     /* get the address and count from the command */
     getAddrCnt(buffer, len, &addr, &cnt);
@@ -154,11 +153,10 @@ static void doCommand(char *buffer, int len, WiFiClient client)
     /* send client cnt bytes starting from addr */
     ptr = (char *)addr;
     while (cnt-- > 0) {
-        status = client.write(*ptr);
+        if (client.write(*ptr) != 1) {
+            Serial.println("doCommand write failure!");
+        }
         ptr++;
-    }
-    if (status != 1) {
-        Serial.println("doCommand write failure!");
     }
 }
 
@@ -189,8 +187,9 @@ static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt)
         }
         *cnt = (*cnt * 10) + (buf[i] - '0');
     }
-    Serial.print("read("); Serial.print(*addr);
-    Serial.print(", "); Serial.println(*cnt);
+    Serial.print("read("); Serial.print(*addr, HEX);
+    Serial.print(", "); Serial.print(*cnt);
+    Serial.println(')');
 }
 
 /*
