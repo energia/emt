@@ -1,4 +1,4 @@
-				emt-a43
+				emt-a44
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,19 +125,21 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.cc3200.tests.wifi
-	added simple wifi test that illustrates byte-by-byte "bug" in 
-	simplelink 1.1 stack; transfers greater than 55 bytes cause a hang 
-	with the new simplelink, no such problem with "old" implementation.
-
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.cc3200.tests.zumo
-	fixed a few edge conditions and added firmware version display
-
 ti.runtime.wiring.cc3200.libraries
-	updated to the SimpleLink 1.1 sources
+	fixed WiFi to properly handle EAGAIN errors; without the call to
+	sl_Task() EAGAIN errors result in a permenent hang
+
+	replaced all calls to _SlNonOsMainLoopTask() with sl_Task(); in
+	theory, a portable API but sl_Task() only exists when
+	SL_PLATFORM_EXTERNAL_SPAWN is not defined or when
+	SL_PLATFORM_EXTERNAL_SPAWN is defined _and_
+	SL_PLATFORM_MULTI_THREADED is not defined.
+
+	fixed to cleanly build when SL_PLATFORM_MULTI_THREADED is defined; but
+	left SL_PLATFORM_MULTI_THREADED undefined in this build.
 
 MRS
