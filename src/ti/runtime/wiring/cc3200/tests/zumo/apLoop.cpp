@@ -27,7 +27,6 @@ static int num_sockets = 0;
 static void doCommand(char *buffer, int len, WiFiClient client);
 static void doWASD(char wasd, WiFiClient client);
 static void printWifiData();
-static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt);
 
 /*
  *  ======== apSetup ========
@@ -233,6 +232,7 @@ static void doWASD(char wasd, WiFiClient client)
 #endif
 }
 
+#if 0
 /*
  *  ======== getAddrCnt ========
  */
@@ -261,6 +261,7 @@ static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt)
         *cnt = (*cnt * 10) + (buf[i] - '0');
     }
 }
+#endif
 
 /*
  *  ======== printWifiData ========
