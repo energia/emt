@@ -33,6 +33,8 @@
 #include "wiring_private.h"
 #include "SPI.h"
 
+void spiTransferCallback(SPI_Handle handle,
+                                        SPI_Transaction * transaction);
 SPIClass::SPIClass(void)
 {
     init(0);
@@ -53,7 +55,7 @@ void SPIClass::init(unsigned long module)
     dataMode = SPI_MODE0;
     bitOrder = MSBFIRST;
     clockDivider = SPI_CLOCK_DIV4;
-    SPI_Params_init(&params);
+    numUsingInterrupts = 0;
 }
 
 /*
@@ -66,20 +68,20 @@ void SPIClass::begin(uint8_t ssPin)
         return;
     }
 
-    SPI_Params_init(&params);
     Board_initSPI();
+
+    SPI_Params_init(&params);
 
     params.bitRate = SPI_CLOCK_MAX / clockDivider;
     params.frameFormat = (SPI_FrameFormat) dataMode;
+    params.transferMode = SPI_MODE_CALLBACK;
+    params.transferCallbackFxn = spiTransferCallback;
 
     spi = SPI_open(spiModule, &params);
 
     if (spi != NULL) {
+	/* 6/18/2015 no support for pin profiles, just save for now */
         slaveSelect = ssPin;
-        if (slaveSelect != 0) {
-            pinMode(slaveSelect, OUTPUT); //set SS as an output
-        }
-
         GateMutex_construct(&gate, NULL);
         begun = TRUE;
     }
@@ -93,10 +95,8 @@ void SPIClass::begin()
 
 void SPIClass::end(uint8_t ssPin) {
     begun = FALSE;
+    numUsingInterrupts = 0;
     SPI_close(spi);
-    if (slaveSelect != 0) {
-        pinMode(slaveSelect, INPUT);
-    }
 }
 
 void SPIClass::end()
@@ -141,6 +141,9 @@ void SPIClass::setClockDivider(uint8_t divider)
 uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode)
 {
     uint32_t rxtxData;
+    uint8_t data_in;
+    uint8_t i;
+    uint32_t taskKey, hwiKey;
 
     if (bitOrder == LSBFIRST) {
         rxtxData = data_out;
@@ -155,22 +158,42 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
         data_out = (uint8_t) rxtxData;
     }
 
-    uint8_t data_in;
+    taskKey = Task_disable();
+    hwiKey = Hwi_disable();
 
-    GateMutex_enter(GateMutex_handle(&gate));
+    /* disable all interrupts registered with SPI.usingInterrupt() */
+    for (i = 0; i < numUsingInterrupts; i++) {
+        disablePinInterrupt(usingInterruptPins[i]);
+    }
 
-    if (slaveSelect != 0) {
+    Hwi_restore(hwiKey);
+
+    if (ssPin != 0) {
         digitalWrite(ssPin, LOW);
     }
 
     transaction.txBuf = &data_out;
     transaction.rxBuf = &data_in;
     transaction.count = 1;
-    SPI_transfer(spi, &transaction);
+    transferComplete = 0;
 
-    if (transferMode == SPI_LAST && slaveSelect != 0) {
+    SPI_transfer(spi, &transaction);
+    while (transferComplete == 0) ;
+
+    if (transferMode == SPI_LAST && ssPin != 0) {
         digitalWrite(ssPin, HIGH);
     }
+
+    hwiKey = Hwi_disable();
+
+    /* re-enable all interrupts registered with SPI.usingInterrupt() */
+    for (i = 0; i < numUsingInterrupts; i++) {
+        enablePinInterrupt(usingInterruptPins[i]);
+    }
+
+    Hwi_restore(hwiKey);
+
+    Task_restore(taskKey);
 
     if (bitOrder == LSBFIRST) {
         rxtxData = data_in;
@@ -185,8 +208,6 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
         data_in = (uint8_t) rxtxData;
     }
 
-    GateMutex_leave(GateMutex_handle(&gate), 0);
-
     return ((uint8_t)data_in);
 }
 
@@ -197,7 +218,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data)
 
 uint8_t SPIClass::transfer(uint8_t data)
 {
-    return (transfer(slaveSelect, data, SPI_LAST));
+    return (transfer(0, data, SPI_LAST));
 }
 
 void SPIClass::setModule(uint8_t module)
@@ -206,8 +227,20 @@ void SPIClass::setModule(uint8_t module)
     begin(slaveSelect);
 }
 
+void SPIClass::usingInterrupt(uint8_t pin)
+{
+    if (numUsingInterrupts < 16) {
+	usingInterruptPins[numUsingInterrupts++] = pin;
+    }
+}
+
+/* C type function to call the thing above */
+void spiTransferCallback(SPI_Handle spi, SPI_Transaction * transaction)
+{
+    SPI.transferComplete = 1;
+}
+
 /*
  * Pre-Initialize a SPI instances
  */
 SPIClass SPI(0);
-//SPIClass SPI1(1);

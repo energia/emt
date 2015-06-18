@@ -75,3 +75,12 @@ void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 void detachInterrupt(uint8_t pin) {
     GPIO_setCallback(pin, NULL);
 }
+
+void disablePinInterrupt(uint8_t pin) {
+    GPIO_disableInt(pin);
+}
+
+void enablePinInterrupt(uint8_t pin) {
+    GPIO_enableInt(pin);
+}
+

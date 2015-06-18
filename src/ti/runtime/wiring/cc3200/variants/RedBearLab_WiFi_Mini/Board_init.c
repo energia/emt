@@ -405,7 +405,7 @@ static const SPICC3200DMA_HWAttrs SPICC3200DMAHWAttrs[Board_SPICOUNT] = {
     {
         GSPI_BASE,
         INT_GSPI,
-        ~(0),
+        0xC0,       /* make SPI interrupt one priority higher than default */
         PRCM_GSPI,
         SPI_HW_CTRL_CS,
         SPI_CS_ACTIVELOW,

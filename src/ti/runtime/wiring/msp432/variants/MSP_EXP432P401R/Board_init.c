@@ -599,7 +599,7 @@ const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .defaultTxBufValue = 0,
 
         .dmaIntNum = INT_DMA_INT1,
-        .intPriority = ~0,
+        .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH1_EUSCIB0RX0,
         .txDMAChannelIndex = DMA_CH0_EUSCIB0TX0
     },
@@ -611,7 +611,7 @@ const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .defaultTxBufValue = 0,
 
         .dmaIntNum = INT_DMA_INT2,
-        .intPriority = ~0,
+        .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH5_EUSCIB2RX0,
         .txDMAChannelIndex = DMA_CH4_EUSCIB2TX0
     }
