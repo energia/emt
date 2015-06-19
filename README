@@ -1,4 +1,4 @@
-				emt-a44
+				emt-a45
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,17 +129,10 @@ DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.cc3200.libraries
-	fixed WiFi to properly handle EAGAIN errors; without the call to
-	sl_Task() EAGAIN errors result in a permenent hang
+ti.runtime.wiring.cc3200.tests
+	cleanup + added Processing sketches
 
-	replaced all calls to _SlNonOsMainLoopTask() with sl_Task(); in
-	theory, a portable API but sl_Task() only exists when
-	SL_PLATFORM_EXTERNAL_SPAWN is not defined or when
-	SL_PLATFORM_EXTERNAL_SPAWN is defined _and_
-	SL_PLATFORM_MULTI_THREADED is not defined.
-
-	fixed to cleanly build when SL_PLATFORM_MULTI_THREADED is defined; but
-	left SL_PLATFORM_MULTI_THREADED undefined in this build.
+ti.runtime.wiring
+	fixed SPI to support multi-thread "external" chip select
 
 MRS
