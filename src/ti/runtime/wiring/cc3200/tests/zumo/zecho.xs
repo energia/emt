@@ -15,7 +15,6 @@ var LEFT     = 'a';
 var BACKWARD = 's';
 var STOP     = ' ';
 
-
 /* data arrays returned from Zumo */
 var word = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 4);
 var line = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 72);
