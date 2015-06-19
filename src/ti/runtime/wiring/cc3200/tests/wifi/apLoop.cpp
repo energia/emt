@@ -35,10 +35,6 @@ __extern void apSetup()
 {
     Serial.begin(9600);
 
-    /* toggle LED when clients connect/disconnect */
-    pinMode(MAIN_LED_PIN, OUTPUT);  
-    digitalWrite(MAIN_LED_PIN, LOW);
-  
     System_printf("  apSetup.\r\n");
 
     Serial.print("Setting up Access Point named: ");
@@ -55,12 +51,24 @@ __extern void apSetup()
     }
     Serial.println('.');
     printWifiData();
-    Serial.println("AP active.");
   
+    /*
+     * Expected device firmware versions from servicepack_1.0.0.10.0.bin:
+     *   NWP version: 2.4.0.2
+     *   MAC version: 1.3.0.1
+     *   PHY version: 1.0.3.34
+     *
+     *   RedBear output was: 2.2.0.1.31.1.2.0.2.1.0.3.23
+     *           and now is: 2.4.0.2.31.1.3.0.1.1.0.3.34
+     */
+    Serial.print(" firmware version: ");
+    Serial.println(WiFi.firmwareVersion());
+    Serial.println("AP active.");
+
     /* start a data server on port number PORTNUM */
     Serial.print("Starting dataserver on port: "); Serial.println(PORTNUM);
     server.begin();
-    Serial.println("dataserver started!");
+    Serial.println("dataserver started.");
 }
 
 /*
@@ -73,11 +81,10 @@ __extern void apLoop()
     if (a != num_clients) {
         if (a > num_clients) {  // new Client connected
             int i;
-            digitalWrite(MAIN_LED_PIN, !digitalRead(MAIN_LED_PIN));
             /* display all clients on the network */
-            Serial.println("Client connected! All clients:");
+            Serial.println("New client connected. All clients:");
             for (i = 0; i < a; i++) {
-                Serial.print("Client #");
+                Serial.print("  Client #");
                 Serial.print(i);
                 Serial.print(" at IP address = ");
                 Serial.print(WiFi.deviceIpAddress(i));
@@ -86,8 +93,9 @@ __extern void apLoop()
             }
         } 
         else {                  // a Client disconnected
-            digitalWrite(MAIN_LED_PIN, !digitalRead(MAIN_LED_PIN));
-            Serial.println("Client disconnected.");
+            Serial.print("Client disconnected, ");
+            Serial.print(a);
+            Serial.println(" clients remaining.");
         }    
         num_clients = a;
     }
@@ -99,7 +107,7 @@ __extern void apLoop()
         if (client) {
             /* if there's a client, read and process commands */
             Serial.print("new client socket: ");
-            Serial.println(num_sockets++);
+            Serial.println(++num_sockets);
 
             static char buffer[256] = {0};
             int bufLen = 0;
@@ -108,10 +116,12 @@ __extern void apLoop()
             while (client.connected()) {
 
                 /* if there's a byte to read from the client .. */
-                if (client.available()) {    
-
+                if (client.available()) {
                     /* copy it to the command buffer, byte at a time */
                     char c = client.read();
+
+                    /* ignore bogus characters */
+                    if (c == '\0' || c == '\r') continue;
 
                     /* never overrun the command buffer */
                     if (bufLen >= (int)(sizeof (buffer))) { 
@@ -154,7 +164,7 @@ static void doCommand(char *buffer, int len, WiFiClient client)
     ptr = (char *)addr;
     while (cnt-- > 0) {
         if (client.write(*ptr) != 1) {
-            Serial.println("doCommand write failure!");
+            System_printf("doCommand write failure!");
         }
         ptr++;
     }
@@ -187,9 +197,7 @@ static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt)
         }
         *cnt = (*cnt * 10) + (buf[i] - '0');
     }
-    Serial.print("read("); Serial.print(*addr, HEX);
-    Serial.print(", "); Serial.print(*cnt);
-    Serial.println(')');
+    System_printf("read(0x%x, %d)\n", *addr, *cnt);
 }
 
 /*

@@ -53,7 +53,7 @@ __extern void apSetup()
         Serial.print('.');
         delay(300);
     }
-    Serial.println();
+    Serial.println('.');
     printWifiData();
   
     /*
@@ -107,9 +107,9 @@ __extern void apLoop()
     }
 
     if (num_clients > 0) {
-
         /* listen for incoming clients */
         WiFiClient client = server.available();
+
         if (client) {
             /* if there's a client, read and process commands */
             Serial.print("new client socket: ");
@@ -122,7 +122,7 @@ __extern void apLoop()
             unsigned int lapse = 0;
             unsigned int start = millis();
             while (client.connected()) {
-                
+
                 /* if there's a byte to read from the client .. */
                 if (client.available()) {
                     /* copy it to the command buffer, byte at a time */

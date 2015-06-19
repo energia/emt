@@ -2,14 +2,16 @@
  *  ======== readmem.xs ========
  *  Open a socket to the CC3200 read it memory
  *
- *  usage: xs -f readmem.xs [log_file]
+ *  usage: xs -f readmem.xs [[read_len] [log_file]]
  *
- *  If log_file is specified, IMU data is appended to the specified file;
+ *  If read_len is specified, each read request to the server is of length 
+ *  read_len; otherwise, data is read 4-bytes at a time.
+ *
+ *  If log_file is specified, memory data is appended to the specified file;
  *  otherwise, this data is printed to the console.
  */
 
-var word = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 128);
-var line = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 75);
+var word;
 var log  = null;
 
 /*
@@ -19,18 +21,30 @@ function main(args)
 {
     var host = "192.168.1.1";
     var port = 8080;
+    var readLen = 4;
+
+    if (args.length > 0) {
+	readLen = args[0] - 0;
+        if (!readLen) {
+	    readLen = 4;
+	}
+    }
+
+    /* create read reply buffer */
+    word = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, readLen);
 
     for (;;) {
-        if (java.lang.System.in.available() > 1) return;
+        if (java.lang.System.in.available() > 1) break;
 
         /* open a socket to the zumo */
+        print("\nconnecting to port " + port);
         var socket = java.net.Socket(host, port);
         var out = java.io.PrintWriter(socket.getOutputStream(), true);
         var ins = java.io.DataInputStream(socket.getInputStream());
 
-        /* open an IMU data log (if specified on the command line) */
-        if (args.length > 0) {
-            log = new java.io.FileWriter(args[0], true);
+        /* open an read data log (if specified on the command line) */
+        if (args.length > 1) {
+            log = new java.io.FileWriter(args[1], true);
         }
 
         /* run a test */

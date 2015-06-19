@@ -48,9 +48,9 @@ function main(args)
 
     /* run a test */
     drive(STOP,     15, "------------- calibrating ------------");
-    drive(FORWARD,  15, "------------- driving forward ------------");
+    drive(FORWARD,  30, "------------- driving forward ------------");
     drive(RIGHT,    51, "------------- turning right ------------");
-    drive(BACKWARD, 15, "------------- driving backward ------------");
+    drive(BACKWARD, 30, "------------- driving backward ------------");
     drive(LEFT,     51, "------------- turning left ------------");
     drive(STOP,     15, "------------- stopping ------------");
 
@@ -75,7 +75,7 @@ function drive(direction, duration, msg)
 	cmd.println(direction);            /* send command to zumo */
 	reply.readFully(line);             /* read results */
 	printLine(java.lang.String(line)); /* print/log results */
-        java.lang.Thread.sleep(5);
+        //java.lang.Thread.sleep(5);
     }
 }
 

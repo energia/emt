@@ -1,8 +1,8 @@
-all: energia.bin
+all: zumo.bin
 
-energia.bin: energia.xm4g
+zumo.bin: zumo.xm4g
 	@$(MSG) making $@ ...
 	${gnu.targets.arm.M4.rootDir}/bin/arm-none-eabi-objcopy -O binary $< $@
 
 clean::
-	$(RM) energia.bin
+	$(RM) zumo.bin
