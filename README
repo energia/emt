@@ -1,4 +1,4 @@
-				emt-a45
+				emt-a46
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,14 +125,37 @@ Librarian releases
 
 ADDITIONS
 
+src/config.bld
+    added M3 target
+
+ti.platforms.emt26xx
+	    added "generic" CC26xx platform
+
+ti.wiring.cc26xx.variants
+	added CC2650STK_BLE variant
+
+bundles/energia
+	added cc26xx closure + tests
+
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.cc3200.tests
-	cleanup + added Processing sketches
+bundles
+	bundle makefile cleanup	
 
-ti.runtime.wiring
-	fixed SPI to support multi-thread "external" chip select
+ti.runtime.wiring.cc3200
+	fix WiFiClient.connected to work when unread characters are in the
+	buffer
+
+ti.runtime.wiring.cc3200.tests
+	cleanup + updates to Processing sketches
+
+ti.platforms.launchpad
+	patch ti.tirtos to return ti library for gnu build (since TI-RTOS does
+	not support Gcc, yet)
+
+ti.runtime.wiring.cc26xx
+	hacked to build _ONLY_, it's not ready to be used
 
 MRS
