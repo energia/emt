@@ -115,9 +115,6 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
     
     //
     //get a socket index and attempt to create a socket
-    //note that the socket is intentionally left as BLOCKING. This allows an
-    //abusive user to send as many requests as they want as fast as they can try
-    //and it won't overload simplelink.
     //
     int socketIndex = WiFiClass::getSocket();
     if (socketIndex == NO_SOCKET_AVAIL) {
@@ -195,7 +192,6 @@ int WiFiClient::sslConnect(IPAddress ip, uint16_t port)
     if (socketIndex == NO_SOCKET_AVAIL) {
         return false;
     }
-
 
     int socketHandle = sl_Socket(SL_AF_INET, SL_SOCK_STREAM, SL_SEC_SOCKET);
     if (socketHandle < 0) {
@@ -483,7 +479,7 @@ int WiFiClient::read(uint8_t* buf, size_t size)
 int WiFiClient::peek()
 {
     //
-    //return the next byte in the buffer or zero if we're past the end of the data
+    //return the next byte in the buffer or -1 if we're past the end of the data
     //
     if (rx_currentIndex < rx_fillLevel) {
         return rx_buffer[rx_currentIndex];
@@ -541,8 +537,8 @@ uint8_t WiFiClient::connected()
     //
     if ( status() ) {
         return true;
-//    } else if (rx_currentIndex < rx_fillLevel) {
-//        return true;
+    } else if (rx_currentIndex < rx_fillLevel) {
+        return true;
     } else {
         return false;
     }
