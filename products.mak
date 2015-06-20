@@ -27,6 +27,7 @@ XDCROOT  = $(call latest, $(CCSROOT)/xdctools_*/.)
 
 DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare*)
 DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
+DRVLIB.cc26xx = $(wildcard $(TIRTOS)/products/CC26*)
 
 ti.targets.arm.elf.M4F = $(call latest,$(CCSROOT)/ccsv6/tools/compiler/*arm_5.*)
 gnu.targets.arm.M4F    = $(call latest,$(CCSROOT)/ccsv6/tools/compiler/gcc-arm-*)
@@ -40,12 +41,15 @@ ifeq (,$(XDCROOT))
     SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6_*)
     DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare*)
     DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
+    DRVLIB.cc26xx = $(wildcard $(TIRTOS)/products/CC26*)
     ti.targets.arm.elf.M4F = $(TOOLS)/vendors/ti/arm/5.2.2/$(BUILD_HOST_OS)
     gnu.targets.arm.M4F    = $(TOOLS)/vendors/linaro/4.8-2014q3/$(BUILD_HOST_OS)
 endif
 
 ti.targets.arm.elf.M4  = $(ti.targets.arm.elf.M4F)
 gnu.targets.arm.M4     = $(gnu.targets.arm.M4F)
+ti.targets.arm.elf.M3  = $(ti.targets.arm.elf.M4F)
+gnu.targets.arm.M3     = $(gnu.targets.arm.M4F)
 
 #
 #  Error checks
@@ -61,4 +65,7 @@ ifeq (,$(wildcard $(DRVLIB.msp432)))
 endif
 ifeq (,$(wildcard $(DRVLIB.cc3200)))
     $(error DRVLIB.cc3200, '$(DRVLIB.cc3200)', does not reference a valid directory)
+endif
+ifeq (,$(wildcard $(DRVLIB.cc26xx)))
+    $(error DRVLIB.cc26xx, '$(DRVLIB.cc26xx)', does not reference a valid directory)
 endif
