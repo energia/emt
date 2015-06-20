@@ -26,31 +26,37 @@ var os     = environment["xdc.hostOS"];
 var tiTargets = xdc.loadPackage('ti.targets.arm.elf');
 tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi --display_error_number ";
+tiTargets.M3.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 if (tiTargets.M4F.rootDir == null) {
     tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.4/" + os;
 }
+tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
 tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
 /* Gnu compiler configuration settings */
 var gnuTargets = xdc.loadPackage('gnu.targets.arm');
 gnuTargets.M4.LONGNAME  = "bin/arm-none-eabi-gcc";
 gnuTargets.M4F.LONGNAME = gnuTargets.M4.LONGNAME;
+gnuTargets.M3.LONGNAME  = gnuTargets.M4.LONGNAME;
 if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
     gnuTargets.M4F.rootDir = vtools + "/linaro/4.8-2014q3/" + os;
 }
 gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
+gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
 
 /* manage exceptions and dwarf compatibility */
 if (false) {
     /* define exceptions as default for both TI and GCC */
     gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -gstrict-dwarf";
     gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf";
+    gnuTargets.M3.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf";
 //    tiTargets.M4F.ccOpts.suffix = " --exceptions"; /* must be used on all C++ files (TI's compiler exits if this is used on .c files) */
     tiTargets.M4F.lnkOpts.suffix = " -c -m $(XDCCFGDIR)/$@.map -i $(rootDir)/lib --disable_auto_rts --library=rtsv7M4_T_le_v4SPD16_eabi_eh.lib";
 }
 else {
     gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
     gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
+    gnuTargets.M3.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
 }
 
 /* optimize release builds for size */
@@ -58,14 +64,18 @@ var rel = gnuTargets.M4F.profiles["release"].compileOpts;
 rel.copts = rel.copts.replace(/-O[0-9]/, "-Os");
 rel = gnuTargets.M4.profiles["release"].compileOpts;
 rel.copts = rel.copts.replace(/-O[0-9]/, "-Os");
+rel = gnuTargets.M3.profiles["release"].compileOpts;
+rel.copts = rel.copts.replace(/-O[0-9]/, "-Os");
 
 /* add C++ support */
 gnuTargets.M4F.lnkOpts.suffix += " -lstdc++";
 gnuTargets.M4.lnkOpts.suffix  += " -lstdc++";
+gnuTargets.M3.lnkOpts.suffix  += " -lstdc++";
 
 /* disable wchar warning about incompatibility between TI and GCC ABI objects */
 gnuTargets.M4F.lnkOpts.suffix += " -Wl,--no-wchar-size-warning";
 gnuTargets.M4.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
+gnuTargets.M3.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
 
 /* define the set of targets for which to build */
 if (Pkg.name.match(/432/)) {
@@ -75,6 +85,10 @@ if (Pkg.name.match(/432/)) {
 else if (Pkg.name.match(/3200/)) {
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
     if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
+}
+else if (Pkg.name.match(/26xx/)) {
+    if (gnuTargets.M3.rootDir != null) Build.targets.$add(gnuTargets.M3);
+    if (tiTargets.M3.rootDir != null)  Build.targets.$add(tiTargets.M3);
 }
 else if (Pkg.name.match(/\.runtime\./)) {
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
@@ -91,6 +105,9 @@ tiTargets.M4F.platform =  "ti.platforms.emt432";
 
 gnuTargets.M4.platform = "ti.platforms.emt3200";
 tiTargets.M4.platform =  "ti.platforms.emt3200";
+
+gnuTargets.M3.platform = "ti.platforms.emt26xx";
+tiTargets.M3.platform =  "ti.platforms.emt26xx";
 
 /* For now, the default is to export everthing */
 Pkg.attrs.exportAll = true;
