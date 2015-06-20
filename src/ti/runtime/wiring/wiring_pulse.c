@@ -31,8 +31,6 @@
  */
 
 #include "wiring_private.h"
-#include <rom.h>
-#include <rom_map.h>
 
 #include <ti/drivers/GPIO.h>
 
