@@ -21,7 +21,7 @@ static const char wifipw[] = "password";
 
 static WiFiServer server(PORTNUM); // create data server on port PORTNUM
 
-static int num_clients = 0;
+int num_clients = 0;
 static int num_sockets = 0;
   
 static void doCommand(char *buffer, int len, WiFiClient client);

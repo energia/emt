@@ -108,10 +108,12 @@ bool WiFiClass::init()
     if (_initialized) {
         return true;
     }
+
     //
     //Initialize the UDMA
     //
     UDMAInit();
+
     //
     //start the SimpleLink driver (no callback)
     //
