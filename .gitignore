@@ -55,6 +55,8 @@ doc-files
 *.xem4f
 *.xm4g
 *.xem4
+*.xem3
+*.xm3g
 
 *.exe
 *.bin
