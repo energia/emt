@@ -1,7 +1,7 @@
 /*
  *  ======== cc2600.bld ========
  */
-var Platform = xdc.module("ti.platforms.emt3200.Platform");
+var Platform = xdc.module("ti.platforms.emt26xx.Platform");
 var DLIBROOT = Platform.findDriverLib();
 print("  using DriverLib: " + DLIBROOT);
 
@@ -11,7 +11,8 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-var DEFS = "-DPART_CC3200 -Dcc3200 -DCCWARE -DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+//var DEFS = "-DSL_PLATFORM_MULTI_THREADED";
+var DEFS = "";
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/driverlib" '
@@ -33,6 +34,9 @@ function addLibs(srcDirs, opts)
 
     for (var i = 0; i < Build.targets.length; i++) {
 	var targ = Build.targets[i];
+	if (targ.name != "M3") {
+	    continue;
+	}
 
 	var toolchain = targ.$name.split(/\./)[0];
 

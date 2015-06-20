@@ -27,5 +27,11 @@ function getLibs(prog)
     /* return our lib + the pre-compiled board-support library */
     var lib = this.$name.substring(this.$name.lastIndexOf('.') + 1) + ext;
     var vlib = vbase + "/lib/" + platform.variant + ext;
+    if (xdc.findFile(vlib) == null) {
+	prog.$logWarning("can't find variant library '" + vlib 
+			 + "': expected to find board support files in "
+			 + vname, this);
+	return ("lib/" + lib);
+    }
     return ("lib/" + lib + ";" + vlib);
 }
