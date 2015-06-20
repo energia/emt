@@ -11,7 +11,7 @@ Client client;
 
 char[] charBuffer = new char[72];
 
-int    NUM_XVALS = 40;
+int    NUM_XVALS = 80;
 String LOG_NAME  = "acc.txt";
 
 Graph graph1 = new Graph(150, 80, 400, 200, color (200, 20, 20));
@@ -21,6 +21,8 @@ float[] ax = { 0 };
 float[] ay = { 0 };
 float[] az = { 0 };
 
+char curGraph = 'A';
+int curGraphOffset = 1;
 float curTime = 0;
 
 PrintWriter log = null;  /* optional data log */
@@ -77,6 +79,34 @@ void draw()
                 println("logging stopped.");
             }
         }
+        else if (key == 'G') {
+            if (curGraph != 'G') {
+                curGraph = 'G';
+                curGraphOffset = 5;
+                graph1.yLabel = "Rotational Speed (r/s)";
+                graph1.Title = " Gyro: (x, y, z) vs. t ";  
+                graph1.yMin = 0;
+                graph1.yMax = 0;
+                ax = new float [] { 0 }; 
+                ay = new float [] { 0 };
+                az = new float [] { 0 };
+                time = new float [] { curTime }; 
+            }
+        }
+        else if (key == 'A') {
+            if (curGraph != 'A') {
+                curGraph = 'A';
+                curGraphOffset = 1;
+                graph1.yLabel = "Acceleration (m/s^2)";
+                graph1.Title = " Acceleration: (x, y, z) vs. t ";  
+                graph1.yMin = 0;
+                graph1.yMax = 0;
+                ax = new float [] { 0 }; 
+                ay = new float [] { 0 };
+                az = new float [] { 0 };
+                time = new float [] { curTime }; 
+            }
+        }
 
         if (pending < MAX_PENDING) {
             client.write(cmd);
@@ -99,8 +129,8 @@ void draw()
         /* parse IMU data and display it */
         String input = new String(charBuffer);
         String [] tokens = splitTokens(input, " ");
-        if (tokens.length > 3) {
-            newPoint(tokens[1], tokens[2], tokens[3]);
+        if (tokens.length > (2 + curGraphOffset)) {
+            newPoint(tokens[curGraphOffset], tokens[1 + curGraphOffset], tokens[2 + curGraphOffset]);
         }
     }
 }
