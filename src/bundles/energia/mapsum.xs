@@ -18,9 +18,10 @@ var symbolTable = {};
 var objectTable = {};
 var toolChain = null;
 
+var verbose = 0;
+
 function main(arguments)
 {
-    var verbose = 0;
     var follow = {};
 
     for (;;) {
@@ -64,14 +65,24 @@ function main(arguments)
 	return;
     }
 
-    var carray = parse(arguments[0], toolChain);
+    var sums = {};
+    for (var i = 0; i < arguments.length; i++) {
+	symbolTable = {};
+	objectTable = {};
+        var mfile = arguments[i];
+	var carray = parse(mfile, toolChain);
+	sums[mfile] = carray;
 
-    print(arguments[0] + " summary:");
-    display(carray, arguments[0], verbose);
+	print((i > 0 ? "\n" : "") + mfile + " summary:");
+	display(carray, mfile, verbose);
 
-    for (oname in follow) {
-        printDepChains(objectTable, oname);
+	for (oname in follow) {
+            printDepChains(objectTable, oname);
+	}
     }
+
+    displayDiffs(arguments[0], sums);
+
     //printDepChains(objectTable, "lib_a-gdtoa-gethex.o");
     //printDepChains(objectTable, "lib_a-er_gamma.o");
     //printDepChains(objectTable, "unwind-arm.o");
@@ -127,6 +138,16 @@ function getToolChain(fileName)
 
 /*
  *  ======== parse ========
+ *  Return sorted array of "containers": objects with a total size
+ *  and a hash of contributing sections and their size.
+ * 
+ *  Each element of the array is of the form:
+ *   {
+ *     name : <name of the "container" (library, object, ...)>, 
+ *     total: <total size of the container>,
+ *     sections: {<name of a contained "section">:
+ *                 <size of this contained section>}
+ *   } 
  */
 function parse(fileName, tools)
 {
@@ -157,15 +178,6 @@ function parse(fileName, tools)
 
 /*
  *  ======== parseGnu ========
- *  Return sorted array of "containers": objects with a total size
- *  and a hash of contributing sections and their size.
- * 
- *  Each element of the array is of the form:
- *   {
- *     name : <name of the "container" (library, object, ...)>, 
- *     total: <total size of the container>,
- *     sections: {<name of a contained "section">: <size of this contained section>}
- *   } 
  */
 function parseGnu(fileName) 
 {
@@ -300,15 +312,6 @@ function parseGnu(fileName)
 
 /*
  *  ======== parseTI ========
- *  Return sorted array of "containers": objects with a total size
- *  and a hash of contributing sections and their size.
- * 
- *  Each element of the array is of the form:
- *   {
- *     name : <name of the "container" (library, object, ...)>, 
- *     total: <total size of the container>,
- *     sections: {<name of a contained "section">: <size of this contained section>}
- *   } 
  */
 function parseTI(fileName) 
 {
@@ -636,13 +639,80 @@ function findRef(carray, name)
 }
 
 /*
+ *  ======== computeDiff ========
+ */
+function computeDiff(baseline, other)
+{
+    var delta = [];
+
+    /* compute hashtable of baseline container sizes */
+    var bsizes = {};
+    for (var i = 0; i < baseline.length; i++) {
+        var c = baseline[i];
+	var name = c.name.replace(/ \(.*\)/, '');
+	bsizes[name] = {total: c.total, sections: c.sections};
+    }
+
+    /* compute deltas for all containers in other */
+    var osizes = {};
+    for (var i = 0; i < other.length; i++) {
+        var c = other[i];
+	var name = c.name.replace(/ \(.*\)/, '');
+	osizes[name] = other[i].total;
+
+        delta.push({
+            name: name, 
+            delta: osizes[name] - (bsizes[name] ? bsizes[name].total : 0),
+            sections: {}
+        });
+
+        if (verbose) {
+            /* if verbose, add list of section differences to delta */
+            var d = delta[delta.length - 1];
+            if (bsizes[name] && d.delta != 0) {
+                /* for each section s in other container c */
+                for (var s in c.sections) {
+                    /* if s is not in baseline container name */
+                    if (!bsizes[name] || !bsizes[name].sections[s]){
+                        /* this is an added section */
+                        d.sections[s] = c.sections[s];
+                    }
+                }
+
+                /* for each section s in the baseline container name */
+                for (var s in bsizes[name].sections) {
+                    /* if s is not in container c */
+                    if (!c.sections[s]){
+                        /* this is an deleted section */
+                        d.sections[s] = 0 - bsizes[name].sections[s];
+                    }
+                }
+            }
+        }
+    }
+
+    /* add delta's for all containers in baseline _not_ in other */
+    for (var name in bsizes) {
+	if (!(name in osizes)) {
+	    delta.push({name: name, delta: 0 - bsizes[name].total});
+	}
+    }
+
+    /* sort delta array by the magnitude of the difference */
+    delta.sort(function(a,b) {return(Math.abs(b.delta) - Math.abs(a.delta));});
+    return (delta);
+}
+
+/*
  *  ======== display ========
  *  Print the array of values returned by parse()
  */
 function display(carray, fileName, verbose)
 {
-    var total = 0;
     var pad = "       ";
+
+    /* for each "container", pretty print it, and accumulate their sizes */
+    var total = 0;
     for (var i = 0; i < carray.length; i++) {
         var c = carray[i];
         var len = String(c.total).length;
@@ -674,6 +744,61 @@ function display(carray, fileName, verbose)
     /* display unused SRAM and FLASH */
     displayMem("SRAM", fileName, targ);
     displayMem("FLASH", fileName, targ);
+}
+
+/*
+ *  ======== displayDiffs ========
+ */
+function displayDiffs(basename, sums) 
+{
+    /* get baseline carray from sums */
+    var baseline = sums[basename];
+
+    /* compute delta between baseline and other sums */
+    for (var oname in sums) {
+        if (oname != basename) {
+            /* compute the difference between two maps */
+            var delta = computeDiff(baseline, sums[oname]);
+
+            /* print results */
+            print("\ndelta: " + oname + " - " + basename);
+            var total = 0;
+            var len;
+            var pad = "         ";
+            for (var i = 0; i < delta.length; i++) {
+                total += delta[i].delta;
+
+		/* display container delta */
+                len = String(delta[i].delta).length;
+                print(pad.substring(len) + delta[i].delta
+                      + " " + delta[i].name);
+
+		/* convert delta[i].sections into a sortable array */
+		var sects = [];
+                for (s in delta[i].sections) {
+		    var tmp = {name: s, size: delta[i].sections[s]};
+		    sects.push(tmp);
+		}
+
+		/* sort it */
+		sects.sort(function(a,b) {
+			       return (Math.abs(b.size) - Math.abs(a.size));
+			   });
+
+		/* display delta[i].sections in sorted order */
+		for (var j = 0; j < sects.length; j++) {
+		    if (verbose < 2 && j >= 5) {
+			break;
+		    }
+		    var s = sects[j];
+		    len = String(s.size).length;
+		    print(pad + pad.substring(len) + s.size + " " + s.name);
+                }
+            }
+            len = String(total).length;
+            print(pad.substring(len) + total + " TOTAL");
+        }
+    }
 }
 
 /*
