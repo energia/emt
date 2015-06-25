@@ -147,7 +147,11 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 
     if (bitOrder == LSBFIRST) {
         rxtxData = data_out;
-#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) && (!defined(__TI_COMPILER_VERSION__) && defined(__GNUC__))
+#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
+#if defined(__TI_COMPILER_VERSION__)
+	rxtxData = __rbit(rxtxData);
+        rxtxData = __rev(rxtxData);
+#elif defined(__GNUC__)
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
@@ -155,10 +159,13 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 #else
 #warning LSB first SPI transfers are not supported for this target
 #endif
+#endif
         data_out = (uint8_t) rxtxData;
     }
 
+    /* protect single 'transaction' content from re-rentrancy */
     taskKey = Task_disable();
+
     hwiKey = Hwi_disable();
 
     /* disable all interrupts registered with SPI.usingInterrupt() */
@@ -168,6 +175,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 
     Hwi_restore(hwiKey);
 
+    /* select SPI peripheral if ssPin was provided */
     if (ssPin != 0) {
         digitalWrite(ssPin, LOW);
     }
@@ -177,12 +185,20 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     transaction.count = 1;
     transferComplete = 0;
 
+    /* kick off the SPI transaction */
     SPI_transfer(spi, &transaction);
-    while (transferComplete == 0) ;
 
+    /* wait for transfer to complete (ie for callback to be called) */
+    while (transferComplete == 0) {
+        ;
+    }
+
+    /* deselect SPI peripheral if ssPin was provided */
     if (transferMode == SPI_LAST && ssPin != 0) {
         digitalWrite(ssPin, HIGH);
     }
+
+    /* now that the transaction is finished, allow other threads to pre-empt */
 
     hwiKey = Hwi_disable();
 
@@ -197,13 +213,18 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
 
     if (bitOrder == LSBFIRST) {
         rxtxData = data_in;
-#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) && (!defined(__TI_COMPILER_VERSION__) && defined(__GNUC__))
+#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
+#if defined(__TI_COMPILER_VERSION__)
+	rxtxData = __rbit(rxtxData);
+        rxtxData = __rev(rxtxData);
+#elif defined(__GNUC__)
         /* reverse order of 32 bits */
         asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
         /* reverse order of bytes to get original bits into lowest byte */
         asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
 #else
 #warning LSB first SPI transfers are not supported for this target
+#endif
 #endif
         data_in = (uint8_t) rxtxData;
     }
