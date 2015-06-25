@@ -1,4 +1,4 @@
-				emt-a46
+				emt-a47
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -126,36 +126,27 @@ Librarian releases
 ADDITIONS
 
 src/config.bld
-    added M3 target
+    added M3 target (for runtime.heaps)
 
-ti.platforms.emt26xx
-	    added "generic" CC26xx platform
-
-ti.wiring.cc26xx.variants
-	added CC2650STK_BLE variant
-
-bundles/energia
-	added cc26xx closure + tests
+ti.runtime.wiring.cc26xx.tests.sanity
+	added sanity test that does nothing (until we have cc2650 wiring 
+	library
 
 DELETIONS
 
 CHANGES
 
-bundles
-	bundle makefile cleanup	
+bindles/energia
+	mapsum can now display multiple map files and compare map files
 
-ti.runtime.wiring.cc3200
-	fix WiFiClient.connected to work when unread characters are in the
-	buffer
+ti.runtime.heaps
+	hacked package.bld to not build unit testw for M3 (due to SYS/BIOS 
+	driverlib build issue)
 
-ti.runtime.wiring.cc3200.tests
-	cleanup + updates to Processing sketches
+ti.runtime.wiring
+	fix critical "volatile" bug in SPI
 
-ti.platforms.launchpad
-	patch ti.tirtos to return ti library for gnu build (since TI-RTOS does
-	not support Gcc, yet)
-
-ti.runtime.wiring.cc26xx
-	hacked to build _ONLY_, it's not ready to be used
+ti.runtime.wiring.cc3200.tests.*
+	misc cleanup
 
 MRS
