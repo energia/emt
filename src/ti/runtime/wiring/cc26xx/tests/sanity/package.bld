@@ -1,0 +1,50 @@
+/*
+ *  ======== package.bld ========
+ */
+Pkg.attrs.profile = "release";
+Pkg.attrs.exportAll = true;
+
+Pkg.attrs.profile = "debug";
+
+Pkg.uses = ["ti/runtime/wiring"];
+
+var PLATFORM = "ti.platforms.emt26xx";
+var Platform = xdc.module(PLATFORM + ".Platform");
+var DLIBROOT = Platform.findDriverLib();
+
+var SRCS = getSources(".");
+var DEFS = "-Dxdc__nolocalstring=1";
+var MAIN = "main.cpp";
+var INCS = "-I" + DLIBROOT;
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+
+    var cxxopts = targ.$name.indexOf("gnu.targets") == 0 ? "-fno-rtti" : "";
+
+    var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});
+    lib.addObjects(SRCS, {copts: cxxopts});
+
+    var exe = Pkg.addExecutable("sanity", targ, PLATFORM,
+			{defs: DEFS, incs: INCS, cfgScript: "energia.cfg"});
+    exe.addObjects([MAIN], {copts: cxxopts});
+
+    break;  /* comment this out to build using TI compiler */
+}
+
+/*
+ *  ======== getSources ========
+ *  Return array of *.c and *.cpp files in the current working directory
+ */
+function getSources(dir)
+{
+    var result = [];
+    var list = java.io.File(dir).list();
+    for (var i = 0; i < list.length; i++) {
+        var file = String(list[i]);
+        if (file.match(/\.c$|\.cpp$/) && file[0] != '.' && file != MAIN) {
+            result.push(file);
+        }
+    }
+    return (result);
+}
