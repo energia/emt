@@ -64,7 +64,7 @@ SECTIONS {
         *(.rodata*)
     } > REGION_TEXT AT> REGION_TEXT
 
-    .data : ALIGN(4) {
+    .data : ALIGN (4) {
         __data_load__ = LOADADDR (.data);
         __data_start__ = .;
         *(.data)
