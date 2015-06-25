@@ -95,6 +95,10 @@ else if (Pkg.name.match(/\.runtime\./)) {
     if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
     if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
+    if (!Pkg.name.match(/\.shell/)) {
+	if (gnuTargets.M3.rootDir != null) Build.targets.$add(gnuTargets.M3);
+	if (tiTargets.M3.rootDir != null)  Build.targets.$add(tiTargets.M3);
+    }
 }
 else {
     Build.useTargets = null;
