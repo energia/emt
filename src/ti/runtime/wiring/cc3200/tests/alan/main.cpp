@@ -59,9 +59,9 @@ Void the_task(UArg _task_setup, UArg _task_loop)
 
     /* Call loop repeatedly */
     for(;;) {
+        Task_yield();
         (*(void(*)()) _task_loop)();
         System_flush();
-        Task_yield();
     }
 }
 

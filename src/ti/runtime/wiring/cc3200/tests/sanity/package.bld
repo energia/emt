@@ -8,10 +8,10 @@ Pkg.attrs.profile = "debug";
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200:CC3200STK_WIFI";
+var PLATFORM = "ti.platforms.emt3200:CC3200_LAUNCHXL";
 
 var SRCS = getSources(".");
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200LP";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200_LAUNCHXL";
 var MAIN = "main.cpp";
 
 for (var i = 0; i < Build.targets.length; i++) {
@@ -22,7 +22,8 @@ for (var i = 0; i < Build.targets.length; i++) {
     var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});
     lib.addObjects(SRCS, {copts: cxxopts});
 
-    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS});
+    var exe = Pkg.addExecutable("sanity", targ, PLATFORM,
+				{defs: DEFS, cfgScript: "energia.cfg"});
     exe.addObjects([MAIN], {copts: cxxopts});
 
     break;  /* comment this out to build using TI compiler */

@@ -24,9 +24,8 @@ for (var i = 0; i < Build.targets.length; i++) {
     var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});
     lib.addObjects(SRCS, {copts: cxxopts});
 
-    var exe = Pkg.addExecutable("wifi", targ, PLATFORM, {
-				    cfgScript: "energia.cfg",
-				    defs: DEFS});
+    var exe = Pkg.addExecutable("wifi", targ, PLATFORM,
+				{defs: DEFS, cfgScript: "energia.cfg"});
     exe.addObjects([MAIN], {copts: cxxopts});
 
     break;  /* comment this out to build using TI compiler */

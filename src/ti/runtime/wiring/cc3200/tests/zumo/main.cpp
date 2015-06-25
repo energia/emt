@@ -63,8 +63,6 @@ int main()
 
     Task_Params taskParams;
 
-    System_printf(" Startup\r\n");
-
     /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
 

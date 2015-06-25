@@ -19,7 +19,8 @@ static const char wifipw[] = "password";
 /* the port number of the server listening for command at 192.168.1.1 */
 #define PORTNUM 8080
 
-static WiFiServer server(PORTNUM); // create data server on port PORTNUM
+/* create data server on port PORTNUM */
+static WiFiServer server(PORTNUM);
 
 int num_clients = 0;
 static int num_sockets = 0;

@@ -139,8 +139,9 @@ __extern void apLoop()
             }
 
             /* client disconnected, close the connection */
-            client.stop();
             Serial.println("client socket disconnected");
+            client.flush();
+            client.stop();
         }
     }
 

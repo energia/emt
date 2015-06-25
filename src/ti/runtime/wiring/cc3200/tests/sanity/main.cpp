@@ -38,9 +38,9 @@ void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 
     /* Call loop repeatedly */
     for(;;) {
+        Task_yield();
         (*(void(*)()) _task_loop)();
         System_flush();
-        Task_yield();
     }
 }
 
@@ -54,10 +54,7 @@ int main()
 
     Task_Params taskParams;
 
-    System_printf("Startup\n");
-    System_flush();
-
-    /* initialize taskParams and set to default */
+    /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
 
     /* All tasks have the same priority */
