@@ -255,7 +255,7 @@ void SPIClass::usingInterrupt(uint8_t pin)
     }
 }
 
-/* C type function to call the thing above */
+/* C type function */
 void spiTransferCallback(SPI_Handle spi, SPI_Transaction * transaction)
 {
     SPI.transferComplete = 1;
