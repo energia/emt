@@ -43,4 +43,9 @@ static const uint8_t YELLOW_LED = 9;
 static const uint8_t PUSH1 = 3;
 static const uint8_t PUSH2 = 11;
 
+static const uint8_t A0 = 23;
+static const uint8_t A1 = 2;
+static const uint8_t A2 = 6;
+static const uint8_t A3 = 24;
+
 #endif
