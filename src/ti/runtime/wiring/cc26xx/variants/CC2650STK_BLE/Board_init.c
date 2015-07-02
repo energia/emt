@@ -350,11 +350,19 @@ const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .powerMngrId = PERIPH_I2C0,
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
+    },
+    {
+        .baseAddr = I2C0_BASE,
+        .intNum = INT_I2C,
+        .powerMngrId = PERIPH_I2C0,
+        .sdaPin = Board_I2C0_SDA1,
+        .sclPin = Board_I2C0_SCL1,
     }
 };
 
 const I2C_Config I2C_config[] = {
     {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[0], &i2cCC26xxHWAttrs[0]},
+    {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[1], &i2cCC26xxHWAttrs[1]},
     {NULL, NULL, NULL}
 };
 

@@ -169,6 +169,7 @@ extern PIN_Config BoardGpioInitTable[];
  */
 typedef enum CC2650_I2CName {
     CC2650_I2C0 = 0,
+    CC2650_I2C1,
     CC2650_I2CCOUNT
 } CC2650_I2CName;
 
