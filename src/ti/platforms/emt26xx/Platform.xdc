@@ -36,7 +36,7 @@ instance:
      */
     override config xdc.platform.IExeContext.Cpu CPU = {
         id:             "0",
-        clockRate:      80.0,
+        clockRate:      48.0,
         catalogName:    "ti.catalog.arm.cortexm3",
         deviceName:     "CC26xx",
         revision:       "",
