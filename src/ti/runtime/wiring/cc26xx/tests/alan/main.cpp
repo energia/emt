@@ -33,7 +33,7 @@ void (*func_ptr[][2])(void) = {
 //	{setup4, loop4},
 //	{setup5, loop5},
 //	{setup6, loop6},
-//	{setup7, loop7}
+	{setup7, loop7}
 };
 
 const char *taskNames[] = {
@@ -44,7 +44,7 @@ const char *taskNames[] = {
 //	"loop4",
 //	"loop5",
 //	"loop6",
-//	"loop7"
+	"loop7"
 };
 
 #define NUM_SKETCHES sizeof(taskNames)/4

@@ -1,22 +1,17 @@
 #include <Energia.h>
 
-void buttonFxnX()
+void buttonFxn0()
 {
     static bool off = true;
 
     if (off) {
     	off = false;
-//    	digitalWrite(YELLOW_LED, 1);
+    	digitalWrite(GREEN_LED, 1);
     }
     else {
     	off = true;
-//    	digitalWrite(YELLOW_LED, 0);
+    	digitalWrite(GREEN_LED, 0);
     }
-}
-
-void buttonFxn0()
-{
-    SPI.transfer(2,0);
 }
 
 void buttonFxn1()
@@ -51,6 +46,8 @@ void setup7()
 {
     pinMode(PUSH1, INPUT_PULLUP);
     pinMode(PUSH2, INPUT_PULLUP);
+    pinMode(RED_LED, OUTPUT);
+    pinMode(GREEN_LED, OUTPUT);
 
     attachInterrupt(PUSH1, buttonFxn0, RISING);
     attachInterrupt(PUSH2, buttonFxn1, RISING);
@@ -58,5 +55,10 @@ void setup7()
 
 void loop7()
 {
+//    digitalWrite(RED_LED, 1);
+//    digitalWrite(GREEN_LED, 0);
+    delay(1000);
+//    digitalWrite(RED_LED, 0);
+//    digitalWrite(GREEN_LED, 1);
     delay(1000);
 }
