@@ -219,7 +219,7 @@ function parseGnu(fileName)
          *    "^ <section_name>", or
          *    "^     0x<addr> 0x<size> <container>(<object>)" immediately followed by the form above
          */
-        var tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+\/\\\-]+)(\(.+\))?/);
+        var tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+:\/\\\-]+)(\(.+\))?/);
         if (tokens == null) {
 
 	    /* check for fill sections (alignment padding) */
@@ -232,7 +232,7 @@ function parseGnu(fileName)
 	    /* are we expecting a continuation line? */
             if (continuation == true) {
                 continuation = false;
-                tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+\/\\\-]+)(\(.+\))?/);
+                tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+:\/\\\-]+)(\(.+\))?/);
                 if (tokens == null) {
                     print("warning: expected a continuation of section '" + section + "', skipping line: " + line);
                     continue;
