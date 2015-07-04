@@ -28,7 +28,7 @@ function instance$meta$init(name)
     this.deviceName = "CC2650";
     this.CPU.revision = this.deviceName;
     this.CPU.catalogName = "ti.catalog.arm.cortexm3";
-    this.CPU.clockRate = 80;
+    this.CPU.clockRate = 48;
 
     if (Program.build.target.$name.match(/gnu/)) {
         this.codeMemory = "REGION_TEXT";

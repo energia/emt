@@ -6,13 +6,13 @@
 
 MEMORY
 {
-    FLASH (RX)      : ORIGIN = 0x00000000, LENGTH = 0x0001ffb0
+    FLASH (RX)      : ORIGIN = 0x00000000, LENGTH = 0x0001ffa8
     /*
      * Customer Configuration Area and Bootloader Backdoor configuration in
      * flash, 40 bytes
      */
-    FLASH_CCFG (RX) : ORIGIN = 0x0001ffb0, LENGTH = 0x00000050
-    SRAM (WX)       : ORIGIN = 0x20000000, LENGTH = 0x00005000
+    FLASH_CCFG (RX) : ORIGIN = 0x0001ffa8, LENGTH = 0x00000058
+    SRAM (RWX)       : ORIGIN = 0x20000000, LENGTH = 0x00005000
 }
 
 REGION_ALIAS("REGION_TEXT", FLASH);
@@ -38,6 +38,10 @@ SECTIONS {
     .vtable (_vtable_base_address) : AT (_vtable_base_address) {
         KEEP (*(.vtable))
     } > REGION_DATA
+
+    /DISCARD/ : {
+        *(__TI_ICODE)
+    }
 
     .text : {
         CREATE_OBJECT_SYMBOLS
@@ -67,8 +71,8 @@ SECTIONS {
     .data : ALIGN (4) {
         __data_load__ = LOADADDR (.data);
         __data_start__ = .;
-        *(.data)
-        *(.data*)
+        KEEP(*(.data))
+        KEEP(*(.data*))
         . = ALIGN (4);
         __data_end__ = .;
     } > REGION_DATA AT> REGION_TEXT
@@ -90,9 +94,12 @@ SECTIONS {
     .bss : {
         __bss_start__ = .;
         *(.shbss)
-        *(.bss)
+        KEEP(*(.bss))
         *(.bss.*)
-        *(COMMON)
+        KEEP(*(COMMON))
+        *(COM*)
+        KEEP(*(COM*))
+        KEEP(*(.COMMON))
         . = ALIGN (4);
         __bss_end__ = .;
     } > REGION_BSS AT> REGION_BSS
@@ -107,9 +114,10 @@ SECTIONS {
         __HeapLimit = __heap_end__;
     } > REGION_HEAP AT> REGION_HEAP
 
-    .stack (NOLOAD) : ALIGN(0x8) {
+    .stack : ALIGN(0x8) {
         _stack = .;
         __stack = .;
         KEEP(*(.stack))
     } > REGION_STACK AT> REGION_STACK
+
 }

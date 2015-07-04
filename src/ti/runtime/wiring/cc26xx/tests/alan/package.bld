@@ -6,12 +6,15 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200";
+var PLATFORM = "ti.platforms.emt26xx";
+var Platform = xdc.module(PLATFORM + ".Platform");
+var DLIBROOT = Platform.findDriverLib();
+
 
 var SRCS = getSources(".");
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200STK_WIFI";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200LP";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC2650STK_BLE";
 var MAIN = "main.cpp";
+var INCS = "-I" + DLIBROOT;
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
@@ -21,7 +24,8 @@ for (var i = 0; i < Build.targets.length; i++) {
     var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});
     lib.addObjects(SRCS, {copts: cxxopts});
 
-    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS});
+    var exe = Pkg.addExecutable("energia", targ, PLATFORM, 
+            {defs: DEFS, incs: INCS, cfgScript: "energia.cfg"});
     exe.addObjects([MAIN], {copts: cxxopts});
 
     break;  /* comment this out to build using TI compiler */

@@ -90,12 +90,135 @@ PIN_Config BoardGpioInitTable[] = {
     Board_DP0 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
     Board_DP3 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
     Board_DP4_UARTRX | PIN_INPUT_EN | PIN_PULLDOWN,                                           /* DevPack */
-    Board_DP5_UARTTX | PIN_INPUT_EN | PIN_PULLDOWN,                                           /* Devpack */
+    Board_DP5_UARTTX | PIN_INPUT_DIS | PIN_PUSHPULL | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH,     /* Devpack */
     Board_DEVPK_ID | PIN_INPUT_EN | PIN_NOPULL,                                               /* Device pack ID - external PU  */
 
     PIN_TERMINATE
 };
 /*============================================================================*/
+
+/*
+ * ======== GPIO driver ========
+ */
+
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOCC26XX.h>
+
+/* GPIO configuration structure definitions */
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(GPIOCC26XX_config, ".const:GPIOCC26XX_config")
+#pragma DATA_SECTION(gpioPinConfigs, ".data:gpioPinConfigs")
+#pragma DATA_SECTION(gpioCallbackFunctions, ".data:gpioCallbackFunctions")
+#endif
+
+GPIO_PinConfig gpioPinConfigs[] = {
+    /* port_pin */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  0  - dummy */
+                          
+    /* pins 1-10 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - VDD */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  2  - GND */
+    GPIOCC26XX_DIO_06 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_06 SCL */
+    GPIOCC26XX_DIO_05 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_05 SDA */
+    GPIOCC26XX_DIO_16 | GPIO_DO_NOT_CONFIG,     /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
+    GPIOCC26XX_DIO_11 | GPIO_DO_NOT_CONFIG,     /*  6  - DIO_11 DP7/AUDIO CLK */
+    GPIOCC26XX_DIO_20 | GPIO_DO_NOT_CONFIG,     /*  7  - DIO_20 DP11/CSN */
+    GPIOCC26XX_DIO_22 | GPIO_DO_NOT_CONFIG,     /*  8  - DIO_22 DP6/AUDIO DO */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  9  - VDD */
+    GPIOCC26XX_DIO_29 | GPIO_DO_NOT_CONFIG,     /*  10 - DIO_29 DP5/UART_TX */
+                          
+    /* pins 11-20 */
+    GPIOCC26XX_DIO_19 | GPIO_DO_NOT_CONFIG,     /*  11 - DIO_19 DP10/MOSI */
+    GPIOCC26XX_DIO_28 | GPIO_DO_NOT_CONFIG,     /*  12 - DIO_28 DP4/UART_RX */
+    GPIOCC26XX_DIO_18 | GPIO_DO_NOT_CONFIG,     /*  13 - DIO_18 DP9/MISO */
+    GPIOCC26XX_DIO_27 | GPIO_DO_NOT_CONFIG,     /*  14 - DIO_27 DP3 */
+    GPIOCC26XX_DIO_17 | GPIO_DO_NOT_CONFIG,     /*  15 - DIO_17 DP8/SCLK/TDI */
+    GPIOCC26XX_DIO_23 | GPIO_DO_NOT_CONFIG,     /*  16 - DIO_23 DP2  */
+    GPIOCC26XX_DIO_30 | GPIO_DO_NOT_CONFIG,     /*  17 - DIO_30 DP_ID */
+    GPIOCC26XX_DIO_24 | GPIO_DO_NOT_CONFIG,     /*  18 - DIO_24 DP1 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  19 - POWER_GOOD */
+    GPIOCC26XX_DIO_25 | GPIO_DO_NOT_CONFIG,     /*  20 - DIO_25 DP0 */
+                          
+    /* virtual pins 21-30 */
+    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  21 - DIO_02 AUDIO DI */
+    GPIOCC26XX_DIO_12 | GPIO_DO_NOT_CONFIG,     /*  22 - DIO_12 MPU PWR */
+    GPIOCC26XX_DIO_21 | GPIO_DO_NOT_CONFIG,     /*  23 - DIO_21 BUZZER */
+    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  24 - DIO_03 REED */
+    GPIOCC26XX_DIO_04 | GPIO_DO_NOT_CONFIG,     /*  25 - DIO_04 BUTTON1 */
+    GPIOCC26XX_DIO_01 | GPIO_DO_NOT_CONFIG,     /*  26 - DIO_01 TMP RDY */
+    GPIOCC26XX_DIO_10 | GPIO_DO_NOT_CONFIG,     /*  27 - DIO_10 LED1 */
+    GPIOCC26XX_DIO_07 | GPIO_DO_NOT_CONFIG,     /*  28 - DIO_07 MPU INT */
+    GPIOCC26XX_DIO_13 | GPIO_DO_NOT_CONFIG,     /*  29 - DIO_13 MIC PWR */
+    GPIOCC26XX_DIO_00 | GPIO_DO_NOT_CONFIG,     /*  30 - DIO_00 BUTTON2 */
+                          
+    /* virtual pin 31 */
+    GPIOCC26XX_DIO_15 | GPIO_DO_NOT_CONFIG,     /*  31 - DIO_15 LED2 */
+};
+
+GPIO_CallbackFxn gpioCallbackFunctions[] = {
+    /* port_pin */
+    NULL,  /*  0  - dummy */
+
+    /* pins 1-10 */
+    NULL,  /*  1  - VDD */
+    NULL,  /*  2  - GND */
+    NULL,  /*  3  - DIO_06 SCL */
+    NULL,  /*  4  - DIO_05 SDA */
+    NULL,  /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
+    NULL,  /*  6  - DIO_11 DP7/AUDIO CLK */
+    NULL,  /*  7  - DIO_20 DP11/CSN */
+    NULL,  /*  8  - DIO_22 DP6/AUDIO DO */
+    NULL,  /*  9  - VDD */
+    NULL,  /*  10 - DIO_29 DP5/UART_TX */
+                    
+    /* pins 11-20 */
+    NULL,  /*  11 - DIO_19 DP10/MOSI */
+    NULL,  /*  12 - DIO_28 DP4/UART_RX */
+    NULL,  /*  13 - DIO_18 DP9/MISO */
+    NULL,  /*  14 - DIO_27 DP3 */
+    NULL,  /*  15 - DIO_17 DP8/SCLK/TDI */
+    NULL,  /*  16 - DIO_23 DP2  */
+    NULL,  /*  17 - DIO_30 DP_ID */
+    NULL,  /*  18 - DIO_24 DP1 */
+    NULL,  /*  19 - POWER_GOOD */
+    NULL,  /*  20 - DIO_25 DP0 */
+                    
+    /* pins 21-30 */
+    NULL,  /*  21 - DIO_02 AUDIO DI */
+    NULL,  /*  22 - DIO_12 MPU PWR */
+    NULL,  /*  23 - DIO_21 BUZZER */
+    NULL,  /*  24 - DIO_03 REED */
+    NULL,  /*  25 - DIO_04 BUTTON1 */
+    NULL,  /*  26 - DIO_01 TMP RDY */
+    NULL,  /*  27 - DIO_10 LED1 */
+    NULL,  /*  28 - DIO_07 MPU INT */
+    NULL,  /*  29 - DIO_13 MIC PWR */
+    NULL,  /*  30 - DIO_00 BUTTON2 */
+                    
+    /* pin 31 */
+    NULL,  /*  31 - DIO_15 LED2 */
+};
+
+/* User requested callback functions for the GPIO input signals */
+
+/* The device-specific GPIO_config structure */
+const GPIOCC26XX_Config GPIOCC26XX_config = {
+    .pinConfigs = (GPIO_PinConfig *)gpioPinConfigs,
+    .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
+    .numberOfPinConfigs = sizeof(gpioPinConfigs)/sizeof(GPIO_PinConfig),
+    .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
+    .intPriority = ~0
+};
+
+/*
+ *  ======== Board_initGPIO ========
+ */
+void Board_initGPIO(void)
+{
+    /* set up initial GPIO pin configurations */
+    GPIO_init();
+}
 
 /*
  *  ============================= UART begin ===================================
@@ -118,8 +241,8 @@ const UARTCC26XX_HWAttrs uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
         .baseAddr = UART0_BASE,
         .intNum = INT_UART0,
         .powerMngrId = PERIPH_UART0,
-        .txPin = Board_EB_UART_TX,
-        .rxPin = Board_EB_UART_RX,
+        .txPin = Board_DP5_UARTTX,
+        .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
         .rtsPin = PIN_UNASSIGNED
     },
@@ -227,13 +350,56 @@ const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .powerMngrId = PERIPH_I2C0,
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
+    },
+    {
+        .baseAddr = I2C0_BASE,
+        .intNum = INT_I2C,
+        .powerMngrId = PERIPH_I2C0,
+        .sdaPin = Board_I2C0_SDA1,
+        .sclPin = Board_I2C0_SCL1,
     }
 };
 
 const I2C_Config I2C_config[] = {
     {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[0], &i2cCC26xxHWAttrs[0]},
+    {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[1], &i2cCC26xxHWAttrs[1]},
     {NULL, NULL, NULL}
 };
+
 /*
  *  ========================== I2C end =========================================
 */
+void Board_initI2C()
+{
+    I2C_init();
+}
+
+void Board_initSPI()
+{
+    SPI_init();
+}
+
+void Board_initUART()
+{
+    UART_init();
+}
+
+void Board_initPIN()
+{
+    PIN_init(BoardGpioInitTable);
+}
+/*
+ *  ======== Board_init ========
+ *  Initialialize the ti.platforms.tink2 hardware
+ */
+void Board_init(void)
+{
+    /* driver-independent initialization */
+
+    /* driver-specific initialization */
+    Board_initPIN();
+    Board_initGPIO();
+//    Board_initPWM();
+//    Board_initPower();
+}
+
