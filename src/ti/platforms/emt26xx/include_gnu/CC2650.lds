@@ -12,7 +12,7 @@ MEMORY
      * flash, 40 bytes
      */
     FLASH_CCFG (RX) : ORIGIN = 0x0001ffa8, LENGTH = 0x00000058
-    SRAM (RWX)       : ORIGIN = 0x20000000, LENGTH = 0x00005000
+    SRAM (RWX)      : ORIGIN = 0x20000000, LENGTH = 0x00005000
 }
 
 REGION_ALIAS("REGION_TEXT", FLASH);
@@ -39,6 +39,7 @@ SECTIONS {
         KEEP (*(.vtable))
     } > REGION_DATA
 
+    /* remove unnecessary sections included in some TI object files */
     /DISCARD/ : {
         *(__TI_ICODE)
     }
@@ -71,8 +72,8 @@ SECTIONS {
     .data : ALIGN (4) {
         __data_load__ = LOADADDR (.data);
         __data_start__ = .;
-        KEEP(*(.data))
-        KEEP(*(.data*))
+        *(.data)
+        *(.data*)
         . = ALIGN (4);
         __data_end__ = .;
     } > REGION_DATA AT> REGION_TEXT
@@ -94,12 +95,9 @@ SECTIONS {
     .bss : {
         __bss_start__ = .;
         *(.shbss)
-        KEEP(*(.bss))
+        *(.bss)
         *(.bss.*)
-        KEEP(*(COMMON))
-        *(COM*)
-        KEEP(*(COM*))
-        KEEP(*(.COMMON))
+        *(COMMON)
         . = ALIGN (4);
         __bss_end__ = .;
     } > REGION_BSS AT> REGION_BSS
@@ -114,10 +112,9 @@ SECTIONS {
         __HeapLimit = __heap_end__;
     } > REGION_HEAP AT> REGION_HEAP
 
-    .stack : ALIGN(0x8) {
+    .stack (NOLOAD) : ALIGN(0x8) {
         _stack = .;
         __stack = .;
         KEEP(*(.stack))
     } > REGION_STACK AT> REGION_STACK
-
 }
