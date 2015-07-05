@@ -35,14 +35,23 @@ function _newGetLibs(prog)
 {
     var libs = this.$oldFxn(prog); /* call previous getLibs() function */
     if (libs != null) {
-        print("    " + this.$name + " wants to link: " + libs);
 	var nlibs = libs.replace(/\.am3g/, '\.aem3');
 	if (nlibs != libs) {
+	    nlibs = getGnuLibs();
             print("    WARNING: patching " + this.$name 
-		  + " getLibs to link: " + nlibs);
+		  + " getLibs to link: " + nlibs + " (was '" + libs + "')");
 	    libs = nlibs;
 	}
     }
 
     return (libs);
+}
+
+function getGnuLibs()
+{
+    var drivers = xdc.findFile("ti/runtime/driverlib/cc26xx");
+    if (drivers == null) {
+	throw new Error("can't find 'ti/runtime/driverlib/cc26xx'");
+    }
+    return (drivers + "/ti_drivers_lib/drivers_cc26xxware.am3g;"); 
 }
