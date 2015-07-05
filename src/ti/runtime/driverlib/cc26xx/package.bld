@@ -1,0 +1,24 @@
+/*
+ *  ======== package.bld ========
+ */
+
+var cc26xx = xdc.loadCapsule("ti/runtime/wiring/cc26xx/cc26xx.bld");
+
+/* get DriverLib source root */
+var srcDir = java.io.File(cc26xx.DLIBROOT).getCanonicalPath();
+
+/* build driverlib */
+cc26xx.addLibs([srcDir + "/driverlib"]);
+
+/* include copy of ti.drivers/lib that has gcc built libraries */
+Pkg.otherFiles = ["./ti_drivers_lib"];
+print("WARNING: including hand-built ti.drivers/lib libraries (from a clone of git://gitorious.design.ti.com/ti-rtos/drivers.git @ cbadf16fe7693004ddfd76fcf4cad06810555e59)");
+
+/* check compatibility with ti.drivers libraries:
+ *   ti.drivers drivers built against
+ *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_21_01_15600
+ *   See `grep CC26XXWARE <drivers repo>/Makefile`
+ */
+if ("/db/vendors/ti/CCWare/cc26xxware_2_21_01_15600" != srcDir) {
+    throw new Error("driverlib <-> TI-RTOS library mismatch");
+}
