@@ -56,7 +56,8 @@ if (false) {
 else {
     gnuTargets.M4F.ccOpts.suffix += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
     gnuTargets.M4.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
-    gnuTargets.M3.ccOpts.suffix  += " -gdwarf-3 -gstrict-dwarf -fno-exceptions";
+    /* HACK: -Dgcc is added because /db/vendors/ti/CCWare/cc26xxware_2_21_01_15600/driverlib/cpu.h references this CCS specific symbol (gack!!!) */
+    gnuTargets.M3.ccOpts.suffix  += " -Dgcc=1 -gdwarf-3 -gstrict-dwarf -fno-exceptions";
 }
 
 /* optimize release builds for size */
