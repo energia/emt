@@ -7,7 +7,7 @@ for (var i = 0; i < Build.targets.length; i++) {
     lib.addObjects(Pkg.modules);
 
     if (targ.name == "M3") {
-        print("WARNING: skipping build of HeapRem unit test");
+        print("WARNING: skipping build of HeapRem unit test for M3 because SYS/BIOS requires special -I options in order to build source files that depend on CC26xx driverlib!!!!");
 	continue;
     }
 

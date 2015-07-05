@@ -10,7 +10,7 @@ var cc3200 = xdc.loadCapsule("cc3200.bld");
 
 /* _POSIX_SOURCE is needed to work around a duplicate symbol
  * definition in socket.h: GCC wants to define it (unless 
- * _POSIX_SOURCE is defined) but it's also defind by our socket.h
+ * _POSIX_SOURCE is defined) but it's also defined by our socket.h
  */
-var DEFS = " -Dxdc__nolocalstring=1 -D_POSIX_SOURCE";
+var DEFS = "-D_POSIX_SOURCE " + cc3200.DEFS;
 cc3200.addLibs([".", "..", "../avr", "./libraries/WiFi", "./libraries/WiFi/utility"], {defs: DEFS});

@@ -11,7 +11,8 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-var DEFS = "";
+var DEFS = "-Dxdc__nolocalstring=1 -DSL_PLATFORM_MULTI_THREADED";
+DEFS = "-Dxdc__nolocalstring=1 ";
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/driverlib" '
@@ -64,6 +65,8 @@ function getSources(dirs)
 
     for (var k = 0; k < dirs.length; k++) {
 	var list = java.io.File(dirs[k]).list();
+	if (list == null) continue;
+
 	var prefix = dirs[k] + "/";
 	for (var i = 0; i < list.length; i++) {
             var file = String(list[i]);

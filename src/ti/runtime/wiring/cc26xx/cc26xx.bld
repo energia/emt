@@ -11,15 +11,18 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-//var DEFS = "-DSL_PLATFORM_MULTI_THREADED";
-var DEFS = "";
+var DEFS = "-Dxdc__nolocalstring=1 -DSL_PLATFORM_MULTI_THREADED";
+DEFS = "-Dxdc__nolocalstring=1 ";
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/driverlib" '
        + '-I"' + DLIBROOT + '/inc" ';
 
-var DEF_OPTS = {defs: "", incs: ""};
+var DEF_OPTS = {name: null, defs: "", incs: ""};
 
+/*
+ *  ======== addLibs ========
+ */
 function addLibs(srcDirs, opts) 
 {
     if (opts == null) opts = {};
@@ -29,7 +32,7 @@ function addLibs(srcDirs, opts)
 	}
     }
 
-    var libName = "lib/" + Pkg.name.substring(Pkg.name.lastIndexOf('.') + 1);
+    var libName = opts.name ? opts.name : ("lib/" + Pkg.name.substring(Pkg.name.lastIndexOf('.') + 1));
     var srcs = getSources(srcDirs);
 
     for (var i = 0; i < Build.targets.length; i++) {
@@ -50,16 +53,20 @@ function addLibs(srcDirs, opts)
 	/* add C & C++ files separately to use language-specific options */
 	lib.addObjects(srcs.cxx, {copts: CXXOPTS[toolchain]});
 	lib.addObjects(srcs.c,   {copts: COPTS[toolchain]});
-	break;
     }
 }
 
+/*
+ *  ======== getSources ========
+ */
 function getSources(dirs)
 {
     var result = {c: [], cxx: [], main: []};
 
     for (var k = 0; k < dirs.length; k++) {
 	var list = java.io.File(dirs[k]).list();
+	if (list == null) continue;
+
 	var prefix = dirs[k] + "/";
 	for (var i = 0; i < list.length; i++) {
             var file = String(list[i]);

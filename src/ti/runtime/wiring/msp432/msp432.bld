@@ -11,15 +11,18 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-var DEFS = "-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX";
+var DEFS = '-Dxdc__nolocalstring=1 -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX ';
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '
        + '-I"' + DLIBROOT + '/inc/CMSIS" '
-       + '-I"' + DLIBROOT + '/MSP432P4xx"';
+       + '-I"' + DLIBROOT + '/MSP432P4xx" ';
 
 var DEF_OPTS = {name: null, defs: "", incs: ""};
 
+/*
+ *  ======== addLibs ========
+ */
 function addLibs(srcDirs, opts) 
 {
     if (opts == null) opts = {};
@@ -53,12 +56,17 @@ function addLibs(srcDirs, opts)
     }
 }
 
+/*
+ *  ======== getSources ========
+ */
 function getSources(dirs)
 {
     var result = {c: [], cxx: [], main: []};
 
     for (var k = 0; k < dirs.length; k++) {
 	var list = java.io.File(dirs[k]).list();
+	if (list == null) continue;
+
 	var prefix = dirs[k] + "/";
 	for (var i = 0; i < list.length; i++) {
             var file = String(list[i]);
