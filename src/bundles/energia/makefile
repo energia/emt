@@ -1,6 +1,10 @@
 # define default set of platforms, compiler toolchains, and tests to build
 PLATFORMS ?= cc26xx msp432 cc3200 
-TESTS     ?= blink hello alloc string
+
+ifeq (,$(TESTS))
+    TESTS        = blink hello alloc string
+    TESTS.cc3200 = zumo wifi
+endif
 
 # define (optional) tools to run on output files to summarize footprint
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
@@ -34,5 +38,5 @@ all: makefile
 %:
 	$(foreach p,$(PLATFORMS), $(call BUILD, $p, $@,))
 	$(foreach p,$(PLATFORMS), \
-            $(foreach t,$(TESTS), \
+            $(foreach t,$(TESTS) $(TESTS.$p), \
                 $(call BUILD, $p/tests/$t, $@,)))
