@@ -51,7 +51,8 @@ extern "C" {
 #endif
 
 #ifndef __TI_COMPILER_VERSION__
-#define gcc
+#undef gcc
+#define gcc 1
 #endif
 
 /** ============================================================================

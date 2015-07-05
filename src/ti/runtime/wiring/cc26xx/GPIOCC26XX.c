@@ -124,9 +124,9 @@ const uint32_t outPinStrengths [] = {
     PIN_DRVSTR_MAX     /* GPIO_CFG_OUT_STR_HIGH */
 };
 
-static const uint32_t powerResources[] = {
+//static const uint32_t powerResources[] = {
 //    PowerCC26XX_PERIPH_GPIOA0,
-};
+//};
 
 #define NUM_PORTS           1
 #define NUM_PINS_PER_PORT   32
