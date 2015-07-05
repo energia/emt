@@ -35,11 +35,24 @@ function getLibs(prog)
 	libs = outDir + "/Board_init.obj";
     }
 
-    /* get required DriverLib libraries (if requested) */
-    var dlib = Platform.addDriverLibs ? Platform.findDriverLib() : null;
-    if (dlib != null) {
-	libs = (libs ? (libs + ';') : "")
-	    + dlib + "/driverlib/bin/ccs/driverlib.lib";
+    if (false) {
+	/* get required DriverLib libraries (if requested) */
+	var dlib = Platform.addDriverLibs ? Platform.findDriverLib() : null;
+	if (dlib != null) {
+	    libs = (libs ? (libs + ';') : "")
+		+ dlib + "/driverlib/bin/ccs/driverlib.lib";
+	}
+    }
+    else {
+	print("    WARNING: force use of pre-built DriverLib libraries");
+	/* force use of pre-built DriverLib libraries (because there is 
+	 * no GCC supported release) 
+	 */
+	var dlib = xdc.findFile("ti/runtime/driverlib/cc26xx");
+	if (dlib == null) {
+	    throw new Error("can't find 'ti/runtime/driverlib/cc26xx'");
+	}
+	libs = (libs ? (libs + ';') : "") + (dlib + "/lib/cc26xx.m3g.lib");
     }
 
     /* '!' tells XDCtools the file won't exist until _after_ generation */
