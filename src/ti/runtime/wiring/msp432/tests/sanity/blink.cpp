@@ -2,9 +2,12 @@
 
 int period = 1;
 
+extern "C" void switchToRTCTimer(void);
+
 __extern void blinkSetup(void)
 {
     pinMode(RED_LED, OUTPUT);    // set ledPin pin as output
+    //switchToRTCTimer();
 }
 
 __extern void blinkLoop(void)

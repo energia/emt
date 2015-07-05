@@ -70,10 +70,10 @@ __extern void apSetup()
     Serial.println(WiFi.firmwareVersion());
     Serial.println("AP active.");
 
-    /* start a data server on port number PORTNUM */
-    Serial.print("Starting dataserver on port: "); Serial.println(PORTNUM);
+    /* startup the command server on port PORTNUM */
+    Serial.print("Starting dataserver ... "); 
     server.begin();
-    Serial.println("dataserver started.");
+    Serial.print("dataserver started on port "); Serial.println(PORTNUM);
 }
 
 /*
@@ -116,7 +116,7 @@ __extern void apLoop()
             Serial.print("new client socket: ");
             Serial.println(++num_sockets);
 
-            static char buffer[256] = {0};
+            static char buffer[64] = {0};
             int bufLen = 0;
 
             /* while connected to the client, read commands and send results */
@@ -166,7 +166,8 @@ __extern void apLoop()
         }
     }
 
-    delay(100);
+    /* check for new connections 4 times per second */
+    delay(250);
 }
 
 /*
@@ -215,22 +216,9 @@ static void doWASD(char wasd, WiFiClient client)
                     imuCompass.a.x, imuCompass.a.y, imuCompass.a.z,
                     imuGyro.g.x,    imuGyro.g.y,    imuGyro.g.z, 
                     imuCompass.m.x, imuCompass.m.y, imuCompass.m.z);
-
-#if 0
-    //Serial.print("replying: client status = "); Serial.println(client.status());
-    for (int i = 0; i < 72; i++) {
-        //Serial.print(" "); Serial.println((int)report[i]);
-        if (client.write(report[i]) != 1) {
-            Serial.print("Error: reply failed: only sent "); Serial.println(i);
-            return;
-        }
-    }
-    //Serial.print(i);Serial.print(" bytes sent: client status = ");Serial.println(client.status());
-#else
     if (client.write((unsigned char *)report, 72) != 72) {
         Serial.println("Error: reply failed, status != 72");
     }
-#endif
 }
 
 #if 0

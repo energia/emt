@@ -19,12 +19,14 @@
 
 #include "app.h"
 
-#define PERIOD  1
+#define PERIOD  1           /* period of motor control updates */
 
-static ZumoMotors motors;
+char motorWASD = ' ';       /* current motor drive command */
+
+static ZumoMotors motors;   /* Zumo motor driver provided by Pololu */
 
 static int clip(int speed);
-static void motorDrive(char wasd, int goal, unsigned int duration);
+static void drive(char wasd, int goal, unsigned int duration);
 
 void motorTest();
 
@@ -48,7 +50,6 @@ __extern void motorSetup(void)
 /*
  *  ======== motorLoop ========
  */
-char motorWASD = ' ';
 __extern void motorLoop(void)
 {
     static unsigned count = 0;
@@ -57,20 +58,20 @@ __extern void motorLoop(void)
     switch (motorWASD) {
         case 's':
         case 'w': {
-            /* illuminate LED while turning */
+            /* illuminate LED while driving */
             digitalWrite(MAIN_LED_PIN, HIGH);
-            motorDrive(motorWASD, 200, PERIOD);
+            drive(motorWASD, 200, PERIOD);
             break;
         }
 
         case 'd':
         case 'a': {
-            /* toggle LED while turning */
+            /* blink LED while turning */
             if (count == ((count / 100) * 100)) {
                 state ^= 1;
                 digitalWrite(MAIN_LED_PIN, state);
             }   
-            motorDrive(motorWASD, 100, PERIOD);
+            drive(motorWASD, 100, PERIOD);
             break;
         }
 
@@ -78,7 +79,7 @@ __extern void motorLoop(void)
             /* turn off LED while stopped */
             motorWASD = ' ';
             digitalWrite(MAIN_LED_PIN, LOW);
-            motorDrive(' ', 0, 10);
+            drive(' ', 0, 10);
             break;
         }
     }
@@ -93,29 +94,28 @@ void motorTest()
 {
     /* drive forward */
     digitalWrite(MAIN_LED_PIN, HIGH);
-    motorDrive('w', 400, 1000);
+    drive('w', 400, 1000);
 
     /* drive backward */
     digitalWrite(MAIN_LED_PIN, LOW);
-    motorDrive('s', 400, 1000);
+    drive('s', 400, 1000);
 
     /* turn right */
     digitalWrite(MAIN_LED_PIN, HIGH);
-    motorDrive('d', 200, 1000);
+    drive('d', 200, 1000);
 
     /* turn left */
-    motorDrive('a', 200, 1000);
+    drive('a', 200, 1000);
 
     digitalWrite(MAIN_LED_PIN, LOW);
-    motorDrive(' ', 0, 4000);
+    drive(' ', 0, 4000);
 }
 
 /*
- *  ======== motorDrive ========
+ *  ======== drive ========
  */
-//#define P 0.8750f
 #define P 0.9375f
-static void motorDrive(char wasd, int goal, unsigned int duration)
+static void drive(char wasd, int goal, unsigned int duration)
 {
     static int leftSpeed = 0;
     static int rightSpeed = 0;
@@ -167,7 +167,7 @@ static void motorDrive(char wasd, int goal, unsigned int duration)
         motors.setLeftSpeed(leftSpeed);
         motors.setRightSpeed(rightSpeed);
 
-        /* run for 1 ms */
+        /* sleep for 1 ms (so duration is in milliseconds) */
         delay(1);
     }
 }

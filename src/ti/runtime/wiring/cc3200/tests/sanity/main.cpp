@@ -28,11 +28,16 @@ const char *taskNames[] = {
 
 #define NUM_SKETCHES (sizeof(taskNames) / 4)
 
+static int gi;
+static int sj;
+
 /*
  *  ======== main task ========
  */
 void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 {
+    System_printf("%p", &sj, &gi);
+    
     /* Call setup once */
     (*(void(*)()) _task_setup)();
 

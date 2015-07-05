@@ -1,6 +1,6 @@
 /*
  *  ======== main.cpp ========
- *  TI-RTOS Task startup
+ *  Basic TI-RTOS Task startup (no Energia MT references)
  */
 #include <stddef.h>
 
@@ -41,7 +41,7 @@ int main()
     System_printf("Startup\n");
     System_flush();
 
-    /* initialize taskParams and set to default */
+    /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
 
     /* All tasks have the same priority */

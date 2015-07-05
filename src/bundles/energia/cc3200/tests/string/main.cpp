@@ -12,35 +12,40 @@
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
 
-/* Board Support Header files (from configuration closure) */
-#include <Energia.h>
+/* TI-RTOS Board support */
+#include <ti/drivers/bsp/Board.h>
 
+typedef void (*SFxn)(void);
+
+typedef struct Sketch {
+    SFxn         setup;
+    SFxn         loop;
+    const char   *name;
+    unsigned int stackSize;
+    int          priority;
+} Sketch;
 __extern void stringSetup(void);
 __extern void stringLoop(void);
 
-void (*func_ptr[][2])(void) = {
-    {stringSetup, stringLoop}
+Sketch sketchTab[] = {
+    {stringSetup,    stringLoop,    "stringLoop",    0x1000, 1},
 };
 
-const char *taskNames[] = {
-    "stringLoop"
-};
-
-#define NUM_SKETCHES (sizeof(taskNames) / sizeof (char *))
+#define NUM_SKETCHES (sizeof(sketchTab) / sizeof (Sketch))
 
 /*
- *  ======== main task ========
+ *  ======== sketchTask ========
  */
-void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
+void sketchTask(xdc_UArg _task_setup, xdc_UArg _task_loop)
 {
     /* Call setup once */
-    (*(void(*)()) _task_setup)();
+    (*(void(*)())_task_setup)();
 
     /* Call loop repeatedly */
-    for(;;) {
+    for (;;) {
+        Task_yield();
         (*(void(*)()) _task_loop)();
         System_flush();
-        Task_yield();
     }
 }
 
@@ -50,35 +55,28 @@ void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 int main()
 {
     /* initialize all device/board specific peripherals */
-    Board_init();  /* this function is generated as part of TI-RTOS config */
+    Board_init();
 
     Task_Params taskParams;
 
-    System_printf("Startup\n");
-    System_flush();
-
-    /* initialize taskParams and set to default */
+    /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
 
-    /* All tasks have the same priority */
-    taskParams.priority = Task_numPriorities - 1;
-    taskParams.stackSize = 0x800;
-
-    uint8_t i = 0;
+    int i = 0;
     for (i = 0; i < NUM_SKETCHES; i++) {
-        /* Set arg0 to setup() */
-        taskParams.arg0 = (xdc_UArg)func_ptr[i][0];
-        /* Set ar1 to loop */
-        taskParams.arg1 = (xdc_UArg)func_ptr[i][1];
-        /* Set the task name */
-        taskParams.instance->name = (xdc_String)taskNames[i];
-        /* Create the task */
-        Task_create(the_task, &taskParams, NULL);
+        taskParams.stackSize = sketchTab[i].stackSize;
+        taskParams.priority =  sketchTab[i].priority;
+        
+        taskParams.arg0 = (xdc_UArg)sketchTab[i].setup;
+        taskParams.arg1 = (xdc_UArg)sketchTab[i].loop;
+        taskParams.instance->name = (xdc_String)sketchTab[i].name;
+
+        /* create the sketch task */
+        Task_create(sketchTask, &taskParams, NULL);
     }
 
-    /* does not return */
-    BIOS_start();
+    /* enable interrupts and start all threads */
+    BIOS_start(); /* does not return */
 
-    return (0); /* should never get here, but just in case ... */
+    return (0);   /* should never get here, but just in case ... */
 }
-

@@ -18,6 +18,8 @@
 /* application/sketch globals */
 #include "app.h"
 
+#define SPAWN_TASK_PRI 1
+
 typedef void (*SFxn)(void);
 
 typedef struct Sketch {
@@ -53,6 +55,8 @@ void sketchTask(xdc_UArg _task_setup, xdc_UArg _task_loop)
     }
 }
 
+extern "C" int VStartSimpleLinkSpawnTask(unsigned long uxPriority);
+
 /*
  *  ======== main ========
  */
@@ -78,6 +82,17 @@ int main()
         /* create the task */
         Task_create(sketchTask, &taskParams, NULL);
     }
+
+    /* The SimpleLink Host Driver requires a mechanism to allow functions to
+     * execute in temporary context.  The SpawnTask is created to handle such
+     * situations.  This task will remain blocked until the host driver
+     * posts a function.  If the SpawnTask priority is higher than other tasks,
+     * it will immediately execute the function and return to a blocked state.
+     * Otherwise, it will remain ready until it is scheduled.
+     */
+    //        if (VStartSimpleLinkSpawnTask(SPAWN_TASK_PRI)) {
+    //            System_abort("spawn of simple link task failed");
+    //        }
 
     /* enable interrupts and start all threads */
     BIOS_start(); /* does not return */

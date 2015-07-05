@@ -7,23 +7,30 @@
 
 import processing.net.Client;
 
-Client client;
+Client client;           /* data socket connected to zumo IMU data server */
 
-char[] charBuffer = new char[72];
+/* IMU data from zumo */
+char[] imuBuffer = new char[72];
 
-int    NUM_XVALS = 80;
-String LOG_NAME  = "acc.txt";
+int    MAX_FPS = 30;     /* max frames/sec, i.e., rate of calls to draw() */
+int    MAX_XVALS = 80;   /* max # of samples in the x-axis */
+int    MAX_PENDING = 6;  /* max # of outstanding commands to send */
 
+String LOG_NAME  = "zumo_log.txt";
+
+/* IMU data graph object */
 Graph graph1 = new Graph(150, 80, 400, 200, color (200, 20, 20));
 
+/* IMU data values to graph */
 float[] time = { 0 };       
-float[] ax = { 0 }; 
-float[] ay = { 0 };
-float[] az = { 0 };
+float[] ax   = { 0 }; 
+float[] ay   = { 0 };
+float[] az   = { 0 };
 
 char curGraph = 'A';
 int curGraphOffset = 1;
 float curTime = 0;
+boolean scaleData = true;
 
 PrintWriter log = null;  /* optional data log */
 
@@ -37,11 +44,12 @@ void setup()
    
     graph1.xLabel = " Time (s)";
     graph1.yLabel = "Acceleration (m/s^2)";
-    graph1.Title = " Acceleration: (x, y, z) vs. t ";  
-    graph1.yMin = 0;
+    graph1.Title  = " Acceleration: (x, y, z) vs. t ";  
+    graph1.yMin   = 0;
+    graph1.yMax   = 0;
 
-    /* slow the draw() rate down to 10 frames/sec */
-    frameRate(40);
+    /* slow the draw() rate down to MAX_FPS frames/sec */
+    frameRate(MAX_FPS);
         
     /* Connect to zumo's command server IP address and port */
     client = new Client(this, "192.168.1.1", 8080);
@@ -52,8 +60,7 @@ void setup()
  */
 boolean cont = false;  /* continuously send previous command to get IMU data */
 String  pcmd = " \n";  /* previous command */
-int pending = 0;
-int MAX_PENDING = 6;
+int     pending = 0;   /* number of outstanding commands sent to zumo bot */
 
 void draw() 
 {
@@ -83,7 +90,7 @@ void draw()
             if (curGraph != 'G') {
                 curGraph = 'G';
                 curGraphOffset = 5;
-                graph1.yLabel = "Rotational Speed (r/s)";
+                graph1.yLabel = "Rotational Speed (deg/s)";
                 graph1.Title = " Gyro: (x, y, z) vs. t ";  
                 graph1.yMin = 0;
                 graph1.yMax = 0;
@@ -108,6 +115,7 @@ void draw()
             }
         }
 
+        /* stop sending commands if too many commands are outstanding */
         if (pending < MAX_PENDING) {
             client.write(cmd);
             pcmd = cmd;
@@ -116,25 +124,33 @@ void draw()
     }
 
     /* Read IMU data from server and display it */
-    if (client.available() >= charBuffer.length) {
+    if (client.available() >= imuBuffer.length) {
         /* read IMU data */
-        for (int i = 0; i < charBuffer.length; i++) {
-            charBuffer[i] = client.readChar();
+        for (int i = 0; i < imuBuffer.length; i++) {
+            imuBuffer[i] = client.readChar();
         }
+
+        /* decrement pending count so we can send more commands */
         if (--pending < 0) {
             println("Yikes! pending = " + pending);
             pending = 0;
         }
        
         /* parse IMU data and display it */
-        String input = new String(charBuffer);
+        String input = new String(imuBuffer);
         String [] tokens = splitTokens(input, " ");
         if (tokens.length > (2 + curGraphOffset)) {
-            newPoint(tokens[curGraphOffset], tokens[1 + curGraphOffset], tokens[2 + curGraphOffset]);
+            newPoint(tokens[0 + curGraphOffset],  /* x value */
+                     tokens[1 + curGraphOffset],  /* y value */
+                     tokens[2 + curGraphOffset]); /* z value */
         }
     }
 }
 
+/*
+ *  ======== newPoint ========
+ *  add new point to data arrays and update graph
+ */
 void newPoint(String x, String y, String z)
 {
     /* get next values */
@@ -145,14 +161,41 @@ void newPoint(String x, String y, String z)
     
     /* update all data arrays */
     time = pushv(time, curTime);
-    ax = pushv(ax, float(x));
-    ay = pushv(ay, float(y));
-    az = pushv(az, float(z));
+    ax = pushv(ax, scale(curGraph, x));
+    ay = pushv(ay, scale(curGraph, y));
+    az = pushv(az, scale(curGraph, z));
 
     /* update display */
     updatePlots();
 }
 
+/*
+ *  ======== pushv ========
+ *  append new data sample to arr[] and return new array
+ */
+float[] pushv(float [] arr, float val)
+{
+    float [] tmp = arr;
+    
+    if (arr.length < MAX_XVALS) {
+        tmp = append(arr, val);
+    }
+    else {
+        /* shift data within arr to make room for new value */
+        int i;
+        for (i = 1; i < MAX_XVALS; i++) {
+            arr[i - 1] = arr[i];
+        }
+        arr[MAX_XVALS - 1] = val;
+    }
+
+    return (tmp);
+}
+
+/*
+ *  ======== updatePlots ========
+ *  redraw IMU graph
+ */
 void updatePlots()
 {
     background(255);
@@ -174,24 +217,16 @@ void updatePlots()
     graph1.LineGraph(time, az);
 }
 
-/*
- *  ======== pushv ========
- */
-float[] pushv(float [] arr, float val)
+float scale(char type, String value)
 {
-    float [] tmp = arr;
-    
-    if (arr.length < NUM_XVALS) {
-        tmp = append(arr, val);
-    }
-    else {
-        /* shift data within arr to make room for new value */
-        int i;
-        for (i = 1; i < NUM_XVALS; i++) {
-            arr[i - 1] = arr[i];
-        }
-        arr[NUM_XVALS - 1] = val;
-    }
+  if (scaleData) {
+    switch (type) {
+        case 'A':
+            return (float(value) * (2 * 9.80665) / float(32768)); /* acc data is +-2G */
 
-    return (tmp);
+        case 'G':
+            return (float(value) * 250 / float(32768));           /* gyro data is +-250 deg/sec */
+    }
+  }
+    return (float(value));
 }

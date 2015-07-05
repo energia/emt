@@ -12,9 +12,9 @@
 
 #include "app.h"
 
-// IMU data instance objects
-LSM303 imuCompass; // acceleration and magnetometer
-L3G    imuGyro;    // gyro data
+/* Pololu IMU data instance objects */
+LSM303 imuCompass; /* acceleration and magnetometer */
+L3G    imuGyro;    /* gyro data */
 
 /*
  *  ======== imuSetup ========

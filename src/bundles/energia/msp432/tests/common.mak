@@ -16,6 +16,10 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 # include definitions of the macros described above
 include ../../tools.mak
 
+# look for portable sources in the energia/tests directory
+vpath %c ../../../tests/$(PROGNAME)
+vpath %cpp ../../../tests/$(PROGNAME)
+
 # if not already defined, define the macros to work in the emt repo
 CLOSURE ?= ../../closure
 
@@ -41,7 +45,7 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalnames=1 -fno-exceptions $(BRD_DEFS)
+CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalstring=1 -fno-exceptions $(BRD_DEFS)
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
 LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(BRD_LIBS)"
 
@@ -62,22 +66,22 @@ else
     RMDIR := rm -rf
 endif
 
+OBJS = $(patsubst %.cpp,%.obj,$(SOURCES))
+
 # build rules
-all: $(patsubst %.cpp,%.obj,$(SOURCES)) $(PROGNAME).size
-
-$(PROGNAME).out: $(PROGNAME).obj main.obj
-
-%.obj: %.cpp makefile
-	@echo armcl $*.cpp ...
-	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
-
-%.out: %.obj main.obj makefile
-	@echo armlink $*.obj ...
-	$(LINK) $*.obj main.obj -Wl,-T"$(CLOSURE)/linker.cmd" $(SDK_LIBS) -lstdc++ -lgcc -lc -lm -lnosys -Wl,-Map=$*.map -o $@
+all: $(PROGNAME).out $(PROGNAME).size
 
 %.size: %.out makefile
 	-@$(OBJTOOL) -x $(CCROOT)/bin/arm-none-eabi-objdump $<
 	-@$(MAPTOOL) $*.map
+
+%.out: $(OBJS) makefile
+	@echo armlink $*.obj ...
+	$(LINK) $(OBJS) -Wl,-T"$(CLOSURE)/linker.cmd" $(SDK_LIBS) -lstdc++ -lgcc -lc -lm -lnosys -Wl,-Map=$*.map -o $@
+
+%.obj: %.cpp makefile
+	@echo armcl $*.cpp ...
+	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
 
 clean:
 	-@$(RM) *.obj

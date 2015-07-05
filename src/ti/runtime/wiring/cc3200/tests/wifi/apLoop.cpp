@@ -177,6 +177,7 @@ static void doCommand(char *buffer, int len, WiFiClient client)
 static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt)
 {
     static const char hex[] = "0123456789abcdef";
+    static int count = 0;
     int i = 0;
 
     *addr = 0;
@@ -198,7 +199,7 @@ static void getAddrCnt(char *buf, int bcnt, long *addr, int *cnt)
         }
         *cnt = (*cnt * 10) + (buf[i] - '0');
     }
-    System_printf("read(0x%x, %d)\n", *addr, *cnt);
+    System_printf("%d: read(0x%x)\n", count++, *addr);
 }
 
 /*

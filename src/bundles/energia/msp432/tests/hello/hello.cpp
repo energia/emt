@@ -3,7 +3,7 @@
 #include <xdc/runtime/System.h>
 
 /*
- *  ======== main task ========
+ *  ======== hello_task ========
  */
 void hello_task(xdc_UArg arg0, xdc_UArg arg1)
 {

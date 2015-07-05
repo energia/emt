@@ -1,6 +1,6 @@
 /*
  *  ======== main.cpp ========
- *  TI-RTOS Task startup
+ *  Basic TI-RTOS Task startup (no Energia MT references)
  */
 #include <stddef.h>
 
@@ -23,17 +23,16 @@ extern void hello_task(xdc_UArg a0, xdc_UArg arg1);
 int main()
 {
     /* initialize all device/board specific peripherals */
-    Board_init();  /* this function is generated as part of TI-RTOS config */
+    Board_init();
 
     Task_Params taskParams;
 
     System_printf("Startup\n");
     System_flush();
 
-    /* initialize taskParams and set to default */
+    /* initialize taskParams to the defaults */
     Task_Params_init(&taskParams);
 
-    /* All tasks have the same priority */
     taskParams.priority = Task_numPriorities - 1;
     taskParams.stackSize = 0x800;
 
