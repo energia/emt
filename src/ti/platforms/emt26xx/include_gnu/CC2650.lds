@@ -39,6 +39,10 @@ SECTIONS {
         KEEP (*(.vtable))
     } > REGION_DATA
 
+    /* these hard-coded addrs are needed by the TI-RTOS SPICC26XXDMA driver
+     * and must match appropriate offsets from UDMACC26XX_CONFIG_BASE defined
+     * by ti/drivers/dma/UDMACC26XX.h
+     */
     .dmaRxControlTableEntry0 0x20000430 : AT (0x20000430) {*(.dmaRxControlTableEntry0)} > REGION_DATA
     .dmaTxControlTableEntry0 0x20000440 : AT (0x20000440) {*(.dmaTxControlTableEntry0)} > REGION_DATA
     .dmaRxControlTableEntry1 0x20000500 : AT (0x20000500) {*(.dmaRxControlTableEntry1)} > REGION_DATA

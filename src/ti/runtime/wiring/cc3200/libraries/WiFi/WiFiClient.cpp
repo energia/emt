@@ -40,6 +40,7 @@ extern "C" {
 #include "WiFi.h"
 #include "WiFiClient.h"
 #include "WiFiServer.h"
+#include <xdc/runtime/System.h>
 
 //--tested, working--//
 //--client side--//
@@ -412,6 +413,8 @@ int WiFiClient::available()
         //
         int iRet = sl_Recv(WiFiClass::_handleArray[_socketIndex], rx_buffer, TCP_RX_BUFF_MAX_SIZE, 0);
         if ((iRet <= 0)  &&  (iRet != SL_EAGAIN)) {
+            System_printf("socket %p died: sl_Recv() failed (%d)\n",
+                          WiFiClass::_handleArray[_socketIndex], iRet);
             sl_Close(WiFiClass::_handleArray[_socketIndex]);
 
             WiFiClass::_portArray[_socketIndex] = -1;
