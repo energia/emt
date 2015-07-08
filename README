@@ -1,4 +1,4 @@
-				emt-a48
+				emt-a49
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,32 +125,17 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.cc26xx.tests.alan
-	added initial CC2600 Sensor Tag test
-
-bundles/energia/tests/
-	added generic tests
-
-bundles/energia/cc3200
-	added zumo demo and wifi tests
-
-ti.runtime.driverlib.cc26xx
-	added driverlib package to build using gcc and contain gcc
-	built TI-RTOS drivers
-
 DELETIONS
 
 CHANGES
-./.reltreerc
-	export CC26xx closure
 
-src/config.bld
-	hacked M3 target to allow builds of sources that reference driverlib headers
+ti.runtime.driverlib.cc26xx
+	fixed <drivers>/packages/ti/drivers/dma/UDMACC26XX.h to properly 
+	define allocation macro, re-built TI-RTOS drivers, and copied them
+	here (first part of SPI fix for CC26xx)
 
-ti.platforms.*
-	hacked to support broken/unsupported cc26xx libraries
-
-bundles/energia
-	cleanup tests
+ti.platforms.emt26xx
+	fixed include_gnu/CC2650*.lds to place DMA sections as required
+	by UDMACC26XX (second part of the SPI fix)
 
 MRS
