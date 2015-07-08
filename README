@@ -1,4 +1,4 @@
-				emt-a49
+				emt-a50
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,13 +129,5 @@ DELETIONS
 
 CHANGES
 
-ti.runtime.driverlib.cc26xx
-	fixed <drivers>/packages/ti/drivers/dma/UDMACC26XX.h to properly 
-	define allocation macro, re-built TI-RTOS drivers, and copied them
-	here (first part of SPI fix for CC26xx)
-
-ti.platforms.emt26xx
-	fixed include_gnu/CC2650*.lds to place DMA sections as required
-	by UDMACC26XX (second part of the SPI fix)
 
 MRS
