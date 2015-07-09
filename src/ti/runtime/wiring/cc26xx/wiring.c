@@ -31,7 +31,7 @@
  */
 
 #include <ti/runtime/wiring/Energia.h>
-#include <xdc/runtime/Timestamp.h>
+#include <ti/sysbios/family/arm/m3/TimestampProvider.h>
 #include <xdc/runtime/Types.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
@@ -42,8 +42,8 @@ unsigned long micros(void)
     Types_Timestamp64 time;
     uint64_t t64;
 
-    Timestamp_getFreq(&freq);
-    Timestamp_get64(&time);
+    TimestampProvider_getFreq(&freq);
+    TimestampProvider_get64(&time);
     t64 = ((uint64_t)time.hi << 32) | time.lo;
     return (t64/(freq.lo/1000000));
 }
@@ -75,12 +75,12 @@ void delayMicroseconds(unsigned int us)
         uint32_t t0, deltaT;
         Types_FreqHz freq;
 
-        Timestamp_getFreq(&freq);
+        TimestampProvider_getFreq(&freq);
         deltaT = us * (freq.lo/1000000);
 
-        t0 = Timestamp_get32();
+        t0 = TimestampProvider_get32();
 
-        while ((Timestamp_get32()-t0) < deltaT) {
+        while ((TimestampProvider_get32()-t0) < deltaT) {
             ;
         }
     }
