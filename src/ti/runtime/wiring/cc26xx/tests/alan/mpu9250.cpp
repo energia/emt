@@ -5,6 +5,7 @@
 
 #include <Energia.h> // Energia Wiring API
 #include <Wire.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
  
 //#include "app.h"
 
@@ -24,6 +25,7 @@
 #define    ACC_FULL_SCALE_16_G       0x18
  
 #define LED RED_LED
+#define BUZZER 23
 
 TwoWire Wire1(1);
 
@@ -136,15 +138,7 @@ void blinkSetup()
     I2CwriteByte(MAG_ADDRESS, 0x0A, 0x01);
 }
 
-#define BUZZER 23
 
-void toggleBuzzer()
-{
-    static bool state = 1;
-    state ^= 1;
-    digitalWrite(BUZZER, state);
-}
- 
 /*
  *  ======== blinkLoop ========
  *  Main loop, read and display data
@@ -158,6 +152,8 @@ int16_t mx, my, mz;
  */
 void blinkLoop()
 {
+    static uint32_t newTone, oldTone;
+
     // ____________________________________
     // :::  accelerometer and gyroscope ::: 
  
@@ -173,31 +169,33 @@ void blinkLoop()
     az = Buf[4] << 8 | Buf[5];
 
     // display ax via LED brightness
-    led(az);
+//    led(az);
 
     // Gyroscope
     gx = Buf[8] << 8 | Buf[9];
     gy = Buf[10] << 8 | Buf[11];
     gz = Buf[12] << 8 | Buf[13];
  
-#if 0
     // Display values
  
+#if 0
     // Accelerometer
+    Serial.print("Axyz: ");
     Serial.print(ax, DEC); 
     Serial.print("\t");
     Serial.print(ay, DEC);
     Serial.print("\t");
     Serial.print(az, DEC);  
-    Serial.print("\t");
+    Serial.print("\n");
  
     // Gyroscope
+    Serial.print("Gxyz: ");
     Serial.print(gx, DEC); 
     Serial.print("\t");
     Serial.print(gy, DEC);
     Serial.print("\t");
     Serial.print(gz, DEC);  
-    Serial.print("\t");
+    Serial.print("\n");
 
     // _____________________
     // :::  Magnetometer ::: 
@@ -234,6 +232,10 @@ void blinkLoop()
     Serial.println("");
 #endif
 
-    delay(gz & 0xf);    /* otherwise get data 100 times per sec */
-    toggleBuzzer();
+    newTone = ax/2 + 2000;
+    if (abs(newTone - oldTone) > 20) {
+        tone(BUZZER, newTone, 0);
+        oldTone = newTone;
+    }
+    delay(100);    /* otherwise get data 100 times per sec */
 }
