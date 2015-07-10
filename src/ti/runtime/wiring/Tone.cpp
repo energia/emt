@@ -45,6 +45,7 @@ static uint8_t tonePin;
 static bool toneState;
 static unsigned long toneDuration;
 static unsigned long mark;
+static unsigned int currentFrequency;
 
 static void ToneIntHandler(UArg arg0)
 {
@@ -67,9 +68,16 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
         return;
     }
 
+    if (frequency > 20000) {
+        return;
+    }
+
+    if (frequency == currentFrequency) {
+        return;
+    }
+
     playing = true;
     toneDuration = duration;
-    tonePin = _pin;
 
     togglePin = true;
 
@@ -78,7 +86,12 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
         frequency = 1000;
     }
 
-    pinMode(tonePin, OUTPUT);
+    currentFrequency = frequency;
+
+    if (_pin != tonePin) {
+        pinMode(tonePin, OUTPUT);
+        tonePin = _pin;
+    }
 
     if (initTimer) {
         Error_Block eb;
