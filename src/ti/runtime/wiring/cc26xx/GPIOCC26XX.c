@@ -41,7 +41,6 @@
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOCC26XX.h>
 #include <ti/drivers/ports/DebugP.h>
-#include <ti/drivers/ports/HwiP.h>
 
 #include <ti/sysbios/family/arm/cc26xx/Power.h>
 #include <ti/sysbios/family/arm/cc26xx/PowerCC2650.h>
@@ -194,7 +193,7 @@ static Power_NotifyObj powerNotifyObj;
 
 extern const GPIOCC26XX_Config GPIOCC26XX_config;
 
-static int powerNotifyFxn(unsigned int eventType, uintptr_t eventArg,
+static int powerPostNotify(unsigned int eventType, uintptr_t eventArg,
     uintptr_t clientArg);
 
 static bool gpioPinCbNotInstalled = true;
@@ -322,7 +321,7 @@ void GPIO_init()
 
     Power_registerNotify(&powerNotifyObj,
             Power_AWAKE_STANDBY,
-            powerNotifyFxn, NULL, (uintptr_t) NULL);
+            powerPostNotify, NULL, (uintptr_t) NULL);
 }
 
 /*
@@ -520,26 +519,15 @@ void GPIO_write(unsigned int index, unsigned int value)
 }
 
 /*
- *  ======== powerNotifyFxn ========
+ *  ======== powerNotify ========
  */
-static int powerNotifyFxn(unsigned int eventType, uintptr_t eventArg,
+static int powerPostNotify(unsigned int eventType, uintptr_t eventArg,
     uintptr_t clientArg)
 {
-#if 0
     unsigned int   i;
-    uint32_t       ulRegVal;
     GPIO_PinConfig config;
-    unsigned long  pinType;
-    unsigned long  pinStrength;
-    uint32_t       output;
-    PinConfig     *pinConfig;
 
     if (eventType == Power_AWAKE_STANDBY) {
-//        /* Take GPIO semaphore */
-//        ulRegVal = HWREG(0x400F703C);
-//        ulRegVal = (ulRegVal & ~0x3FF) | 0x155;
-//        HWREG(0x400F703C) = ulRegVal;
-
         for (i = 0; i < GPIOCC26XX_config.numberOfPinConfigs; i++) {
             if ((GPIOCC26XX_config.pinConfigs[i] & 0xffff0000) !=
                     GPIO_DO_NOT_CONFIG) {
@@ -553,37 +541,5 @@ static int powerNotifyFxn(unsigned int eventType, uintptr_t eventArg,
             }
         }
     }
-    else {
-        /* Entering LPDS */
-        /*
-         *  For pins configured as GPIO output, to retain the state
-         *  in LPDS, enable the Pull-Up if 1, or Pull-Down if 0.
-         *  Change the pad direction to input, which will cause the
-         *  external pad to float (HiZ), and the PU or PD resistor will
-         *  hold the output to keep it at 1 or 0.
-         */
-        for (i = 0; i < GPIOCC26XX_config.numberOfPinConfigs; i++) {
-            if ((GPIOCC26XX_config.pinConfigs[i] & 0xffff0000) ==
-                    GPIO_DO_NOT_CONFIG) {
-                continue;
-            }
-
-            config =  GPIOCC26XX_config.pinConfigs[i];
-
-            if (!(config & (GPIO_CFG_INPUT | GPIO_CFG_IN_INT_ONLY))) {
-                pinConfig = (PinConfig *) &GPIOCC26XX_config.pinConfigs[i];
-
-//                pad = pads[getGpioNumber(pinConfig)];
-
-//                PinConfigGet(pad, &pinStrength, &pinType);
-//                output = config & GPIO_CFG_OUT_HIGH;
-
-//                pinType = (output) ? PIN_TYPE_STD_PU : PIN_TYPE_STD_PD;
-//                PinConfigSet(pad, pinStrength, pinType);
-//                PinDirModeSet(pad, PIN_DIR_MODE_IN);
-            }
-        }
-    }
-#endif
     return (Power_NOTIFYDONE);
 }

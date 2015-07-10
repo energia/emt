@@ -400,6 +400,5 @@ void Board_init(void)
     Board_initPIN();
     Board_initGPIO();
 //    Board_initPWM();
-//    Board_initPower();
 }
 
