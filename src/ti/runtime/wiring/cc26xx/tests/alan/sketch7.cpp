@@ -51,6 +51,9 @@ void setup7()
 
     attachInterrupt(PUSH1, buttonFxn0, RISING);
     attachInterrupt(PUSH2, buttonFxn1, RISING);
+
+//    SPI.begin();
+//    SPI.transfer(100);
 }
 
 void loop7()
