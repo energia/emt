@@ -6,12 +6,12 @@
 
 MEMORY
 {
-    FLASH (RX)      : ORIGIN = 0x00000000, LENGTH = 0x0001ffb0
+    FLASH (RX)      : ORIGIN = 0x00000000, LENGTH = 0x0001ffa8
     /*
      * Customer Configuration Area and Bootloader Backdoor configuration in
      * flash, 40 bytes
      */
-    FLASH_CCFG (RX) : ORIGIN = 0x0001ffb0, LENGTH = 0x00000050
+    FLASH_CCFG (RX) : ORIGIN = 0x0001ffa8, LENGTH = 0x00000058
     SRAM (WX)       : ORIGIN = 0x20000000, LENGTH = 0x00005000
 }
 
