@@ -136,6 +136,22 @@ instance:
 
     /*!
      *  ======== variant ========
+     *  Name of the board variant to use
+     *
+     *  Board variants are small libraries of code that customize
+     *  TI-RTOS and Energia for a specific hardware platform.  This library
+     *  contains the TI-RTOS "board.c" driver configuration, pin mux setup
+     *  code, as well as Energia pin map tables.
+     *
+     *  Variant names are used to create a path name to a library whose
+     *  basename is variant-independent, such as "board.lib".  For example,
+     *  variant libraries are typically contained in a directory whose name
+     *  is the variant name.  Suppose that `variant` is set to
+     *  "CC3200_LAUNCHXL", the full path name of the variant library named
+     *  "board.lib" is
+     *  @p(code)
+     *      <some_path>/CC3200_LAUNCHXL/lib/board.lib
+     *  @p
      */
     config String variant;
 }
