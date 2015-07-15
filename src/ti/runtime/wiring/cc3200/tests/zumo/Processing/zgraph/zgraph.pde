@@ -217,16 +217,19 @@ void updatePlots()
     graph1.LineGraph(time, az);
 }
 
+/*
+ *  ======== scale =========
+ */
 float scale(char type, String value)
 {
-  if (scaleData) {
-    switch (type) {
-        case 'A':
-            return (float(value) * (2 * 9.80665) / float(32768)); /* acc data is +-2G */
+    if (scaleData) {
+        switch (type) {
+            case 'A':
+                return (float(value) * (2 * 9.80665) / float(32768)); /* acc data is +-2G */
 
-        case 'G':
-            return (float(value) * 250 / float(32768));           /* gyro data is +-250 deg/sec */
+            case 'G':
+                return (float(value) * 250 / float(32768));           /* gyro data is +-250 deg/sec */
+        }
     }
-  }
     return (float(value));
 }
