@@ -30,7 +30,7 @@ JOBS = --jobs=4
 # Builds all packages and releases
 .local-release: .local-all imports.mak
 	@echo making energia closures ...
-	make -C src/bundles/energia all msp432/closure.zip cc3200/closure.zip
+	make -C src/bundles/energia all msp432/closure.zip cc3200/closure.zip cc26xx/closure.zip
 
 # ======== .local-all ========
 # Builds all packages
@@ -40,6 +40,9 @@ JOBS = --jobs=4
 	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
 	@echo "Building packages ..."
 	$(MYXDC) $(JOBS) release -Pr src
+
+.local-make:
+	$(MYXDC) $(JOBS) .make -Pr src
 
 # ======== .local-regress ========
 # Test the packages in this tree
