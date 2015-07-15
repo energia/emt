@@ -30,24 +30,6 @@
 TwoWire Wire1(1);
 
 /*
- *  ======== led ========
- *  Illuminate LED based on specified brightness b
- */
-static void led(int16_t b)
-{
-    static int16_t max = 1;
-    
-    /* scale b to be 0 -> 255 */
-    if (b < 0) {
-        b = -b;
-    }
-    if (b > max) {
-        max = b;
-    }
-    digitalWrite(LED, b & 1);
-}
-
-/*
  *  ======== I2Cread ========
  *  This function read Nbytes bytes from I2C device at address Address.
  *  Put read bytes starting at register Register in the Data array. 
@@ -167,9 +149,6 @@ void blinkLoop()
     ax = Buf[0] << 8 | Buf[1];
     ay = Buf[2] << 8 | Buf[3];
     az = Buf[4] << 8 | Buf[5];
-
-    // display ax via LED brightness
-//    led(az);
 
     // Gyroscope
     gx = Buf[8] << 8 | Buf[9];
