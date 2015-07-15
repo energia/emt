@@ -45,7 +45,7 @@
     %}
 %}
 %for (var i = 0; i < libs.length; i++) {
--l"`libs[i].replace(/\/\${variant}\//, VARIANT)`"
+-l"`libs[i].replace(/\/\${variantPath}\//, VARIANT)`"
 %}
 
 --retain="*(xdc.meta)"

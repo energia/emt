@@ -42,7 +42,7 @@ INPUT(
         %}
     %}
     %for (var i = 0; i < libs.length; i++) {
-    `libs[i].replace(/\/\${variant}\//, VARIANT)`
+    `libs[i].replace(/\/\${variantPath}\//, VARIANT)`
     %}
 )
 %}
