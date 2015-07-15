@@ -17,15 +17,22 @@ function getLibs(prog)
     if (suffix == null) {
 	prog.$logWarning("unsupported target '" + prog.build.target.$name 
 	    + "': the target's suffix '" + prog.build.target.suffix
-            + "' isn't compatible with any library provided by this pack",
+            + "' isn't compatible with any library provided by this package",
 	    this);
 	return (null);
     }
     var ext = "." + suffix + ".lib";
 
-    /* select board-specific variant package directory */
-    var vbase = "!/${variant}/";
+    /* generate an variant library name that's _not_ variant-specific 
+     * Note: '/${variantPath}/', expanded by link.xdt, must _also_ be 
+     *       valid for all variants since one closure must work for 
+     *       all variants; see ti.platforms.launchpad.IPlatform.
+     */
+    var vbase = "!/${variantPath}/";
     if (platform.$module.addDriverLibs) {
+	/* if we are in package.bld flow, it's ok to use the variant name
+	 * otherwise, we must not.
+	 */
 	var prefix = this.$name.replace(/\./g, "/");
 	var vname = prefix + "/variants/" + platform.variant;
 	vbase = xdc.findFile(vname);
@@ -39,7 +46,8 @@ function getLibs(prog)
     }
 
     /* return our lib + the pre-compiled board-support library */
-    var lib = this.$name.substring(this.$name.lastIndexOf('.') + 1) + ext;
+    var dev = this.$name.substring(this.$name.lastIndexOf('.') + 1);
+    var lib =  "lib/wiring_" + dev + ext;
     var vlib = vbase + "lib/board" + ext;
-    return ("lib/" + lib + ";" + vlib);
+    return (lib + ";" + vlib);
 }

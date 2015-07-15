@@ -3,4 +3,4 @@
  */
 var msp432 = xdc.loadCapsule("msp432.bld");
 
-msp432.addLibs([".", "..", "../avr"], {defs: " -Dxdc__nolocalstring=1"});
+msp432.addLibs([".", "..", "../avr"], {name: "lib/wiring_msp432"});

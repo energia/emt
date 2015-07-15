@@ -13,4 +13,4 @@ var cc3200 = xdc.loadCapsule("cc3200.bld");
  * _POSIX_SOURCE is defined) but it's also defined by our socket.h
  */
 var DEFS = "-D_POSIX_SOURCE " + cc3200.DEFS;
-cc3200.addLibs([".", "..", "../avr", "./libraries/WiFi", "./libraries/WiFi/utility"], {defs: DEFS});
+cc3200.addLibs([".", "..", "../avr", "./libraries/WiFi", "./libraries/WiFi/utility"], {name: "lib/wiring_cc3200", defs: DEFS});
