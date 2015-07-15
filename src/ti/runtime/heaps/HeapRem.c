@@ -67,7 +67,7 @@ Void HeapRem_free(HeapRem_Object *obj, Ptr block, SizeT size)
 /* ======== HeapRem_isBlocking ======== */
 Bool HeapRem_isBlocking(HeapRem_Object *obj)
 {
-    return (Memory_query((IHeap_Handle)module->heap, Memory_Q_BLOCKING));
+    return (HeapMem_isBlocking(module->heap));
 }
  
 /* ======== HeapRem_getStats ======== */
