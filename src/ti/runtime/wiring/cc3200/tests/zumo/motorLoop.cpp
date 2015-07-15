@@ -1,5 +1,5 @@
 /*
- *  ======== motorLoop.cpp ========
+ *  ======== motorLoop ========
  *  This sketch controls the motors on the Zumo by polling a global
  *  variable, motorWASD, once per PERIOD milliseconds for one of the
  *  following motor commands:
@@ -52,6 +52,7 @@ __extern void motorSetup(void)
  */
 __extern void motorLoop(void)
 {
+    /* state used to blink LED */
     static unsigned count = 0;
     static char state = 0;
     

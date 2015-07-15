@@ -25,6 +25,6 @@ __extern void shellLoop(void);
 
 /* main external declarations */
 extern Char mainOutputBuf[];
-#define MAIN_LED_PIN 13
+#define MAIN_LED_PIN RED_LED
 
 #endif

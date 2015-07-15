@@ -1,5 +1,5 @@
 /*
- *  ======== apLoop.cpp ========
+ *  ======== apLoop ========
  *  This sketch starts a network and listens on port PORTNUM for
  *  command that can control the zumo motors.
  *
@@ -8,12 +8,14 @@
  */
 
 #include <cc3200/libraries/WiFi/WiFi.h>
+#include <ti/sysbios/knl/Task.h>
+
 #include <string.h>
 
 #include "app.h"
 
 /* name of the network and its password */
-static const char ssid[] = "tink3AP";
+static const char ssid[] = "zumoAP";
 static const char wifipw[] = "password";
 
 /* the port number of the server listening for command at 192.168.1.1 */
@@ -35,6 +37,9 @@ static void printWifiData();
 __extern void apSetup()
 {
     Serial.begin(9600);
+
+    /* set priority of this task to be lower than other tasks */
+    Task_setPri(Task_self(), 1);
 
     /* toggle LED when clients connect/disconnect */
     pinMode(MAIN_LED_PIN, OUTPUT);  
@@ -166,8 +171,8 @@ __extern void apLoop()
         }
     }
 
-    /* check for new connections 4 times per second */
-    delay(250);
+    /* check for new connections 2 times per second */
+    delay(500);
 }
 
 /*
@@ -210,7 +215,10 @@ static void doWASD(char wasd, WiFiClient client)
 {
     static char report[80];
 
+    /* set new motor command */
     motorWASD = wasd;
+
+    /* send current IMU data */
     System_snprintf(report, sizeof(report),
         "A: %6d %6d %6d G: %6d %6d %6d M: %6d %6d %6d",
                     imuCompass.a.x, imuCompass.a.y, imuCompass.a.z,

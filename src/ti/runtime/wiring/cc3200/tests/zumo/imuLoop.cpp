@@ -1,5 +1,5 @@
 /*
- *  ======== imuLoop.cpp ========
+ *  ======== imuLoop ========
  *  This sketch simply reads the Zumo IMU sensors at 20Hz and prints
  *  the current value once per second to the UART.
  */
@@ -27,10 +27,12 @@ __extern void imuSetup()
 
     Wire.begin();
 
+    /* initialize Zumo accelerometer and magnetometer */
     imuCompass.init();
     imuCompass.enableDefault();
-
     System_printf("  imuSetup: compass done\r\n");
+
+    /* initialize Zumo gyro */
     if (!imuGyro.init()) {
         System_printf("Failed to autodetect gyro type!");
         delay(1000);
@@ -63,5 +65,6 @@ __extern void imuLoop()
         Serial.println(report);
     }
 
+    /* update IMU data every 50 ms (200 Hz) */
     delay(50);
 }

@@ -15,10 +15,10 @@
 #include "app.h"
 
 /* name of the network and its password */
-static const char ssid[] = "tink3AP";
+static const char ssid[] = "zumoAP";
 static const char wifipw[] = "password";
 
-/* port number of the server listening for commands at 192.168.1.1 */
+/* the port number of the server listening for command at 192.168.1.1 */
 #define PORTNUM 8080
 
 /* create data server on port PORTNUM */

@@ -12,7 +12,7 @@
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
 
-/* Board Support Header files */
+/* TI-RTOS Board support */
 #include <ti/drivers/bsp/Board.h>
 
 /* application/sketch globals */
@@ -33,14 +33,14 @@ typedef struct Sketch {
 Sketch sketchTab[] = {
     {imuSetup,   imuLoop,   "imu",   0xc00, 2},
     {motorSetup, motorLoop, "motor", 0xc00, 2},
-    {apSetup,    apLoop,    "ap",    0x1000, 1},
+    {apSetup,    apLoop,    "ap",    0x1000, 2},
     //    {shellSetup, shellLoop, "shell", 0x1000},
 };
 
 #define NUM_SKETCHES (sizeof(sketchTab) / sizeof (Sketch))
 
 /*
- *  ======== main task ========
+ *  ======== sketchTask ========
  */
 void sketchTask(xdc_UArg _task_setup, xdc_UArg _task_loop)
 {
@@ -79,7 +79,7 @@ int main()
         taskParams.arg1 = (xdc_UArg)sketchTab[i].loop;
         taskParams.instance->name = (xdc_String)sketchTab[i].name;
 
-        /* create the task */
+        /* create the sketch task */
         Task_create(sketchTask, &taskParams, NULL);
     }
 

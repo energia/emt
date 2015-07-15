@@ -15,7 +15,7 @@
 /* TI-RTOS Board support */
 #include <ti/drivers/bsp/Board.h>
 
-/* application/sketch setup/loop functions */
+/* application/sketch globals */
 #include "app.h"
 
 typedef void (*SFxn)(void);
