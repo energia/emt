@@ -3,4 +3,4 @@
  */
 var cc26xx = xdc.loadCapsule("cc26xx.bld");
 
-cc26xx.addLibs([".", "..", "../avr"], {defs: " -Dxdc__nolocalstring=1"});
+cc26xx.addLibs([".", "..", "../avr"], {name: "lib/wiring_cc26xx"});

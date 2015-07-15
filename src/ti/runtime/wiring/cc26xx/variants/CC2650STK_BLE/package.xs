@@ -6,7 +6,7 @@
  * 
  * ti.runtime.wiring.cc26xx dynamically adds our libraries to:
  *     o ensure that pins.obj always occurs _after_ the wiring library 
- *       (which references the definition in pinc.c)
+ *       (which references the definition in pins.c)
  *     o ensure Board_init.obj occurs _before_ the ti.drivers libraries
  *     o avoid a static dependency on any board-specific packages
  */
