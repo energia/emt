@@ -30,14 +30,14 @@ metaonly interface IPlatform inherits xdc.platform.IPlatform
      *  In order to support multiple board variants with a single
      *  closure, the library name provided ti.runtime.wiring.<device>
      *  has a variant-independent name (because it's used in a
-     *  linker command file common to all variants.  In order to use
+     *  linker command file common to all variants.)  In order to use
      *  this linker command file, it's necessary for the user to
      *  supply a variant-specific library search path to ensure that
      *  the right variant library is used.
      *
-     *  This path is only used to enable the creation of longer
-     *  variant-independent name for the library.  For example,
-     *  setting variantPath to "variants/" will cause the the
+     *  This config parameter is only used to enable the creation of 
+     *  longer variant-independent name for the library.  For example,
+     *  setting `variantPath` to "variants/" will cause the the
      *  following line to appear in the generated linker command
      *  file:
      *  @p(code)
@@ -122,15 +122,20 @@ instance:
 
     /*!
      *  ======== includeLinkCmdFile ========
-     *  The flag that specifies if the platform should include a linker command
-     *  file.
+     *  Automatically include a device-specific linker command file
+     *  
+     *  This flag specifies whether the platform should include a default
+     *  device-specific linker command file.
      *
-     *  By default, a user is responsible for adding a linker command file to
-     *  the project, or to the linker command line. However, if this flag is
-     *  set, this platform will include a default linker command file for the
-     *  selected device.
+     *  By default, a user is responsible for supplying a device and
+     *  toolchain-specific linker command file to the linker. However, if
+     *  this flag is set to `true`, this platform will include an appropriate
+     *  default linker command file for the selected device and toolchain.
      */
     config Bool includeLinkCmdFile = false;
 
+    /*!
+     *  ======== variant ========
+     */
     config String variant;
 }
