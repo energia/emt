@@ -43,9 +43,16 @@ SECTIONS {
      * and must match appropriate offsets from UDMACC26XX_CONFIG_BASE defined
      * by ti/drivers/dma/UDMACC26XX.h
      */
+    UDMACC26XX_dmaRxControlTableEntry0_is_placed = 0;
     .dmaRxControlTableEntry0 0x20000430 : AT (0x20000430) {*(.dmaRxControlTableEntry0)} > REGION_DATA
+
+    UDMACC26XX_dmaTxControlTableEntry0_is_placed = 0;
     .dmaTxControlTableEntry0 0x20000440 : AT (0x20000440) {*(.dmaTxControlTableEntry0)} > REGION_DATA
+
+    UDMACC26XX_dmaRxControlTableEntry1_is_placed = 0;
     .dmaRxControlTableEntry1 0x20000500 : AT (0x20000500) {*(.dmaRxControlTableEntry1)} > REGION_DATA
+
+    UDMACC26XX_dmaTxControlTableEntry1_is_placed = 0;
     .dmaTxControlTableEntry1 0x20000510 : AT (0x20000510) {*(.dmaTxControlTableEntry1)} > REGION_DATA
 
     /* remove unnecessary sections included in some TI object files */
