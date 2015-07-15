@@ -1,4 +1,4 @@
-				emt-a50
+				emt-a51
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,5 +129,35 @@ DELETIONS
 
 CHANGES
 
+./makefile
+	fixed to build cc26xx closure
+
+ti.runtime.wiring.cc26xx
+	fixed to properly support variants
+
+ti.runtime.heaps
+	fix bug in HeapRem that affects isBlocking()
+
+ti.platforms.emt26xx
+	fix linker command files to require symbol definitions for DMA 
+	control sections added via UDMACC26XX
+
+ti.runtime.wiring.*
+	changed wiring library name from <device>.lib to wiring_<device>.lib
+	to avoid confusion with similarily named driverlib library
+
+
+ti.runtime.wiring.cc26xx
+	Force usage of m3.TimestampProvider to work around ROM's requirement
+	of xdc.runtime being bound to cc26xx.TimestampProvider
+
+	moved GPIOCC26XX.c to ti.runtime.wiring.cc26xx.variants.CC2650STK_BLE
+	to eliminate circular library dependency with variant library.
+	THIS IS A HACK THAT WILL BE ELIMINATED BY moving GPIOCC26XX.c to the
+	drivers repo.
+
+
+ti.platforms.emt26xx
+	fix ROM linker command files
 
 MRS
