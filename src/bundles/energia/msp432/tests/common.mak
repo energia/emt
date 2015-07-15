@@ -28,7 +28,7 @@ vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
 
 VARIANT ?= MSP_EXP432P401R
-PROGNAME ?= = blink
+PROGNAME ?= blink
 
 # define MSP432 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB.msp432)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
@@ -66,7 +66,7 @@ else
     RMDIR := rm -rf
 endif
 
-OBJS = $(patsubst %.cpp,%.obj,$(SOURCES))
+OBJS = $(patsubst %.ino,%.obj,$(patsubst %.cpp,%.obj,$(SOURCES)))
 
 # build rules
 all: $(PROGNAME).out $(PROGNAME).size
@@ -82,6 +82,10 @@ all: $(PROGNAME).out $(PROGNAME).size
 %.obj: %.cpp makefile
 	@echo armcl $*.cpp ...
 	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
+
+%.obj: %.ino makefile
+	@echo armcl $*.ino ...
+	$(CC) -x c++ $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
 
 clean:
 	-@$(RM) *.obj

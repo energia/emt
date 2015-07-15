@@ -42,6 +42,7 @@ all: .debug closure
 	@echo "    SYSBIOS = $(SYSBIOS)"
 	@echo "    EMTROOT = $(EMTROOT)"
 	@echo "    XDCPATH = $(XDCPATH)"
+	@echo "    DRVLIB  = $(DRVLIB.cc3200)"
 	@echo "  -----------------"
 	@echo ""
 

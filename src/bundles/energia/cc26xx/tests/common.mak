@@ -30,7 +30,7 @@ vpath %.cpp $(CURDIR)
 # Supported variants include:
 #    CC2650STK_BLE  - TI CC2650 SensorTag
 VARIANT ?= CC2650STK_BLE
-PROGNAME ?= = blink
+PROGNAME ?= blink
 
 # define CC26xx DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB.cc26xx)/driverlib/bin/ccs/driverlib.lib
@@ -68,15 +68,10 @@ else
     RMDIR := rm -rf
 endif
 
-OBJS = $(patsubst %.cpp,%.obj,$(SOURCES))
+OBJS = $(patsubst %.ino,%.obj,$(patsubst %.cpp,%.obj,$(SOURCES)))
 
 # build rules
-ifneq (,$(filter-out alloc,$(filter-out hello,$(PROGNAME))))
 all: $(PROGNAME).out $(PROGNAME).size
-else
-$(info WARNING: skipping link of $(PROGNAME) because GPIO driver for the 26xx is in the wiring library rather than in the TI-RTOS library)
-all: $(OBJS)
-endif
 
 %.size: %.out makefile
 	-@$(OBJTOOL) -x $(CCROOT)/bin/arm-none-eabi-objdump $<
@@ -89,6 +84,10 @@ endif
 %.obj: %.cpp makefile
 	@echo armcl $*.cpp ...
 	$(CC) $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
+
+%.obj: %.ino makefile
+	@echo armcl $*.ino ...
+	$(CC) -x c++ $(CCOPTS) -I "$(CCROOT)/include" $(CFG_INCS) $< -o $@
 
 clean:
 	-@$(RM) *.obj

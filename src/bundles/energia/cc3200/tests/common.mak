@@ -32,7 +32,7 @@ vpath %.cpp $(CURDIR)
 #    RedBearLab_WiFi_Mini - RedBear WiFi Mini
 #    RedBearLab_CC3200    - RedBear CC3200 (arduino UNO clone)
 VARIANT ?= CC3200_LAUNCHXL
-PROGNAME ?= = blink
+PROGNAME ?= blink
 
 # define CC3200 DriverLib libs and headers based on definitions above
 SDK_LIBS = $(DRVLIB.cc3200)/driverlib/ccs/Release/driverlib.a
