@@ -1,5 +1,5 @@
 /*
- *  ======== cc2600.bld ========
+ *  ======== cc26xx.bld ========
  */
 var Platform = xdc.module("ti.platforms.emt26xx.Platform");
 var DLIBROOT = Platform.findDriverLib();
@@ -12,7 +12,7 @@ var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
 var DEFS = "-Dxdc__nolocalstring=1 -DSL_PLATFORM_MULTI_THREADED";
-DEFS = "-Dxdc__nolocalstring=1 ";
+DEFS = "-Dxdc__nolocalstring=1 "; /* single threaded wireless */
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/driverlib" '
