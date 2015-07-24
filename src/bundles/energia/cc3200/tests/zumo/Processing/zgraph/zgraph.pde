@@ -13,7 +13,7 @@ Client client;           /* data socket connected to zumo IMU data server */
 char[] imuBuffer = new char[72];
 
 int    MAX_FPS = 30;     /* max frames/sec, i.e., rate of calls to draw() */
-int    MAX_XVALS = 80;   /* max # of samples in the x-axis */
+int    MAX_XVALS = 256;  /* max # of samples in the x-axis */
 int    MAX_PENDING = 6;  /* max # of outstanding commands to send */
 
 String LOG_NAME  = "zumo_log.txt";
@@ -29,6 +29,7 @@ float[] az   = { 0 };
 
 char curGraph = 'A';
 int curGraphOffset = 1;
+long startMillis = 0;
 float curTime = 0;
 boolean scaleData = true;
 
@@ -66,6 +67,10 @@ void draw()
 {
     /* send server commands based on keyboard input */
     if (keyPressed || cont) {
+        if (startMillis == 0) {
+            /* capture initial start time */
+            startMillis = java.lang.System.currentTimeMillis();
+        }
         String cmd = pcmd;
         if  (key == ' ' || key == 'w' || key == 'a' || key == 's' || key == 'd') {
             cmd = key + "\n";
@@ -154,7 +159,7 @@ void draw()
 void newPoint(String x, String y, String z)
 {
     /* get next values */
-    curTime += 1;
+    curTime = (java.lang.System.currentTimeMillis() - startMillis) / 1000.0;
     if (log != null) {
         log.println("A: " + x + " " + y + " " + z);
     }
@@ -204,7 +209,7 @@ void updatePlots()
     graph1.xMin = min(time);
     graph1.yMax = max(max(max(az), max(ax), max(ay)), graph1.yMax);
     graph1.yMin = min(min(min(az), min(ax), min(ay)), graph1.yMin);
-                                                  
+
     graph1.DrawAxis();
       
     graph1.GraphColor = color(200, 40, 40);  
