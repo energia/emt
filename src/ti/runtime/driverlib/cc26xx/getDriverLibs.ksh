@@ -1,5 +1,5 @@
 #!/bin/ksh
-SRC=/db/vtree/dr/drivers-dr/packages/ti/drivers/lib
+SRC=/db/vtree/dr/drivers-h-dr/packages/ti/drivers/lib
 if [ $# -ge 1 ]; then
     SRC=$1
 fi

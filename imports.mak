@@ -6,7 +6,7 @@ XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_01_33/$(BUILD_HOST_OS)
 #
 # internal TISB trees containing imports
 #
-ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-g06
+ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-h10
 
 #
 # Specific required imports (referenced by makeunix, for example)

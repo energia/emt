@@ -306,6 +306,7 @@ const SPICC26XX_HWAttrs spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
     {   /* SENSORTAG_CC2650_SPI0 */
         .baseAddr = SSI0_BASE,
         .intNum = INT_SSI0,
+        .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .defaultTxBufValue = 0,
         .powerMngrId = PERIPH_SSI0,
         .rxChannelBitMask = 1<<UDMA_CHAN_SSI0_RX,

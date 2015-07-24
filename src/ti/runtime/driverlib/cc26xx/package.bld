@@ -12,13 +12,16 @@ cc26xx.addLibs([srcDir + "/driverlib"]);
 
 /* include copy of ti.drivers/lib that has gcc built libraries */
 Pkg.otherFiles = ["./ti_drivers_lib"];
-print("WARNING: including hand-built ti.drivers/lib libraries (from a clone of git://gitorious.design.ti.com/ti-rtos/drivers.git @ cbadf16fe7693004ddfd76fcf4cad06810555e59)");
+print("WARNING: including hand-built ti.drivers/lib libraries (from a clone of git://gitorious.design.ti.com/ti-rtos/drivers.git @ tag 2.14.00.10)");
 
 /* check compatibility with ti.drivers libraries:
- *   ti.drivers drivers built against
+ *   for zumaprod-g06, ti.drivers drivers built against
  *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_21_01_15600
+ *   for zumaprod-h10, and
+ *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_21_02_15830
+ *   
  *   See `grep CC26XXWARE <drivers repo>/Makefile`
  */
-if ("/db/vendors/ti/CCWare/cc26xxware_2_21_01_15600" != srcDir) {
+if ("/db/vendors/ti/CCWare/cc26xxware_2_21_02_15830" != srcDir) {
     throw new Error("driverlib <-> TI-RTOS library mismatch");
 }
