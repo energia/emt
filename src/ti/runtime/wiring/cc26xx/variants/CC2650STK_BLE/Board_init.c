@@ -369,6 +369,47 @@ const I2C_Config I2C_config[] = {
 /*
  *  ========================== I2C end =========================================
 */
+
+/*
+ * ======== PWM driver ========
+ */
+#include <ti/drivers/PWM.h>
+#include <ti/drivers/pwm/PWMTimerCC26xx.h>
+#include <driverlib/timer.h>
+
+PWMTimerCC26xx_Object pwmCC26xxObjects[CC2650_PWMCOUNT];
+
+const PWMTimerCC26xx_HWAttrs pwmCC26xxHWAttrs[CC2650_PWMCOUNT] = {
+    {GPT0_BASE, TIMER_A, PERIPH_GPT0, IOID_0},
+    {GPT0_BASE, TIMER_B, PERIPH_GPT0, IOID_1},
+    {GPT1_BASE, TIMER_A, PERIPH_GPT1, IOID_2},
+    {GPT1_BASE, TIMER_B, PERIPH_GPT1, IOID_3},
+    {GPT2_BASE, TIMER_A, PERIPH_GPT2, IOID_4},
+    {GPT2_BASE, TIMER_B, PERIPH_GPT3, IOID_5},
+    {GPT3_BASE, TIMER_A, PERIPH_GPT3, IOID_6},
+    {GPT3_BASE, TIMER_B, PERIPH_GPT3, IOID_7}
+};
+
+const PWM_Config PWM_config[] = {
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[0], &pwmCC26xxHWAttrs[0]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[1], &pwmCC26xxHWAttrs[1]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[2], &pwmCC26xxHWAttrs[2]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
+    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
+    {NULL, NULL, NULL}
+};
+
+/*
+ *  ======== Board_initPWM ========
+ */
+void Board_initPWM(void)
+{
+    PWM_init();
+}
+
 void Board_initI2C()
 {
     I2C_init();
@@ -399,6 +440,6 @@ void Board_init(void)
     /* driver-specific initialization */
     Board_initPIN();
     Board_initGPIO();
-//    Board_initPWM();
+    Board_initPWM();
 }
 

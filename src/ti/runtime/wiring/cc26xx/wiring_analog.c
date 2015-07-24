@@ -33,28 +33,109 @@
 #define ARDUINO_MAIN
 
 #include "wiring_private.h"
+
+#include <driverlib/ioc.h>
+
 #include <ti/drivers/PWM.h>
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOCC26XX.h>
 
 /*
  * analogWrite() support
  */
 
 extern PWM_Config PWM_config[];
+extern const GPIOCC26XX_Config GPIOCC26XX_config;
+
+#define NOT_IN_USE 0
+
+/* Mappable PWM Timer capture pins */
+const uint8_t mappable_pwms[] = {
+   IOC_IOCFG17_PORT_ID_PORT_EVENT0,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT1,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT2,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT3,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT4,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT5,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT6,
+   IOC_IOCFG17_PORT_ID_PORT_EVENT7,
+};
+
+/* Current PWM timer GPIO mappings */
+uint16_t used_pwm_port_pins[] = {
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+    NOT_IN_USE,
+};
 
 /*
- * For the CC26xx, the timers used for PWM are clocked at 80MHz.
- * The period is set to 2.04ms in the PWM_open() calls in Board_init().
+ * For the CC26xx, the timers used for PWM are clocked at 48MHz.
+ * The period is set to 2.045ms in the PWM_open() calls below.
  * The PWM objects are configured for PWM_DUTY_COUNTS mode to minimize
  * the PWM_setDuty() processing overhead.
- * The 2.04ms period yields a period count of 163200.
+ * The 2.045ms period yields a period count of 98160.
  * The Arduino analogWrite() API takes a value of 0-255 for the duty cycle.
- * The PWM scale factor is then 163200 / 255 = 640
+ * The PWM scale factor is then 98160 / 255 = 385
  */
 
-#define PWM_SCALE_FACTOR 163200/255
+#define PWM_SCALE_FACTOR 385
 
 void analogWrite(uint8_t pin, int val) 
 {
+    uint8_t pwmIndex, pinId;
+    uint32_t hwiKey;
+
+    hwiKey = Hwi_disable();
+    
+    if (digital_pin_to_pin_function[pin] == PIN_FUNC_ANALOG_OUTPUT) {
+        pwmIndex = digital_pin_to_pwm_index[pin];
+    }
+    else {
+        /* re-configure pin if possible */
+        PWM_Params params;
+
+        pinId = GPIOCC26XX_config.pinConfigs[pin] & 0xffff;
+        
+        if (pinId == GPIOCC26XX_EMPTY_PIN) {
+            Hwi_restore(hwiKey);
+            return; /* can't get there from here */
+        }
+        
+        /* find an unused PWM resource and port map it */
+        for (pwmIndex = 0; pwmIndex < 8; pwmIndex++) {
+            if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
+                /* remember which pinId is being used by this PWM resource */
+                used_pwm_port_pins[pwmIndex] = pinId; /* save port/pin info */
+                /* remember which PWM resource is being used by this pin */
+                digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
+                break;
+            }
+        }
+
+        if (pwmIndex > 7) {
+            Hwi_restore(hwiKey);
+            return; /* no unused PWM ports */
+        }
+
+        PWM_Params_init(&params);
+
+        /* Open the PWM port */
+        params.period = 2045; /* arduino period is 2.04ms (490Hz) */
+        params.dutyMode = PWM_DUTY_COUNTS;
+        params.custom = (void *)pinId;
+        
+        PWM_open(pwmIndex, &params);
+        digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
+    }
+
+    Hwi_restore(hwiKey);
+
+    PWM_setDuty((PWM_Handle)&(PWM_config[pwmIndex]), (val * PWM_SCALE_FACTOR));
 }
 
 /*
@@ -67,6 +148,13 @@ void analogWrite(uint8_t pin, int val)
  */
 void stopAnalogWrite(uint8_t pin)
 {
+    uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    /* Close PWM port */
+    PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
+    /* restore pin table entry with port/pin info */
+    digital_pin_to_pwm_index[pin] = used_pwm_port_pins[pwmIndex];
+    /* free up pwm resource */
+    used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
 }
 
 /*

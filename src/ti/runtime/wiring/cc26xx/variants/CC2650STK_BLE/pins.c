@@ -30,7 +30,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ti/runtime/wiring/cc3200/wiring_private.h>
+#include <ti/runtime/wiring/cc26xx/wiring_private.h>
 
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
@@ -56,6 +56,46 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  17 - DIO_30 DP_ID */
     PIN_FUNC_UNUSED,    /*  18 - DIO_24 DP1 */
     PIN_FUNC_UNUSED,    /*  19 - POWER_GOOD */
+    PIN_FUNC_UNUSED,    /*  20 - DIO_25 DP0 */
+    PIN_FUNC_UNUSED,    /*  21 - DIO_02 AUDIO DI */
+    PIN_FUNC_UNUSED,    /*  22 - DIO_12 MPU PWR */
+    PIN_FUNC_UNUSED,    /*  23 - DIO_21 BUZZER */
+    PIN_FUNC_UNUSED,    /*  24 - DIO_03 REED */
+    PIN_FUNC_UNUSED,    /*  25 - DIO_04 BUTTON1 */
+    PIN_FUNC_UNUSED,    /*  26 - DIO_01 TMP RDY */
+    PIN_FUNC_UNUSED,    /*  27 - DIO_10 LED1 */
+    PIN_FUNC_UNUSED,    /*  28 - DIO_07 MPU INT */
+    PIN_FUNC_UNUSED,    /*  29 - DIO_13 MIC PWR */
+    PIN_FUNC_UNUSED,    /*  30 - DIO_00 BUTTON2 */
+    PIN_FUNC_UNUSED,    /*  31 - DIO_15 LED2 */
+};
+
+/*
+ * While in use, this table contains
+ * the index of the PWM resource that is mapped
+ * to the corresponding pin.
+ */
+uint16_t digital_pin_to_pwm_index[] = {
+    NOT_MAPPABLE,       /*  dummy */
+    NOT_MAPPABLE,       /*  1  - VDD */
+    NOT_MAPPABLE,       /*  2  - GND */
+    PIN_FUNC_UNUSED,    /*  3  - DIO_06 SCL */
+    PIN_FUNC_UNUSED,    /*  4  - DIO_05 SDA */
+    PIN_FUNC_UNUSED,    /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
+    PIN_FUNC_UNUSED,    /*  6  - DIO_11 DP7/AUDIO CLK */
+    PIN_FUNC_UNUSED,    /*  7  - DIO_20 DP11/CSN */
+    PIN_FUNC_UNUSED,    /*  8  - DIO_22 DP6/AUDIO DO */
+    NOT_MAPPABLE,       /*  9  - VDD */
+    PIN_FUNC_UNUSED,    /*  10 - DIO_29 DP5/UART_TX */
+    PIN_FUNC_UNUSED,    /*  11 - DIO_19 DP10/MOSI */
+    PIN_FUNC_UNUSED,    /*  12 - DIO_28 DP4/UART_RX */
+    PIN_FUNC_UNUSED,    /*  13 - DIO_18 DP9/MISO */
+    PIN_FUNC_UNUSED,    /*  14 - DIO_27 DP3 */
+    PIN_FUNC_UNUSED,    /*  15 - DIO_17 DP8/SCLK/TDI */
+    PIN_FUNC_UNUSED,    /*  16 - DIO_23 DP2  */
+    PIN_FUNC_UNUSED,    /*  17 - DIO_30 DP_ID */
+    PIN_FUNC_UNUSED,    /*  18 - DIO_24 DP1 */
+    NOT_MAPPABLE,       /*  19 - POWER_GOOD */
     PIN_FUNC_UNUSED,    /*  20 - DIO_25 DP0 */
     PIN_FUNC_UNUSED,    /*  21 - DIO_02 AUDIO DI */
     PIN_FUNC_UNUSED,    /*  22 - DIO_12 MPU PWR */
