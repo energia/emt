@@ -1,4 +1,4 @@
-				emt-a51
+				emt-a52
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,35 +129,23 @@ DELETIONS
 
 CHANGES
 
-./makefile
-	fixed to build cc26xx closure
-
 ti.runtime.wiring.cc26xx
-	fixed to properly support variants
+	changed default build options to add -DSL_PLATFORM_MULTI_THREADED to 
+	all builds.
 
-ti.runtime.heaps
-	fix bug in HeapRem that affects isBlocking()
+ti.runtime.wiring.cc3200
+	changed default build options to add -DSL_PLATFORM_MULTI_THREADED to 
+	all builds.
 
-ti.platforms.emt26xx
-	fix linker command files to require symbol definitions for DMA 
-	control sections added via UDMACC26XX
+	added call to VStartSimpleLinkSpawnTask() from WiFi.init() to enable
+	simplelink callbacks from separate TI-RTOS task
 
-ti.runtime.wiring.*
-	changed wiring library name from <device>.lib to wiring_<device>.lib
-	to avoid confusion with similarily named driverlib library
-
-
-ti.runtime.wiring.cc26xx
-	Force usage of m3.TimestampProvider to work around ROM's requirement
-	of xdc.runtime being bound to cc26xx.TimestampProvider
-
-	moved GPIOCC26XX.c to ti.runtime.wiring.cc26xx.variants.CC2650STK_BLE
-	to eliminate circular library dependency with variant library.
-	THIS IS A HACK THAT WILL BE ELIMINATED BY moving GPIOCC26XX.c to the
-	drivers repo.
-
-
-ti.platforms.emt26xx
-	fix ROM linker command files
+	THESE CHANGES DO NOT ALLOW MULTIPLE THREADS TO USE ENERGIA WIFI.
+	However, simplelink now allows multiple threads to use the simplelink
+	APIs.  It's just the Energia Wifi API implementations that are still
+	far from being reentrant.  However, just by making the simplelink
+	changes we are able to start power management profiling and fix some
+	"lockup" behaviors caused by "busy-waiting" in single-threaded 
+	simplelink.
 
 MRS
