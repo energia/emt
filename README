@@ -1,4 +1,4 @@
-				emt-a52
+				emt-a53
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,23 +129,17 @@ DELETIONS
 
 CHANGES
 
+./imports.mak and products.mak
+	import the latest GA TI-RTOS (2.14, to get new SPI driver that
+	supports setting interrupt priority)
+
 ti.runtime.wiring.cc26xx
-	changed default build options to add -DSL_PLATFORM_MULTI_THREADED to 
-	all builds.
+	Added PWMTimerCC26xx PWM driver
+	added Partially working analogWrite()
 
-ti.runtime.wiring.cc3200
-	changed default build options to add -DSL_PLATFORM_MULTI_THREADED to 
-	all builds.
-
-	added call to VStartSimpleLinkSpawnTask() from WiFi.init() to enable
-	simplelink callbacks from separate TI-RTOS task
-
-	THESE CHANGES DO NOT ALLOW MULTIPLE THREADS TO USE ENERGIA WIFI.
-	However, simplelink now allows multiple threads to use the simplelink
-	APIs.  It's just the Energia Wifi API implementations that are still
-	far from being reentrant.  However, just by making the simplelink
-	changes we are able to start power management profiling and fix some
-	"lockup" behaviors caused by "busy-waiting" in single-threaded 
-	simplelink.
+ti.runtime.driverlib.cc26xx
+	switched to new driverlib and new TI-RTOS drivers (to get support for
+        setting interrupt priority for SPI driver.  This allows CC26xx Wiring
+	to call SPI operations from ISRs.)
 
 MRS
