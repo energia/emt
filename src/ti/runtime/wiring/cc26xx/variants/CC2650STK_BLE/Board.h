@@ -125,6 +125,16 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_EB_UART_TX            IOID_16
 #define Board_EB_UART_RX            IOID_17
 
+/* PWM pins */
+#define Board_PWM0_PIN              IOID_0
+#define Board_PWM1_PIN              IOID_1
+#define Board_PWM2_PIN              IOID_2
+#define Board_PWM3_PIN              IOID_3
+#define Board_PWM4_PIN              IOID_4
+#define Board_PWM5_PIN              IOID_5
+#define Board_PWM6_PIN              IOID_6
+#define Board_PWM7_PIN              IOID_7
+
 /* DevPack */
 #define Board_AUDIOFS_TDO           IOID_16
 #define Board_AUDIODO               IOID_22
@@ -158,6 +168,8 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_SPI0                  CC2650_SPI0
 /* Generic UART instance identifiers */
 #define Board_UART                  CC2650_UART0
+/* Generic PWM instance identifiers */
+#define Board_PWM                   CC2650_PWM0
 
 
 /** ============================================================================
@@ -200,6 +212,22 @@ typedef enum CC2650_UdmaName {
     CC2650_UDMA0 = 0,
     CC2650_UDMACOUNT
 } CC2650_UdmaName;
+
+/*!
+ *  @def    CC2650_PWMName
+ *  @brief  Enum of PWM pin names on the CC3200_LP dev board
+ */
+typedef enum CC2650_PWMName {
+    CC2650_PWM0 = 0, /* PWM output from TIMERA0 side A */
+    CC2650_PWM1 = 1, /* PWM output from TIMERA0 side B */
+    CC2650_PWM2 = 2, /* PWM output from TIMERA1 side A */
+    CC2650_PWM3 = 3, /* PWM output from TIMERA1 side B */
+    CC2650_PWM4 = 4, /* PWM output from TIMERA2 side A */
+    CC2650_PWM5 = 5, /* PWM output from TIMERA2 side B */
+    CC2650_PWM6 = 6, /* PWM output from TIMERA3 side A */
+    CC2650_PWM7 = 7, /* PWM output from TIMERA3 side B */
+    CC2650_PWMCOUNT
+} CC2650_PWMName;
 
 #ifdef __cplusplus
 }
