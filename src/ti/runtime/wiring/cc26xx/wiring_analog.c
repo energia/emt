@@ -39,6 +39,7 @@
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOCC26XX.h>
+#include <ti/drivers/pwm/PWMTimerCC26xx.h>
 
 /*
  * analogWrite() support
@@ -74,20 +75,55 @@ uint16_t used_pwm_port_pins[] = {
 };
 
 /*
+ * While in use, this table contains
+ * the index of the PWM Timer resource that is mapped
+ * to the corresponding pin.
+ */
+uint16_t digital_pin_to_pwm_index[32];
+
+/*
+ * Common digital pin decommissioning function
+ */
+void stopDigitalIO(uint8_t pin)
+{
+    GPIOCC26xx_release(pin);
+}
+
+/*
+ * Do whatever is necessary to prepare the digital input pin to be
+ * configured in any other mode
+ */
+void stopDigitalRead(uint8_t pin)
+{
+   stopDigitalIO(pin);
+}
+
+/*
+ * Do whatever is necessary to prepare the digital output pin to be
+ * configured in any other mode
+ */
+ void stopDigitalWrite(uint8_t pin)
+{
+   stopDigitalIO(pin);
+}
+
+/*
  * For the CC26xx, the timers used for PWM are clocked at 48MHz.
- * The period is set to 2.045ms in the PWM_open() calls below.
+ * A PWM period of 2.04ms is chosen for Arduino compatibility.
+ * The period is set to 2.040ms in the PWM_open() calls below.
  * The PWM objects are configured for PWM_DUTY_COUNTS mode to minimize
  * the PWM_setDuty() processing overhead.
- * The 2.045ms period yields a period count of 98160.
+ * The 2.040ms period yields a period count of 97,920.
  * The Arduino analogWrite() API takes a value of 0-255 for the duty cycle.
- * The PWM scale factor is then 98160 / 255 = 385
+ * The PWM scale factor is then 97,920 / 255 = 384
  */
 
-#define PWM_SCALE_FACTOR 385
+#define PWM_SCALE_FACTOR 384
 
 void analogWrite(uint8_t pin, int val) 
 {
-    uint8_t pwmIndex, pinId;
+    uint8_t pwmIndex;
+    uint16_t pwmPinId;
     uint32_t hwiKey;
 
     hwiKey = Hwi_disable();
@@ -98,10 +134,13 @@ void analogWrite(uint8_t pin, int val)
     else {
         /* re-configure pin if possible */
         PWM_Params params;
-
-        pinId = GPIOCC26XX_config.pinConfigs[pin] & 0xffff;
+        PWMTimerCC26xx_PWMPinCfg pwmPinCfg;
         
-        if (pinId == GPIOCC26XX_EMPTY_PIN) {
+        /* extract 16bit pinID from pin */
+        pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xffff;
+        
+        /* must use 16 bits to compare with EMPTY_PIN */
+        if (pwmPinId == GPIOCC26XX_EMPTY_PIN) {
             Hwi_restore(hwiKey);
             return; /* can't get there from here */
         }
@@ -110,7 +149,7 @@ void analogWrite(uint8_t pin, int val)
         for (pwmIndex = 0; pwmIndex < 8; pwmIndex++) {
             if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
                 /* remember which pinId is being used by this PWM resource */
-                used_pwm_port_pins[pwmIndex] = pinId; /* save port/pin info */
+                used_pwm_port_pins[pwmIndex] = pwmPinId; /* save pwm pin info */
                 /* remember which PWM resource is being used by this pin */
                 digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
                 break;
@@ -122,12 +161,26 @@ void analogWrite(uint8_t pin, int val)
             return; /* no unused PWM ports */
         }
 
+        /* undo pin's current plumbing */
+        switch (digital_pin_to_pin_function[pin]) {
+            case PIN_FUNC_ANALOG_INPUT:
+                stopAnalogRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_INPUT:
+                stopDigitalRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_OUTPUT:
+                stopDigitalWrite(pin);
+                break;
+        }
+        
+        /* Open the PWM port */
         PWM_Params_init(&params);
 
-        /* Open the PWM port */
-        params.period = 2045; /* arduino period is 2.04ms (490Hz) */
+        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
         params.dutyMode = PWM_DUTY_COUNTS;
-        params.custom = (void *)pinId;
+        pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
+        params.custom = &pwmPinCfg;
         
         PWM_open(pwmIndex, &params);
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
