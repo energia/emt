@@ -1,4 +1,4 @@
-				emt-a53
+				emt-a54
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,17 +129,23 @@ DELETIONS
 
 CHANGES
 
-./imports.mak and products.mak
-	import the latest GA TI-RTOS (2.14, to get new SPI driver that
-	supports setting interrupt priority)
+bundles/energia/cc26xx
+    Use 10us Clock.tickPeriod in CC26xx for compatibility with LPRF library
+    expectations.
 
-ti.runtime.wiring.cc26xx
-	Added PWMTimerCC26xx PWM driver
-	added Partially working analogWrite()
+ti.runtime.wiring/cc26xx
+    Enhance CC26xx delay() implementation to scale according to 
+    Clock_tickPeriod setting
 
-ti.runtime.driverlib.cc26xx
-	switched to new driverlib and new TI-RTOS drivers (to get support for
-        setting interrupt priority for SPI driver.  This allows CC26xx Wiring
-	to call SPI operations from ISRs.)
+    Refine and improve CC26xx analogWrite() implementation.
+
+ti.runtime.wiring
+    Fix dropped characters bug in Serial
+
+ti.drivers and ti.runtime.wiring/cc26xx/variants
+    Make CC26xx TI-RTOS driver configurations compatible with the version of
+    TI-RTOS we're using
+
+    Refine and improve CC26xx PWM and GPIO drivers.
 
 MRS
