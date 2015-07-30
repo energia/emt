@@ -133,13 +133,22 @@ void HardwareSerial::end(void)
 
 int HardwareSerial::available(void)
 {
+    unsigned int key;
+    int numChars;
+    
+    key = Hwi_disable();
+
     if (RX_BUFFER_EMPTY) {
         /* kick off another character read operation */
         UART_read(uart, &rxBuffer[rxWriteIndex], 1);
     }
 
-    return (rxWriteIndex >= rxReadIndex) ?
+    numChars = (rxWriteIndex >= rxReadIndex) ?
         (rxWriteIndex - rxReadIndex) : SERIAL_BUFFER_SIZE - (rxReadIndex - rxWriteIndex);
+
+    Hwi_restore(key);
+
+    return (numChars);
 }
 
 int HardwareSerial::peek(void)

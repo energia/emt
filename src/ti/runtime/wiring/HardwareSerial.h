@@ -49,8 +49,8 @@ class HardwareSerial : public Stream
     private:
         bool begun;
         unsigned char rxBuffer[SERIAL_BUFFER_SIZE];
-        unsigned long rxWriteIndex;
-        unsigned long rxReadIndex;
+        volatile unsigned long rxWriteIndex;
+        volatile unsigned long rxReadIndex;
         unsigned long baudRate;
         uint8_t uartModule;
         UART_Handle uart;
