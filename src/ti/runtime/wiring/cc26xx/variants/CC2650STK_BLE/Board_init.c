@@ -239,8 +239,9 @@ UARTCC26XX_Object uartCC26XXObjects[CC2650_UARTCOUNT];
 const UARTCC26XX_HWAttrs uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
     {    /* CC2650_UART0 */
         .baseAddr = UART0_BASE,
-        .intNum = INT_UART0,
         .powerMngrId = PERIPH_UART0,
+        .intNum = INT_UART0,
+	.intPriority = (~0),
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
@@ -274,7 +275,12 @@ UDMACC26XX_Object UdmaObjects[CC2650_UDMACOUNT];
 
 /* UDMA configuration structure */
 const UDMACC26XX_HWAttrs udmaHWAttrs[CC2650_UDMACOUNT] = {
-    { UDMA0_BASE, INT_UDMAERR, PERIPH_UDMA },
+    {
+        .baseAddr =  UDMA0_BASE, 
+        .powerMngrId =  PERIPH_UDMA,
+        .intNum = INT_UDMAERR,
+        .intPriority = (~0)
+    },
 };
 
 /* UDMA configuration structure */
@@ -315,6 +321,19 @@ const SPICC26XX_HWAttrs spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
         .misoPin = Board_SPI0_MISO,
         .clkPin = Board_SPI0_CLK,
         .csnPin = PIN_UNASSIGNED     /* External flash / DevPk uses SPI0 */
+    },
+    {   /* SENSORTAG_CC2650_SPI1 */
+        .baseAddr = SSI1_BASE,
+        .intNum = INT_SSI1,
+        .intPriority = ~0,
+        .defaultTxBufValue = 0,
+        .powerMngrId = PERIPH_SSI1,
+        .rxChannelBitMask  = 1<<UDMA_CHAN_SSI1_RX,
+        .txChannelBitMask  = 1<<UDMA_CHAN_SSI1_TX,
+        .mosiPin = Board_SPI1_MOSI,
+        .misoPin = Board_SPI1_MISO,
+        .clkPin = Board_SPI1_CLK,
+        .csnPin = Board_SPI1_CSN
     }
 };
 
@@ -322,6 +341,8 @@ const SPICC26XX_HWAttrs spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
 const SPI_Config SPI_config[] = {
     /* SENSORTAG_CC2650_SPI0 */
     {&SPICC26XXDMA_fxnTable, &spiCC26XXDMAObjects[0], &spiCC26XXDMAHWAttrs[0]},
+    /* SENSORTAG_CC2650_SPI1 */
+    {&SPICC26XXDMA_fxnTable, &spiCC26XXDMAObjects[1], &spiCC26XXDMAHWAttrs[1]},
     {NULL, NULL, NULL},
 };
 /*
@@ -347,15 +368,17 @@ I2CCC26XX_Object i2cCC26xxObjects[CC2650_I2CCOUNT];
 const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
     {
         .baseAddr = I2C0_BASE,
-        .intNum = INT_I2C,
         .powerMngrId = PERIPH_I2C0,
+        .intNum = INT_I2C,
+	.intPriority = (~0),
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
     },
     {
         .baseAddr = I2C0_BASE,
-        .intNum = INT_I2C,
         .powerMngrId = PERIPH_I2C0,
+        .intNum = INT_I2C,
+	.intPriority = (~0),
         .sdaPin = Board_I2C0_SDA1,
         .sclPin = Board_I2C0_SCL1,
     }
@@ -370,6 +393,38 @@ const I2C_Config I2C_config[] = {
 /*
  *  ========================== I2C end =========================================
 */
+
+/*
+ *  ========================== Crypto begin =======================================
+ *  NOTE: The Crypto implementation should be considered experimental and not validated!
+*/
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(CryptoCC26XX_config, ".const:CryptoCC26XX_config")
+#pragma DATA_SECTION(cryptoCC26XXHWAttrs, ".const:cryptoCC26XXHWAttrs")
+#endif
+
+/* Include drivers */
+#include <ti/drivers/crypto/CryptoCC26XX.h>
+
+/* Crypto objects */
+CryptoCC26XX_Object cryptoCC26XXObjects[CC2650_CRYPTOCOUNT];
+
+/* Crypto configuration structure, describing which pins are to be used */
+const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC2650_CRYPTOCOUNT] = {
+    {
+      .baseAddr = CRYPTO_BASE,
+      .powerMngrId = PERIPH_CRYPTO,
+      .intNum = INT_CRYPTO,
+      .intPriority = ~0,
+    }
+};
+
+/* Crypto configuration structure */
+const CryptoCC26XX_Config CryptoCC26XX_config[] = {
+    {&cryptoCC26XXObjects[0], &cryptoCC26XXHWAttrs[0]},
+    {NULL, NULL}
+};
 
 /*
  * ======== PWM driver ========

@@ -76,6 +76,9 @@ extern PIN_Config BoardGpioInitTable[];
 /* Identify as SensorTag */
 #define CC2650ST_7ID
 
+/* Same RF Configuration as 7x7 EM */
+#define CC2650EM_7ID
+
 /* This PCB version supports magnetometer */
 #define FEATURE_MAGNETOMETER
 
@@ -120,6 +123,11 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_SPI0_MISO             IOID_18
 #define Board_SPI0_MOSI             IOID_19
 #define Board_SPI0_CLK              IOID_17
+#define Board_SPI0_CSN              PIN_UNASSIGNED
+#define Board_SPI1_MISO             PIN_UNASSIGNED
+#define Board_SPI1_MOSI             PIN_UNASSIGNED
+#define Board_SPI1_CLK              PIN_UNASSIGNED
+#define Board_SPI1_CSN              PIN_UNASSIGNED
 
 /* UART (when connected to SRF06EB) */
 #define Board_EB_UART_TX            IOID_16
@@ -158,6 +166,9 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_AUDIO_DI              IOID_2
 #define Board_AUDIO_CLK             IOID_11
 
+/* UART pins used by driver */
+#define Board_UART_TX               Board_DP5_UARTTX
+#define Board_UART_RX               Board_DP4_UARTRX
 
 /** ============================================================================
  *  Instance identifiers
@@ -166,6 +177,7 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_I2C                   CC2650_I2C0
 /* Generic SPI instance identifiers */
 #define Board_SPI0                  CC2650_SPI0
+#define Board_SPI1                  CC2650_SPI1
 /* Generic UART instance identifiers */
 #define Board_UART                  CC2650_UART0
 /* Generic PWM instance identifiers */
@@ -187,11 +199,22 @@ typedef enum CC2650_I2CName {
 } CC2650_I2CName;
 
 /*!
+ *  @def    CC2650_CryptoName
+ *  @brief  Enum of Crypto names on the CC2650 dev board
+ */
+typedef enum CC2650_CryptoName {
+    CC2650_CRYPTO0 = 0,
+    CC2650_CRYPTOCOUNT
+} CC2650_CryptoName;
+
+
+/*!
  *  @def    CC2650_SPIName
  *  @brief  Enum of SPI names on the CC2650 dev board
  */
 typedef enum CC2650_SPIName {
     CC2650_SPI0 = 0,
+    CC2650_SPI1,
     CC2650_SPICOUNT
 } CC2650_SPIName;
 
