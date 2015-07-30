@@ -162,17 +162,17 @@ typedef struct PinConfig {
  */
 typedef struct PortCallbackInfo {
     /*
-     * the port's 8 corresponding
+     * the port's corresponding
      * user defined pinId indices
      */
     uint8_t pinIndex[NUM_PINS_PER_PORT];
 } PortCallbackInfo;
 
 /*
- * Table of portCallbackInfos.
- * One for each port.
+ * Only one PortCallbackInfo object is needed for CC26xx since the 32 pins
+ * are all on one port.
  */
-static PortCallbackInfo gpioCallbackInfo[NUM_PORTS];
+static PortCallbackInfo gpioCallbackInfo;
 
 /*
  *  Bit mask used to keep track of which of the GPIO objects in the config
@@ -195,8 +195,6 @@ extern const GPIOCC26XX_Config GPIOCC26XX_config;
 
 static int powerPostNotify(unsigned int eventType, uintptr_t eventArg,
     uintptr_t clientArg);
-
-static bool gpioPinCbNotInstalled = true;
 
 /*
  *  ======== getPinNumber ========
@@ -227,7 +225,7 @@ void GPIO_clearInt(unsigned int index)
  */
 void GPIO_disableInt(unsigned int index)
 {
-    uintptr_t  key;
+    unsigned int key;
     PinConfig *config = (PinConfig *) &GPIOCC26XX_config.pinConfigs[index];
 
     DebugP_assert(initCalled && index < GPIOCC26XX_config.numberOfPinConfigs);
@@ -250,7 +248,7 @@ void GPIO_disableInt(unsigned int index)
  */
 void GPIO_enableInt(unsigned int index)
 {
-    uintptr_t  key;
+    unsigned int key;
     PinConfig *config = (PinConfig *) &GPIOCC26XX_config.pinConfigs[index];
 
     DebugP_assert(initCalled && index < GPIOCC26XX_config.numberOfPinConfigs);
@@ -276,7 +274,7 @@ void GPIO_hwiIntFxn(PIN_Handle pinHandle, PIN_Id pinId)
 {
     unsigned int      pinIndex;
 
-    pinIndex = gpioCallbackInfo[0].pinIndex[pinId];
+    pinIndex = gpioCallbackInfo.pinIndex[pinId];
 
     /* only call plugged callbacks */
     if (pinIndex != CALLBACK_INDEX_NOT_CONFIGURED) {
@@ -289,18 +287,19 @@ void GPIO_hwiIntFxn(PIN_Handle pinHandle, PIN_Id pinId)
  */
 void GPIO_init()
 {
-    unsigned int i, j;
+    unsigned int i;
 
 #if DebugP_ASSERT_ENABLED
     initCalled = true;
 #endif
 
     gpioPinHandle = PIN_open(&gpioPinState, gpioPinTable);
-    
-    for (i = 0; i < NUM_PORTS; i++) {
-        for (j = 0; j < NUM_PINS_PER_PORT; j++) {
-            gpioCallbackInfo[i].pinIndex[j] = CALLBACK_INDEX_NOT_CONFIGURED;
-        }
+
+    /* install our Hwi callback function */    
+    PIN_registerIntCb(gpioPinHandle, GPIO_hwiIntFxn);
+
+    for (i = 0; i < NUM_PINS_PER_PORT; i++) {
+        gpioCallbackInfo.pinIndex[i] = CALLBACK_INDEX_NOT_CONFIGURED;
     }
 
     /*
@@ -361,11 +360,11 @@ void GPIO_setCallback(unsigned int index, GPIO_CallbackFxn callback)
     pinNum = getPinNumber(config->ioid);
 
     if (callback == NULL) {
-        gpioCallbackInfo[0].pinIndex[pinNum] =
+        gpioCallbackInfo.pinIndex[pinNum] =
             CALLBACK_INDEX_NOT_CONFIGURED;
     }
     else {
-        gpioCallbackInfo[0].pinIndex[pinNum] = index;
+        gpioCallbackInfo.pinIndex[pinNum] = index;
     }
 
     /*
@@ -382,7 +381,7 @@ void GPIO_setCallback(unsigned int index, GPIO_CallbackFxn callback)
  */
 void GPIO_setConfig(unsigned int index, GPIO_PinConfig pinConfig)
 {
-    uintptr_t key;
+    unsigned int key;
     uint16_t direction;
     GPIO_PinConfig gpioPinConfig;
     PIN_Config pinPinConfig = 0; /* PIN driver PIN_config ! */
@@ -456,11 +455,6 @@ void GPIO_setConfig(unsigned int index, GPIO_PinConfig pinConfig)
         }
         PIN_setConfig(gpioPinHandle, bmMask, pinPinConfig);
     }
-
-    if ((pinConfig & GPIO_CFG_INT_MASK) && gpioPinCbNotInstalled) {
-        gpioPinCbNotInstalled = 1;
-        PIN_registerIntCb(gpioPinHandle, GPIO_hwiIntFxn);
-    }
 }
 
 /*
@@ -468,7 +462,7 @@ void GPIO_setConfig(unsigned int index, GPIO_PinConfig pinConfig)
  */
 void GPIO_toggle(unsigned int index)
 {
-    uintptr_t  key;
+    unsigned int key;
     PinConfig *config = (PinConfig *) &GPIOCC26XX_config.pinConfigs[index];
 
     DebugP_assert(initCalled && index < GPIOCC26XX_config.numberOfPinConfigs);
@@ -493,7 +487,7 @@ void GPIO_toggle(unsigned int index)
  */
 void GPIO_write(unsigned int index, unsigned int value)
 {
-    uintptr_t  key;
+    unsigned int key;
     PinConfig *config = (PinConfig *) &GPIOCC26XX_config.pinConfigs[index];
 
     DebugP_assert(initCalled && index < GPIOCC26XX_config.numberOfPinConfigs);
@@ -543,3 +537,29 @@ static int powerPostNotify(unsigned int eventType, uintptr_t eventArg,
     }
     return (Power_NOTIFYDONE);
 }
+
+/*
+ *  ======== GPIOCC26xx_release ========
+ */
+void GPIOCC26xx_release(int index)
+{
+    PinConfig *config = (PinConfig *) &GPIOCC26XX_config.pinConfigs[index];
+    unsigned int key;
+
+    key = Hwi_disable();
+
+    if (config->added) {
+        /* disable the pin's interrupt */
+        GPIO_disableInt(index);
+
+        /* remove its callback */
+        GPIO_setCallback(index, NULL);
+
+        config->added = 0;
+
+        PIN_remove(gpioPinHandle, config->ioid);
+    }
+    
+    Hwi_restore(key);
+}
+

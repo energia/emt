@@ -52,6 +52,8 @@
 #include <driverlib/ioc.h>
 #include <driverlib/timer.h>
 
+#define NUM_TIMERS  8
+
 void         PWMTimerCC26xx_close(PWM_Handle handle);
 int          PWMTimerCC26xx_control(PWM_Handle handle, unsigned int cmd,
                                   void *arg);
@@ -111,9 +113,9 @@ static const uint8_t gptPinPortIds[] = {
  *  ======================== PIN driver objects ================================
  */
 /* PIN driver state objects, 1 for each possible PWM pin */
-static PIN_State pinState[8];
+static PIN_State pinState[NUM_TIMERS];
 /* PIN driver handle */
-static PIN_Handle hPin[8];
+static PIN_Handle hPin[NUM_TIMERS];
 
 extern const PWM_Params PWM_defaultParams;
 
@@ -148,7 +150,7 @@ void PWMTimerCC26xx_close(PWM_Handle handle)
     key = Hwi_disable();
     /*
      * Before closing the PWM instance, we must verify whether the other PWM
-     * timer half is operaing.  The Timer will be marked unused only if both
+     * timer half is operating.  The Timer will be marked unused only if both
      * PWM half timers are disabled.
      */
     kernelTimerID = 1 << ((hwAttrs->baseAddr >> 12) & 0xF);
@@ -161,6 +163,11 @@ void PWMTimerCC26xx_close(PWM_Handle handle)
     }
 
     object->period = 0;
+    
+    /* release pin */
+    PIN_close(hPin[object->timerNum]);
+    hPin[object->timerNum] = NULL;
+    
     Hwi_restore(key);
 
     Log_print1(Diags_USER1, "PWM: (%p) is closed", (UArg) handle);
@@ -313,8 +320,8 @@ PWM_Handle PWMTimerCC26xx_open(PWM_Handle handle, PWM_Params *params)
     object->timerNum = timerNum;
 
     /* configure pwm pin */
-    if (params->custom) { /* use custom params pinId if supplied */
-        pwmPinId = (PIN_Config)params->custom;
+    if (params->custom) { /* use the custom params' pwmPinId if supplied */
+        pwmPinId = ((PWMTimerCC26xx_PWMPinCfg *)(params->custom))->pwmPinId;
     }
     else {
         pwmPinId = hwAttrs->pwmPinId;

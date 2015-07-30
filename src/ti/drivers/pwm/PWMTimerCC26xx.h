@@ -96,7 +96,21 @@ extern "C" {
 extern const PWM_FxnTable PWMTimerCC26xx_fxnTable;
 
 /*!
- *  @brief  PWMTimerCC3200 Hardware attributes
+ *  @brief  PWMTimerCC26xx PWM Pin Configuration
+ *
+ *  Pin configuration of the pin that the PWM signal should
+ *  be output from.
+ * 
+ *  Use the 'custom' field of the the PWM params passed to 
+ *  the PWM_open() call to override the default pwmPinId found in
+ *  the HWAttrs structure.
+ */
+typedef struct PWMTimerCC26xx_PWMPinCfg {
+    uint8_t pwmPinId;
+ } PWMTimerCC26xx_PWMPinCfg;
+ 
+ /*!
+ *  @brief  PWMTimerCC26xx Hardware attributes
  *
  *  These fields are used by driverlib APIs and therefore must be populated by
  *  driverlib macro definitions. For CCWare these definitions are found in:
@@ -115,7 +129,7 @@ typedef struct PWMTimerCC26xx_HWAttrs {
     uint32_t   baseAddr;        /*!< Timer peripheral base address */
     uint16_t   timer;           /*!< Half-timers to generate outputs */
     uint32_t   powerMngrId;     /*!< UART Peripheral's power manager ID */
-    uint16_t   pwmPinId;        /*!< The PIN ID of the PWM output */
+    uint8_t    pwmPinId;        /*!< The PIN ID of the PWM output */
 } PWMTimerCC26xx_HWAttrs;
 
 /*!

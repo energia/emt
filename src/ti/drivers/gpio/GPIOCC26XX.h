@@ -233,6 +233,16 @@ typedef struct GPIOCC26XX_Config {
 #define GPIOCC26XX_DIO_30    IOID_30
 #define GPIOCC26XX_DIO_31    IOID_31
 
+/*!
+ *  @brief     Un-oonfigure a GPIO pin
+ *
+ *  Disables pin interrupt, clears callback, restores pin to default setting,
+ *  removes pin from PIN object
+ *
+ *  @param      index    GPIO index
+ */
+extern void GPIOCC26xx_release(int index);
+
 #ifdef __cplusplus
 }
 #endif
