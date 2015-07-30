@@ -88,5 +88,10 @@ void delayMicroseconds(unsigned int us)
 
 void delay(uint32_t milliseconds)
 {
-    Task_sleep(milliseconds);
+    uint32_t delay;
+
+    /* math below assumes tickPeriod is <= 1000 */
+    delay = (milliseconds * 1000) / Clock_tickPeriod;
+
+    Task_sleep(delay);
 }
