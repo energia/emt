@@ -27,15 +27,16 @@ void buttonFxn1()
 	    break;
 	case 1:
 	case 5: 
-	    analogWrite(RED_LED, 100);
+	    analogWrite(RED_LED, 10);
 	    break;
 	case 2:
 	case 6: 
-	    analogWrite(RED_LED, 200);
+	    analogWrite(RED_LED, 100);
 	    break;
 	case 3:
 	case 7: 
-	    analogWrite(RED_LED, 255);
+//	    analogWrite(RED_LED, 255);
+	    digitalWrite(RED_LED, 1);
 	    break;
     }
 }
@@ -45,8 +46,7 @@ void setup7()
     pinMode(PUSH1, INPUT_PULLUP);
     pinMode(PUSH2, INPUT_PULLUP);
     pinMode(RED_LED, OUTPUT);
-    pinMode(RED_LED, OUTPUT);
-//    pinMode(GREEN_LED, OUTPUT);
+    pinMode(GREEN_LED, OUTPUT);
 
     attachInterrupt(PUSH1, buttonFxn0, RISING);
     attachInterrupt(PUSH2, buttonFxn1, RISING);
@@ -57,7 +57,7 @@ void setup7()
 
 void loop7()
 {
-    digitalWrite(RED_LED, 1);
+//    digitalWrite(RED_LED, 1);
 //    digitalWrite(GREEN_LED, 0);
     delay(1000);
 //    digitalWrite(RED_LED, 0);
