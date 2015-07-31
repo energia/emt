@@ -50,7 +50,11 @@ unsigned long micros(void)
 
 unsigned long millis(void)
 {
-    return (Clock_getTicks());
+    uint64_t milliseconds;
+
+    milliseconds = ((uint64_t)Clock_getTicks() * (uint64_t)Clock_tickPeriod) / (uint64_t)1000;
+
+    return (milliseconds);
 }
 
 /* Delay for the given number of microseconds. */
@@ -88,10 +92,10 @@ void delayMicroseconds(unsigned int us)
 
 void delay(uint32_t milliseconds)
 {
-    uint32_t delay;
+    uint64_t delay;
 
     /* math below assumes tickPeriod is <= 1000 */
-    delay = (milliseconds * 1000) / Clock_tickPeriod;
+    delay = ((uint64_t)milliseconds * (uint64_t)1000) / (uint64_t)Clock_tickPeriod;
 
     Task_sleep(delay);
 }
