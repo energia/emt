@@ -36,16 +36,16 @@
 #include <inc/hw_memmap.h>
 
 uint8_t digital_pin_to_pin_function[] = {
-    PIN_FUNC_UNUSED,    /*  dummy */
-    PIN_FUNC_UNUSED,    /*  1  - VDD */
-    PIN_FUNC_UNUSED,    /*  2  - GND */
+    PIN_FUNC_INVALID,   /*  dummy */
+    PIN_FUNC_INVALID,   /*  1  - VDD */
+    PIN_FUNC_INVALID,   /*  2  - GND */
     PIN_FUNC_UNUSED,    /*  3  - DIO_06 SCL */
     PIN_FUNC_UNUSED,    /*  4  - DIO_05 SDA */
     PIN_FUNC_UNUSED,    /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
     PIN_FUNC_UNUSED,    /*  6  - DIO_11 DP7/AUDIO CLK */
     PIN_FUNC_UNUSED,    /*  7  - DIO_20 DP11/CSN */
     PIN_FUNC_UNUSED,    /*  8  - DIO_22 DP6/AUDIO DO */
-    PIN_FUNC_UNUSED,    /*  9  - VDD */
+    PIN_FUNC_INVALID,   /*  9  - VDD */
     PIN_FUNC_UNUSED,    /*  10 - DIO_29 DP5/UART_TX */
     PIN_FUNC_UNUSED,    /*  11 - DIO_19 DP10/MOSI */
     PIN_FUNC_UNUSED,    /*  12 - DIO_28 DP4/UART_RX */
@@ -55,7 +55,7 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  16 - DIO_23 DP2  */
     PIN_FUNC_UNUSED,    /*  17 - DIO_30 DP_ID */
     PIN_FUNC_UNUSED,    /*  18 - DIO_24 DP1 */
-    PIN_FUNC_UNUSED,    /*  19 - POWER_GOOD */
+    PIN_FUNC_INVALID,   /*  19 - POWER_GOOD */
     PIN_FUNC_UNUSED,    /*  20 - DIO_25 DP0 */
     PIN_FUNC_UNUSED,    /*  21 - DIO_02 AUDIO DI */
     PIN_FUNC_UNUSED,    /*  22 - DIO_12 MPU PWR */
@@ -68,39 +68,4 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  29 - DIO_13 MIC PWR */
     PIN_FUNC_UNUSED,    /*  30 - DIO_00 BUTTON2 */
     PIN_FUNC_UNUSED,    /*  31 - DIO_15 LED2 */
-};
-
-const uint32_t digital_pin_to_analog_in[] = {
-    NOT_ON_ADC,     /*  dummy */
-    NOT_ON_ADC,     /*  1  - VDD */
-    NOT_ON_ADC,     /*  2  - GND */
-    NOT_ON_ADC,     /*  3  - DIO_06 SCL */
-    NOT_ON_ADC,     /*  4  - DIO_05 SDA */
-    NOT_ON_ADC,     /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
-    NOT_ON_ADC,     /*  6  - DIO_11 DP7/AUDIO CLK */
-    NOT_ON_ADC,     /*  7  - DIO_20 DP11/CSN */
-    NOT_ON_ADC,     /*  8  - DIO_22 DP6/AUDIO DO */
-    NOT_ON_ADC,     /*  9  - VDD */
-    NOT_ON_ADC,     /*  10 - DIO_29 DP5/UART_TX */
-    NOT_ON_ADC,     /*  11 - DIO_19 DP10/MOSI */
-    NOT_ON_ADC,     /*  12 - DIO_28 DP4/UART_RX */
-    NOT_ON_ADC,     /*  13 - DIO_18 DP9/MISO */
-    NOT_ON_ADC,     /*  14 - DIO_27 DP3 */
-    NOT_ON_ADC,     /*  15 - DIO_17 DP8/SCLK/TDI */
-    NOT_ON_ADC,     /*  16 - DIO_23 DP2  */
-    NOT_ON_ADC,     /*  17 - DIO_30 DP_ID */
-    NOT_ON_ADC,     /*  18 - DIO_24 DP1 */
-    NOT_ON_ADC,     /*  19 - POWER_GOOD */
-    NOT_ON_ADC,     /*  20 - DIO_25 DP0 */
-    NOT_ON_ADC,     /*  21 - DIO_02 AUDIO DI */
-    NOT_ON_ADC,     /*  22 - DIO_12 MPU PWR */
-    NOT_ON_ADC,     /*  23 - DIO_21 BUZZER */
-    NOT_ON_ADC,     /*  24 - DIO_03 REED */
-    NOT_ON_ADC,     /*  25 - DIO_04 BUTTON1 */
-    NOT_ON_ADC,     /*  26 - DIO_01 TMP RDY */
-    NOT_ON_ADC,     /*  27 - DIO_10 LED1 */
-    NOT_ON_ADC,     /*  28 - DIO_07 MPU INT */
-    NOT_ON_ADC,     /*  29 - DIO_13 MIC PWR */
-    NOT_ON_ADC,     /*  30 - DIO_00 BUTTON2 */
-    NOT_ON_ADC,     /*  31 - DIO_15 LED2 */
 };

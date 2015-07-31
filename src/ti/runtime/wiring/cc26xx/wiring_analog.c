@@ -69,7 +69,7 @@ const uint8_t mappable_pwms[] = {
 };
 
 /* Current PWM timer GPIO mappings */
-uint16_t used_pwm_port_pins[] = {
+uint8_t used_pwm_port_pins[] = {
     NOT_IN_USE,
     NOT_IN_USE,
     NOT_IN_USE,
@@ -129,7 +129,7 @@ void stopDigitalRead(uint8_t pin)
 void analogWrite(uint8_t pin, int val) 
 {
     uint8_t pwmIndex;
-    uint16_t pwmPinId;
+    uint8_t pwmPinId;
     uint32_t hwiKey;
 
     hwiKey = Hwi_disable();
@@ -142,14 +142,13 @@ void analogWrite(uint8_t pin, int val)
         PWM_Params params;
         PWMTimerCC26xx_PWMPinCfg pwmPinCfg;
         
-        /* extract 16bit pinID from pin */
-        pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xffff;
-        
-        /* must use 16 bits to compare with EMPTY_PIN */
-        if (pwmPinId == GPIOCC26XX_EMPTY_PIN) {
+        if (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID) {
             Hwi_restore(hwiKey);
             return; /* can't get there from here */
         }
+        
+        /* extract 16bit pinID from pin */
+        pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
         
         /* find an unused PWM resource and port map it */
         for (pwmIndex = 0; pwmIndex < 8; pwmIndex++) {
@@ -242,13 +241,13 @@ uint16_t analogRead(uint8_t pin)
     
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
         /* adcPinId must be 16 bits to compare with EMPTY_PIN */
-        uint16_t adcPinId;
-        adcPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xffff;
+        uint8_t adcPinId;
+        adcPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
 
         /* for 7x7 packages, only IOIDs 23-30 are tied to AUXIO channels */
         if ((adcPinId < 23) || 
             (adcPinId > 30) || 
-            (adcPinId == GPIOCC26XX_EMPTY_PIN)) {
+            (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID)) {
             Hwi_restore(hwiKey);
             return (0); /* can't get there from here */
         }
@@ -259,6 +258,19 @@ uint16_t analogRead(uint8_t pin)
             digital_pin_to_pin_function[adcPin] = PIN_FUNC_UNUSED;
         }
         
+        /* undo pin's current plumbing */
+        switch (digital_pin_to_pin_function[pin]) {
+            case PIN_FUNC_ANALOG_OUTPUT:
+                stopAnalogWrite(pin);
+                break;
+            case PIN_FUNC_DIGITAL_INPUT:
+                stopDigitalRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_OUTPUT:
+                stopDigitalWrite(pin);
+                break;
+        }
+
         /* open pin */
         adcPinTable[0] = adcPinId | PIN_INPUT_DIS | PIN_GPIO_OUTPUT_DIS;
         adcPinTable[1] = PIN_TERMINATE;
