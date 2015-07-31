@@ -171,6 +171,10 @@ int HardwareSerial::read(void)
     int iChar;
     unsigned int hwiKey;
 
+    if (uart == NULL) {
+        return (0);
+    }
+
     while ((iChar = peek()) < 0) {
         Semaphore_pend(Semaphore_handle(&rxSemaphore), BIOS_WAIT_FOREVER);
     }
@@ -190,6 +194,10 @@ void HardwareSerial::flush()
 
 size_t HardwareSerial::write(uint8_t c)
 {
+    if (uart == NULL) {
+        return (0);
+    }
+
     UART_write(uart,(char*)&c,1);
     return (1);
 }
