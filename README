@@ -1,4 +1,4 @@
-				emt-a54
+				emt-a55
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,23 +129,14 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/cc26xx
-    Use 10us Clock.tickPeriod in CC26xx for compatibility with LPRF library
-    expectations.
-
-ti.runtime.wiring/cc26xx
-    Enhance CC26xx delay() implementation to scale according to 
-    Clock_tickPeriod setting
-
-    Refine and improve CC26xx analogWrite() implementation.
-
 ti.runtime.wiring
-    Fix dropped characters bug in Serial
+	Serial.read/write now check for null uart handle (in case someone
+	forgot to call Serial.begin())
 
-ti.drivers and ti.runtime.wiring/cc26xx/variants
-    Make CC26xx TI-RTOS driver configurations compatible with the version of
-    TI-RTOS we're using
+ti.runtime.wiring.cc26xx
+	added support for analogWrite/Read
 
-    Refine and improve CC26xx PWM and GPIO drivers.
+ti.runtime.wiring.cc26xx.variants
+	added A0-A6 definitions
 
 MRS
