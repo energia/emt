@@ -54,6 +54,10 @@ closure: configPkg
 
 	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
 
+	@echo WARNING: copying ti.drivers headers to $@ from $(EMTROOT)/ti/drivers
+	@cp $(EMTROOT)/ti/drivers/gpio/* $@/ti/drivers/gpio
+	@cp $(EMTROOT)/ti/drivers/pwm/* $@/ti/drivers/pwm
+
 	@echo patching $@ ...
 	@$(CURDIR)/../patch.ksh $@ ./src $<
 
