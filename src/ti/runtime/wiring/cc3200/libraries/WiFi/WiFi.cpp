@@ -162,6 +162,11 @@ bool WiFiClass::init()
 
     _initialized = true;
     
+    //
+    // Start collecting statistics
+    //
+    sl_WlanRxStatStart();
+
     return true;
 }
 
@@ -765,7 +770,20 @@ uint8_t* WiFiClass::BSSID(uint8_t* bssid)
 //!! How to get the current connection??!!//
 int32_t WiFiClass::RSSI()
 {
-    return 0;
+    long lRetVal = -1;
+
+    if (WiFi.status() != WL_CONNECTED) {
+        return 0;
+    }
+
+    SlGetRxStatResponse_t rxStatResp;
+
+    lRetVal = sl_WlanRxStatGet(&rxStatResp,0);
+    if (lRetVal < 0) {
+        return 0;
+    }
+
+    return rxStatResp.AvarageMgMntRssi;
 }
 
 //!! How to get the current connection??!!//
@@ -798,6 +816,7 @@ int8_t WiFiClass::scanNetworks()
     iRet = sl_WlanPolicySet(SL_POLICY_CONNECTION , ucpolicyOpt, NULL, 0);
     if(iRet != 0)
     {
+        sl_WlanPolicySet(SL_POLICY_CONNECTION , SL_CONNECTION_POLICY(1,1,0,0,0), 0, 0);
         return 0;
     }
 
@@ -808,6 +827,7 @@ int8_t WiFiClass::scanNetworks()
     iRet = sl_WlanPolicySet(SL_POLICY_SCAN , SL_SCAN_POLICY(1), (unsigned char *)(policyVal.ucPolicy), sizeof(policyVal));
     if(iRet != 0)
     {
+        sl_WlanPolicySet(SL_POLICY_CONNECTION , SL_CONNECTION_POLICY(1,1,0,0,0), 0, 0);
         return 0;
     }
     delay(300);
@@ -824,6 +844,7 @@ int8_t WiFiClass::scanNetworks()
     //
     ucpolicyOpt = SL_SCAN_POLICY(0);
     sl_WlanPolicySet(SL_POLICY_SCAN , ucpolicyOpt, NULL, 0);
+    sl_WlanPolicySet(SL_POLICY_CONNECTION , SL_CONNECTION_POLICY(1,1,0,0,0), 0, 0);
     
     return network_count;
     
