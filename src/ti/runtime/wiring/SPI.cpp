@@ -145,6 +145,10 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     uint8_t i;
     uint32_t taskKey, hwiKey;
 
+    if (spi == NULL) {
+        return (0);
+    }
+    
     if (bitOrder == LSBFIRST) {
         rxtxData = data_out;
 #if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
@@ -215,7 +219,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
         rxtxData = data_in;
 #if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
 #if defined(__TI_COMPILER_VERSION__)
-	rxtxData = __rbit(rxtxData);
+        rxtxData = __rbit(rxtxData);
         rxtxData = __rev(rxtxData);
 #elif defined(__GNUC__)
         /* reverse order of 32 bits */

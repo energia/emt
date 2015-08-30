@@ -176,6 +176,10 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
     bool ret;
     WireContext *wc = getWireContext();
 
+    if (i2c == NULL) {
+        return (4); /* 4 = 'other error' */
+    }
+    
     ret = I2C_transfer(i2c, &(wc->i2cTransaction));
 
     wc->txWriteIndex = 0;
@@ -265,7 +269,7 @@ size_t TwoWire::write(uint8_t data)
 // or after beginTransmission(address)
 size_t TwoWire::write(const uint8_t *data, size_t quantity)
 {
-    for(size_t i = 0; i < quantity; i++){
+    for (size_t i = 0; i < quantity; i++) {
         write(data[i]);
     }
     return (quantity);
