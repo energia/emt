@@ -240,7 +240,7 @@ void stopAnalogWrite(uint8_t pin)
  * analogRead() support
  */
 
-static int8_t analogResolution = 10;
+static int8_t analogReadShift = 4; /* 14 - 4 = 10 bits by default */
 static bool adc_module_enabled = false;
 
 static const uint16_t adc_to_port_pin[] = {
@@ -312,8 +312,8 @@ uint16_t analogRead(uint8_t pin)
             /* Setting reference voltage to 2.5 */
             MAP_REF_A_setReferenceVoltage(REF_A_VREF2_5V);
             MAP_REF_A_enableReferenceVoltage();
-
-            analogReadResolution(analogResolution);
+            /* always use max resolution */
+            MAP_ADC14_setResolution(ADC_14BIT);
         }
 
         port = adc_to_port_pin[adcIndex] >> 8;
@@ -363,7 +363,7 @@ uint16_t analogRead(uint8_t pin)
 
     Hwi_restore(hwiKey);
 
-    return (sample);
+    return (sample >> analogReadShift);
 }
 
 /*
@@ -384,7 +384,7 @@ void stopAnalogRead(uint8_t pin)
 
     /* Place Pin in NORMAL GPIO mode */
     MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
+                                                 GPIO_PRIMARY_MODULE_FUNCTION);
 }
 
 /*
@@ -392,23 +392,6 @@ void stopAnalogRead(uint8_t pin)
  */
 void analogReadResolution(uint16_t bits)
 {
-    uint32_t adcBits;
-
-    switch (bits) {
-        case 8:
-            adcBits = ADC_8BIT;
-            break;
-        case 10:
-            adcBits = ADC_10BIT;
-            break;
-        case 12:
-            adcBits = ADC_12BIT;
-            break;
-        case 14:
-            adcBits = ADC_14BIT;
-            break;
-    }
-    analogResolution = bits;
-
-    MAP_ADC14_setResolution(adcBits);
+    analogReadShift = 14 - bits;
 }
+
