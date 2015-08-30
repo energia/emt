@@ -241,7 +241,7 @@ const UARTCC26XX_HWAttrs uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
         .baseAddr = UART0_BASE,
         .powerMngrId = PERIPH_UART0,
         .intNum = INT_UART0,
-	.intPriority = (~0),
+        .intPriority = (~0),
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
@@ -370,7 +370,7 @@ const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .baseAddr = I2C0_BASE,
         .powerMngrId = PERIPH_I2C0,
         .intNum = INT_I2C,
-	.intPriority = (~0),
+        .intPriority = (~0),
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
     },
@@ -378,7 +378,7 @@ const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .baseAddr = I2C0_BASE,
         .powerMngrId = PERIPH_I2C0,
         .intNum = INT_I2C,
-	.intPriority = (~0),
+        .intPriority = (~0),
         .sdaPin = Board_I2C0_SDA1,
         .sclPin = Board_I2C0_SCL1,
     }
@@ -413,10 +413,10 @@ CryptoCC26XX_Object cryptoCC26XXObjects[CC2650_CRYPTOCOUNT];
 /* Crypto configuration structure, describing which pins are to be used */
 const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC2650_CRYPTOCOUNT] = {
     {
-      .baseAddr = CRYPTO_BASE,
-      .powerMngrId = PERIPH_CRYPTO,
-      .intNum = INT_CRYPTO,
-      .intPriority = ~0,
+        .baseAddr = CRYPTO_BASE,
+        .powerMngrId = PERIPH_CRYPTO,
+        .intNum = INT_CRYPTO,
+        .intPriority = ~0,
     }
 };
 
