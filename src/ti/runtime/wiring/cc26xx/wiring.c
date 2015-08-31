@@ -94,6 +94,11 @@ void delay(uint32_t milliseconds)
 {
     uint64_t delay;
 
+    if (milliseconds == 0) {
+        Task_yield();
+        return();
+    }
+
     /* math below assumes tickPeriod is <= 1000 */
     delay = ((uint64_t)milliseconds * (uint64_t)1000) / (uint64_t)Clock_tickPeriod;
 

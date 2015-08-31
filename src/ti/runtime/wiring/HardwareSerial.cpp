@@ -115,7 +115,7 @@ void HardwareSerial::setPins(unsigned long pins)
     /* almost same functionality as above */
 }
 
-void HardwareSerial::seize(void)
+void HardwareSerial::acquire(void)
 {
     GateMutex_enter(GateMutex_handle(&gate));
 }
@@ -129,6 +129,7 @@ void HardwareSerial::end(void)
 {
     begun = false;
     UART_close(uart);
+    uart = NULL;
 }
 
 int HardwareSerial::available(void)
@@ -136,6 +137,10 @@ int HardwareSerial::available(void)
     unsigned int key;
     int numChars;
     
+    if (uart == NULL) {
+        return (0);
+    }
+
     key = Hwi_disable();
 
     if (RX_BUFFER_EMPTY) {
@@ -194,12 +199,36 @@ void HardwareSerial::flush()
 
 size_t HardwareSerial::write(uint8_t c)
 {
+    IArg key;
+
     if (uart == NULL) {
         return (0);
     }
 
-    UART_write(uart,(char*)&c,1);
+    key = GateMutex_enter(GateMutex_handle(&gate));
+
+    UART_write(uart, (char *)&c, 1);
+
+    GateMutex_leave(GateMutex_handle(&gate), key);
+
     return (1);
+}
+
+size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
+{
+    IArg key;
+    
+    if (uart == NULL) {
+        return (0);
+    }
+
+    key = GateMutex_enter(GateMutex_handle(&gate));
+
+    UART_write(uart, (char *)buffer, size);
+
+    GateMutex_leave(GateMutex_handle(&gate), key);
+
+    return (size);
 }
 
 void HardwareSerial::readCallback(UART_Handle uart, void *buf, size_t count)

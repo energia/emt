@@ -185,6 +185,11 @@ static void switchToTimerA()
  */
 void delay(uint32_t milliseconds)
 {
+    if (milliseconds == 0) {
+        Task_yield();
+        return();
+    }
+
     switch (delayMode) {
         /* using Timer_A, check for opportunity to transition to WDT */
         case 0:

@@ -65,7 +65,7 @@ class HardwareSerial : public Stream
         void begin(unsigned long);
         void setModule(unsigned long);
         void setPins(unsigned long);
-        void seize(void);    /* seize serial port for this thread */
+        void acquire(void);  /* acquire serial port for this thread */
         void release(void);  /* release serial port */
         void end(void);
         virtual int available(void);
@@ -74,8 +74,8 @@ class HardwareSerial : public Stream
         virtual void flush(void);
         void readCallback(UART_Handle uart, void *buf, size_t count);
         virtual size_t write(uint8_t c);
-        using Print::write; // pull in write(str) and write(buf, size) from Print
-
+        virtual size_t write(const uint8_t *buffer, size_t size);
+        using Print::write; // pull in write(str) from Print
 };
 
 // Create new HardwareSerial called Serial for use in Sketch.

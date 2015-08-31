@@ -88,5 +88,10 @@ void delayMicroseconds(unsigned int us)
 
 void delay(uint32_t milliseconds)
 {
+    if (milliseconds == 0) {
+        Task_yield();
+        return;
+    }
+
     Task_sleep(milliseconds);
 }

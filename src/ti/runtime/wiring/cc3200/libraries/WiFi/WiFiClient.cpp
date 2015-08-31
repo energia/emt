@@ -337,44 +337,62 @@ size_t WiFiClient::write(uint8_t b)
     return write(&b, 1);
 }
 
+/* 
+ * Value obtained from the sl_Send() implementation.
+ * Max Secure TCP socket packet size.
+ */
+#define MAX_SL_SEND_BUFSIZE 1386  
+
 //--tested, working--//
 //--client and server side--//
 size_t WiFiClient::write(const uint8_t *buffer, size_t size)
 {
-    //
-    //don't do anything if not properly set up
-    //
+    int iRet;
+    size_t origSize, sendSize;
+
+    /*
+     * don't do anything if not properly set up
+     */
     if (_socketIndex == NO_SOCKET_AVAIL) {
         return 0;
     }
 
-    //
-    //write the buffer to the socket
-    //
-    int iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], buffer, size, 0);
-
-    // Flow control signal; perform a paced-retry.
-    while (iRet == SL_EAGAIN) {
-        delay(10);
-
+    origSize = size;
+    
+    /* 
+     * send no more than MAX_SL_SEND_BUFSIZE bytes at a time to socket
+     */
+    while (size) {
+        if (size > MAX_SL_SEND_BUFSIZE) {
+            sendSize = MAX_SL_SEND_BUFSIZE;
+        }
+        else {
+            sendSize = size;
+        }
+        /* Write block to socket, retry if SL_EAGAIN is received */
+        while ((iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], buffer, sendSize, 0))
+                == SL_EAGAIN) {
+            delay(10);
 #ifndef SL_PLATFORM_MULTI_THREADED
-        /* HACK: required in nonos builds, otherwise we hang in this loop */
-        sl_Task();
+            /* HACK: required in nonos builds, otherwise we hang in this loop */
+            sl_Task();
 #endif
-
-        iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], buffer, size, 0);
+        }
+        if (iRet == sendSize) {
+            size -= sendSize;
+            buffer += sendSize;
+        }
+        else {
+            /*
+             * if an error occurred or the socket has died, call stop()
+             * to make the object aware that it's dead
+             */
+            stop();
+            return 0;
+        }
     }
-
-    if ((iRet < 0) || (iRet != size)) {
-        //
-        //if an error occured or the socket has died, call stop()
-        //to make the object aware that it's dead
-        //
-        stop();
-        return 0;
-    } else {
-        return iRet;
-    }
+    
+    return (origSize);
 }
 
 //--tested, working--//
