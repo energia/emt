@@ -337,9 +337,16 @@ size_t WiFiClient::write(uint8_t b)
     return write(&b, 1);
 }
 
-/* 
- * Value obtained from the sl_Send() implementation.
- * Max Secure TCP socket packet size.
+/* HACK:  sl_Send() can't handle EAGAIN errors from the network processor
+ *        and, as a result, we must ensure that each call to sl_Send() sends
+ *        at most one packet.  To do this, we must either use an internal
+ *        simplelink  method to get the max packet size for the specified 
+ *        socket's type or simply use a packet size known to be suported by
+ *        all socket types.
+ *
+ *        We use the smallest packet size for the types of sockets used;
+ *        1386.  Currently, this minimum value is for secure IPv4 TCP sockets;
+ *        see utility/socket.c:_SlPayloadByProtocolLUT.
  */
 #define MAX_SL_SEND_BUFSIZE 1386  
 
@@ -430,7 +437,7 @@ int WiFiClient::available()
         //if the connection has died, call stop() to make the object aware it's dead
         //
         int iRet = sl_Recv(WiFiClass::_handleArray[_socketIndex], rx_buffer, TCP_RX_BUFF_MAX_SIZE, 0);
-        if ((iRet <= 0)  &&  (iRet != SL_EAGAIN)) {
+        if ((iRet <= 0) && (iRet != SL_EAGAIN)) {
             System_printf("socket %p died: sl_Recv() failed (%d)\n",
                           WiFiClass::_handleArray[_socketIndex], iRet);
             sl_Close(WiFiClass::_handleArray[_socketIndex]);
