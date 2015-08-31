@@ -96,7 +96,7 @@ void delay(uint32_t milliseconds)
 
     if (milliseconds == 0) {
         Task_yield();
-        return();
+        return;
     }
 
     /* math below assumes tickPeriod is <= 1000 */

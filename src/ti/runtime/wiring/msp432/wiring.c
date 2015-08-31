@@ -187,7 +187,7 @@ void delay(uint32_t milliseconds)
 {
     if (milliseconds == 0) {
         Task_yield();
-        return();
+        return;
     }
 
     switch (delayMode) {
