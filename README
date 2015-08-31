@@ -1,4 +1,4 @@
-				emt-a55
+				emt-a56
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,18 +125,35 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring
+	added missing Stream::readString() and Stream::readStringUntil()
+
 DELETIONS
 
 CHANGES
 
 ti.runtime.wiring
-	Serial.read/write now check for null uart handle (in case someone
-	forgot to call Serial.begin())
+	"fixed" HardwareSerial.cpp to serialize access to underlying TI-RTOS 
+	UART driver.  This is needed to avoid loss of characters when two
+	threads try to write to the UART; TI-RTOS UART does not support
+	multiple concurrent writers (it simply drops characters if the UART
+	is busy).
 
-ti.runtime.wiring.cc26xx
-	added support for analogWrite/Read
+	Provide an efficient write(uint8_t *, size_t) implementation that
+	sends a buffer at a time to UART_write().
 
-ti.runtime.wiring.cc26xx.variants
-	added A0-A6 definitions
+	delay(0) is now equivalent to Task_yield().
+
+	provide a few NULL handle checks to convert prevent non-deterministic
+	crashes to mysterious nops.
+
+ti.runtime.wiring.msp432
+	fix msp432 analaogReadResolution to respect 8/10/12/14 bit resolution
+
+ti.runtime.wiring.cc3200/libraries/WiFi
+	fix WiFiClient.write() "bug" for buffers larger than 1386 bytes;
+	sl_Send() can't handle EAGAIN errors so WiFiClient.write must
+	packetize write requests to ensure no sl_Send() is larger than the
+	smallest underlying maximum packaget size. (blech!)
 
 MRS
