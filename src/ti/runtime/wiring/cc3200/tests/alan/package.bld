@@ -2,15 +2,18 @@
  *  ======== package.bld ========
  */
 Pkg.attrs.profile = "release";
+//Pkg.attrs.profile = "debug";
 Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200";
+var PLATFORM = "ti.platforms.emt3200:CC3200_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200_LAUNCHXL";
+
+//var PLATFORM = "ti.platforms.emt3200:CC3200STK_WIFI";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200STK_WIFI";
 
 var SRCS = getSources(".");
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200STK_WIFI";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200LP";
 var MAIN = "main.cpp";
 
 for (var i = 0; i < Build.targets.length; i++) {

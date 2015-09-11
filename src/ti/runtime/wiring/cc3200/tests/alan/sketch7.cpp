@@ -58,5 +58,10 @@ void setup7()
 
 void loop7()
 {
-    delay(1000);
+//    pinMode(YELLOW_LED, INPUT_PULLUP);
+    digitalWrite(YELLOW_LED, 1);
+    delay(5000);
+//    pinMode(YELLOW_LED, INPUT_PULLUP);
+    digitalWrite(YELLOW_LED, 0);
+    delay(5000);
 }

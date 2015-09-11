@@ -126,7 +126,7 @@ static const struct {
 
 void mon_setup(void)
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("Welcome! This is the Serial debug console.");
 }
 
@@ -766,7 +766,7 @@ static void printTaskInfo(Task_Handle task)
     Serial.println(buf);
 }
 
-static void printUtilization()
+void printUtilization()
 {
     UInt i;
     Memory_Stats memStat;
