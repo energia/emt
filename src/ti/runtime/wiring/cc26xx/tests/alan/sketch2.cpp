@@ -1,14 +1,15 @@
 #include <Energia.h>
 
-extern void blinkSetup();
-extern void blinkLoop();
+extern void lcdSetup();
+extern void lcdLoop();
+
 
 void setup2()
 {
-    blinkSetup();
+    lcdSetup();
 }
 
 void loop2()
 {
-    blinkLoop();
+    lcdLoop();
 }

@@ -65,4 +65,7 @@ void loop7()
     delay(1000);
 //    analogWrite(RED_LED, 100);
 //    analogWrite(GREEN_LED, 100);
+//    analogRead(18);
+//    analogRead(20);
+//    digitalWrite(20,0);
 }
