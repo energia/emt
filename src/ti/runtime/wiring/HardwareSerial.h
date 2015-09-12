@@ -60,6 +60,8 @@ class HardwareSerial : public Stream
         GateMutex_Struct gate;
 
     public:
+        operator bool();// Arduino compatibility (see StringLength example)
+        
         HardwareSerial(void);
         HardwareSerial(unsigned long);
         void begin(unsigned long);
