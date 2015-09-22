@@ -99,7 +99,7 @@ void Board_initDMA(void)
             System_abort("Couldn't create DMA error hwi");
         }
 
-        MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK);
+        MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK | PRCM_SLP_MODE_CLK);
         MAP_PRCMPeripheralReset(PRCM_UDMA);
         MAP_uDMAEnable();
         MAP_uDMAControlBaseSet(dmaControlTable);
@@ -554,10 +554,10 @@ const PowerCC3200_Config PowerCC3200_config = {
     &PowerCC3200_sleepPolicy,  /* policyFxn */
     NULL,                      /* enterLPDSHookFxn */
     NULL,                      /* resumeLPDSHookFxn */
-    0,                         /* enablePolicy */
+    1,                         /* enablePolicy */
     1,                         /* enableGPIOWakeupLPDS */
     0,                         /* enableGPIOWakeupShutdown */
-    0,                         /* enableNetworkWakeupLPDS */
+    1,                         /* enableNetworkWakeupLPDS */
     PRCM_LPDS_GPIO13,          /* wakeupGPIOSourceLPDS */
     PRCM_LPDS_FALL_EDGE,       /* wakeupGPIOTypeLPDS */
     0,                         /* wakeupGPIOSourceShutdown */
@@ -566,11 +566,44 @@ const PowerCC3200_Config PowerCC3200_config = {
                                /* ramRetentionMaskLPDS */
 };
 
+#define SPI_RATE_13M                        13000000
+#define SPI_RATE_20M                    20000000
+
+uint32_t wakeupcalled = 0;
+
+void simpleLinkWakupCallback()
+{
+    unsigned long ulBase;
+    unsigned long ulSpiBitRate = 0;
+
+wakeupcalled++;
+
+    //NWP master interface
+    ulBase = LSPI_BASE;
+
+    ulSpiBitRate = SPI_RATE_20M;
+
+    MAP_SPIConfigSetExpClk(ulBase,MAP_PRCMPeripheralClockGet(PRCM_LSPI),
+                                    ulSpiBitRate,SPI_MODE_MASTER,SPI_SUB_MODE_0,
+                     (SPI_SW_CTRL_CS |
+                     SPI_4PIN_MODE |
+                     SPI_TURBO_OFF |
+                     SPI_CS_ACTIVEHIGH |
+                     SPI_WL_32));
+}
+
+Power_NotifyObj slNotify;
+
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
+
+    Power_setConstraint(PowerCC3200_DISALLOW_DEEPSLEEP);
+    Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
+
+//    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS|PowerCC3200_AWAKE_DEEPSLEEP, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
     Power_init();
 }
 
@@ -589,5 +622,5 @@ void Board_init(void)
     /* driver-specific initialization */
     Board_initGPIO();
     Board_initPWM();
-    Board_initPower();
+//    Board_initPower();
 }

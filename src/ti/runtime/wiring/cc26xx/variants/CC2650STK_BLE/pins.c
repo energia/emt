@@ -68,4 +68,5 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  29 - DIO_13 MIC PWR */
     PIN_FUNC_UNUSED,    /*  30 - DIO_00 BUTTON2 */
     PIN_FUNC_UNUSED,    /*  31 - DIO_15 LED2 */
+    PIN_FUNC_UNUSED,    /*  32 - DIO_14 FLASH CS */
 };

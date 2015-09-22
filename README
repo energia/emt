@@ -1,4 +1,4 @@
-				emt-a56
+				emt-a57
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,35 +125,31 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring
-	added missing Stream::readString() and Stream::readStringUntil()
-
 DELETIONS
 
 CHANGES
 
 ti.runtime.wiring
-	"fixed" HardwareSerial.cpp to serialize access to underlying TI-RTOS 
-	UART driver.  This is needed to avoid loss of characters when two
-	threads try to write to the UART; TI-RTOS UART does not support
-	multiple concurrent writers (it simply drops characters if the UART
-	is busy).
+	"fixed" HardwareSerial.cpp to support bizzare Wiring synty 
+        "while (!Serial);"
 
-	Provide an efficient write(uint8_t *, size_t) implementation that
-	sends a buffer at a time to UART_write().
+src/ti/runtime/wiring/cc26xx/tests/alan
+	extended test to include low power operation
 
-	delay(0) is now equivalent to Task_yield().
+bundles/energia/cc26xx
+ti/runtime/wiring/cc26xx/variants/CC2650STK_BLE
+	added CC26xx low power support
 
-	provide a few NULL handle checks to convert prevent non-deterministic
-	crashes to mysterious nops.
+ti/runtime/wiring/cc3200
+	started low power support:
+	    - Do not cut the clock to the DMA when in going to sleep
+	    - test code to cc3200/tests/alan
+	    - configure CC3200_LAUNCHXL/Board_init.c power driver
 
-ti.runtime.wiring.msp432
-	fix msp432 analaogReadResolution to respect 8/10/12/14 bit resolution
-
-ti.runtime.wiring.cc3200/libraries/WiFi
-	fix WiFiClient.write() "bug" for buffers larger than 1386 bytes;
-	sl_Send() can't handle EAGAIN errors so WiFiClient.write must
-	packetize write requests to ensure no sl_Send() is larger than the
-	smallest underlying maximum packaget size. (blech!)
-
+	CC32xx low power still needs some love. I didn't check in the
+	changes necessary to obtain low power operation because of
+	flakey behavior.  
+	    -The GPIO driver doesn't preserve the pin state during LPDS.
+	    -Entering LPDS is held off in my HTTP example unless I enable
+	     the UART driver...
 MRS

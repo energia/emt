@@ -197,6 +197,12 @@ void HardwareSerial::flush()
 {
 }
 
+HardwareSerial::operator bool()
+{
+    return true;  // Arduino compatibility (see StringLength example)
+}
+
+
 size_t HardwareSerial::write(uint8_t c)
 {
     IArg key;

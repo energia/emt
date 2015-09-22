@@ -76,12 +76,14 @@ PIN_Config BoardGpioInitTable[] = {
     Board_KEY_RIGHT  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
     Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
     Board_MPU_INT    | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_NEGEDGE | PIN_HYSTERESIS,        /* MPU_INT is active low         */
-    Board_TMP_RDY    | PIN_INPUT_EN | PIN_PULLUP | PIN_HYSTERESIS,                            /* TMP_RDY is active high        */
+    Board_TMP_RDY    | PIN_INPUT_EN | PIN_NOPULL | PIN_HYSTERESIS,                            /* TMP_RDY is active high        */
     Board_BUZZER     | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* Buzzer initially off          */
-    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,    /* MPU initially on              */
+    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* MPU initially off             */
     Board_MIC_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MIN,     /* MIC initially off             */
     Board_SPI_FLASH_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,  /* External flash chip select    */
     Board_SPI_DEVPK_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,  /* DevPack chip select           */
+    Board_SPI0_MOSI | PIN_INPUT_DIS | PIN_PULLDOWN,                                           /* disable input, enable pulldown */
+    Board_SPI0_CLK  | PIN_INPUT_DIS | PIN_PULLDOWN,                                           /* disable input, enable pulldown */
     Board_AUDIO_DI | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* Audio DI                      */
     Board_AUDIODO | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,       /* Audio data out                */
     Board_AUDIO_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* DevPack */
@@ -154,6 +156,7 @@ GPIO_PinConfig gpioPinConfigs[] = {
                           
     /* virtual pin 31 */
     GPIOCC26XX_DIO_15 | GPIO_DO_NOT_CONFIG,     /*  31 - DIO_15 LED2 */
+    GPIOCC26XX_DIO_14 | GPIO_DO_NOT_CONFIG,     /*  32 - DIO_14 FLASH CS */
 };
 
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
@@ -198,6 +201,7 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
                     
     /* pin 31 */
     NULL,  /*  31 - DIO_15 LED2 */
+    NULL,  /*  32 - DIO_14 FLASH CS */
 };
 
 /* User requested callback functions for the GPIO input signals */
