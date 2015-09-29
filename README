@@ -1,4 +1,4 @@
-				emt-a57
+				emt-a58
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,27 +129,13 @@ DELETIONS
 
 CHANGES
 
-ti.runtime.wiring
-	"fixed" HardwareSerial.cpp to support bizzare Wiring synty 
-        "while (!Serial);"
+ti.runtime.wiring.cc3200/libraries/WiFi
+  - Enhance startSmartConfig() to be optionally non-blocking.
+  - Store connection info in a profile after successful SmartConfig.
+  - Add begin() without parameter to connect to a stored profile.
+  - Copy BSSID into bssid user supplied argument rather than returning a 
+    pointer.
+  - Enhance scanNetworks() to allow reconnecting to the previous AP after
+    a scan.
 
-src/ti/runtime/wiring/cc26xx/tests/alan
-	extended test to include low power operation
-
-bundles/energia/cc26xx
-ti/runtime/wiring/cc26xx/variants/CC2650STK_BLE
-	added CC26xx low power support
-
-ti/runtime/wiring/cc3200
-	started low power support:
-	    - Do not cut the clock to the DMA when in going to sleep
-	    - test code to cc3200/tests/alan
-	    - configure CC3200_LAUNCHXL/Board_init.c power driver
-
-	CC32xx low power still needs some love. I didn't check in the
-	changes necessary to obtain low power operation because of
-	flakey behavior.  
-	    -The GPIO driver doesn't preserve the pin state during LPDS.
-	    -Entering LPDS is held off in my HTTP example unless I enable
-	     the UART driver...
 MRS
