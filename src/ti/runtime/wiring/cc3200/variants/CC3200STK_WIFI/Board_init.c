@@ -99,7 +99,7 @@ void Board_initDMA(void)
             System_abort("Couldn't create DMA error hwi");
         }
 
-        MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK);
+        MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK | PRCM_SLP_MODE_CLK);
         MAP_PRCMPeripheralReset(PRCM_UDMA);
         MAP_uDMAEnable();
         MAP_uDMAControlBaseSet(dmaControlTable);
@@ -122,7 +122,7 @@ void Board_initGeneral(void)
 
     /*
      * ======== Enable Peripheral Clocks ========
-     * Enable all clocks (because wiring can use any pin for in any mode
+     * Enable all clocks (because wiring can use any pin in any mode
      * at runtime)
      */
     MAP_PRCMPeripheralClkEnable(PRCM_CAMERA, PRCM_RUN_MODE_CLK);
@@ -139,67 +139,6 @@ void Board_initGeneral(void)
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA1, PRCM_RUN_MODE_CLK);
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA2, PRCM_RUN_MODE_CLK);
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA3, PRCM_RUN_MODE_CLK);
-
-    MAP_PRCMPeripheralClkEnable(PRCM_UARTA0, PRCM_RUN_MODE_CLK);
-    MAP_PRCMPeripheralClkEnable(PRCM_UARTA1, PRCM_RUN_MODE_CLK);
-
-
-    /* ======== UART Pin Configuration ======== */
-
-    /* Serial */
-
-    /*
-     * Configure SensorTag UART1: UART1 TX (via USB port)
-     *     device pin: 55 (UART1_TX)
-     *     energia pin: 10
-     */
-    MAP_PinTypeUART(PIN_55, PIN_MODE_6);
-
-    /*
-     * Configure SensorTag UART1: UART1 RX (via USB port)
-     *     device pin: 57 (UART1_RX)
-     *     energia pin: 12
-     */
-    MAP_PinTypeUART(PIN_57, PIN_MODE_6);
-
-    /* ======== SPI Pin Configuration ======== */
-
-    /*
-     * Configure SensorTag SPI pin: SPI CLK
-     *     device pin: 5 (GSPI_CLK)
-     *     energia pin: 15
-     */
-    MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
-
-    /*
-     * Configure SensorTag SPI pin: SPI MOSI
-     *     device pin: 7 (GSPI_MOSI)
-     *     energia pin: 11
-     */
-    MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
-
-    /*
-     * Configure SensorTag SPI pin: SPI MISO
-     *     device pin: 6 (GSPI_MISO)
-     *     energia pin: 13
-     */
-    MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
-
-    /* ======== I2C Pin Configuration ======== */
-
-    /*
-     * Configure SensorTag I2C pin: MPU Data (via I2C)
-     *     device pin: 3 (I2C_SCL)
-     *     energia pin: 3
-     */
-    MAP_PinTypeI2C(PIN_03, PIN_MODE_5);
-
-    /*
-     * Configure Configure SensorTag I2C pin: MPU Data (via I2C)
-     *     device pin: 4 (I2C_SDA)
-     *     energia pin: 4
-     */
-    MAP_PinTypeI2C(PIN_04, PIN_MODE_5);
 }
 
 /*
@@ -343,11 +282,42 @@ const I2C_Config I2C_config[] = {
 };
 
 /*
- *  ======== Board_initI2C ========
+ *  ======== Board_openI2C ========
+ *  Initialize the I2C driver.
+ *  Initialize the I2C port's pins.
+ *  Open the I2C port.
  */
-void Board_initI2C(void)
+I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 {
+    
+    /* Initialize the I2C driver */
+    /* By design, I2C_init() is idempotent */
     I2C_init();
+    
+    /* initialize the pins associated with the respective I2C */
+    switch(i2cPortIndex) {
+        case 0:
+            /*
+             * Configure SensorTag I2C pin: MPU Data (via I2C)
+             *     device pin: 3 (I2C_SCL)
+             *     energia pin: 3
+             */
+            MAP_PinTypeI2C(PIN_03, PIN_MODE_5);
+
+            /*
+             * Configure Configure SensorTag I2C pin: MPU Data (via I2C)
+             *     device pin: 4 (I2C_SDA)
+             *     energia pin: 4
+             */
+            MAP_PinTypeI2C(PIN_04, PIN_MODE_5);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the I2C */
+    return (I2C_open(i2cPortIndex, i2cParams));
 }
 
 /*
@@ -432,12 +402,54 @@ const SPI_Config SPI_config[] = {
 };
 
 /*
- *  ======== Board_initSPI ========
+ *  ======== Board_openSPI ========
  */
-void Board_initSPI(void)
+SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 {
-    Board_initDMA();
+    /* Initialize the SPI driver */
+    /* By design, SPI_init() is idempotent */
     SPI_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(spiPortIndex) {
+        /*
+         * NOTE: TI-RTOS examples configure EUSCIB0 as either SPI or I2C.  Thus,
+         * a conflict occurs when the I2C & SPI drivers are used simultaneously in
+         * an application.  Modify the pin mux settings in this file and resolve the
+         * conflict before running your the application.
+         */
+
+        case 0:
+            /*
+             * Configure SensorTag SPI pin: SPI CLK
+             *     device pin: 5 (GSPI_CLK)
+             *     energia pin: 15
+             */
+            MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
+
+            /*
+             * Configure SensorTag SPI pin: SPI MOSI
+             *     device pin: 7 (GSPI_MOSI)
+             *     energia pin: 11
+             */
+            MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
+
+            /*
+             * Configure SensorTag SPI pin: SPI MISO
+             *     device pin: 6 (GSPI_MISO)
+             *     energia pin: 13
+             */
+            MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
+            break;
+            
+        default:
+            return(NULL);
+    }
+    
+    Board_initDMA();
+
+    /* open the SPI port */
+    return (SPI_open(spiPortIndex, spiParams));
 }
 
 /*
@@ -473,11 +485,45 @@ const UART_Config UART_config[] = {
 };
 
 /*
- *  ======== Board_initUART ========
+ *  ======== Board_openUART ========
+ *  Initialize the UART driver.
+ *  Initialize the UART port's pins.
+ *  Open the UART port.
  */
-void Board_initUART(void)
+UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 {
+    /* Initialize the UART driver */
+    /* By design, UART_init() is idempotent */
     UART_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(uartPortIndex) {
+        case 0:
+            /* Serial */
+            /* enable UART1 clock */
+            MAP_PRCMPeripheralClkEnable(PRCM_UARTA1, PRCM_RUN_MODE_CLK);
+
+            /*
+             * Configure SensorTag UART1: UART1 TX (via USB port)
+             *     device pin: 55 (UART1_TX)
+             *     energia pin: 10
+             */
+            MAP_PinTypeUART(PIN_55, PIN_MODE_6);
+
+            /*
+             * Configure SensorTag UART1: UART1 RX (via USB port)
+             *     device pin: 57 (UART1_RX)
+             *     energia pin: 12
+             */
+            MAP_PinTypeUART(PIN_57, PIN_MODE_6);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the UART */
+    return (UART_open(uartPortIndex, uartParams));
 }
 
 /* 
@@ -498,10 +544,10 @@ const PowerCC3200_Config PowerCC3200_config = {
     &PowerCC3200_sleepPolicy,  /* policyFxn */
     NULL,                      /* enterLPDSHookFxn */
     NULL,                      /* resumeLPDSHookFxn */
-    0,                         /* enablePolicy */
+    1,                         /* enablePolicy */
     1,                         /* enableGPIOWakeupLPDS */
     0,                         /* enableGPIOWakeupShutdown */
-    0,                         /* enableNetworkWakeupLPDS */
+    1,                         /* enableNetworkWakeupLPDS */
     PRCM_LPDS_GPIO13,          /* wakeupGPIOSourceLPDS */
     PRCM_LPDS_FALL_EDGE,       /* wakeupGPIOTypeLPDS */
     0,                         /* wakeupGPIOSourceShutdown */
@@ -510,11 +556,44 @@ const PowerCC3200_Config PowerCC3200_config = {
                                /* ramRetentionMaskLPDS */
 };
 
+#define SPI_RATE_13M                        13000000
+#define SPI_RATE_20M                    20000000
+
+uint32_t wakeupcalled = 0;
+
+void simpleLinkWakupCallback()
+{
+    unsigned long ulBase;
+    unsigned long ulSpiBitRate = 0;
+
+wakeupcalled++;
+
+    //NWP master interface
+    ulBase = LSPI_BASE;
+
+    ulSpiBitRate = SPI_RATE_20M;
+
+    MAP_SPIConfigSetExpClk(ulBase,MAP_PRCMPeripheralClockGet(PRCM_LSPI),
+                                    ulSpiBitRate,SPI_MODE_MASTER,SPI_SUB_MODE_0,
+                     (SPI_SW_CTRL_CS |
+                     SPI_4PIN_MODE |
+                     SPI_TURBO_OFF |
+                     SPI_CS_ACTIVEHIGH |
+                     SPI_WL_32));
+}
+
+Power_NotifyObj slNotify;
+
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
+
+    Power_setConstraint(PowerCC3200_DISALLOW_DEEPSLEEP);
+    Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
+
+//    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS|PowerCC3200_AWAKE_DEEPSLEEP, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
     Power_init();
 }
 
@@ -533,5 +612,5 @@ void Board_init(void)
     /* driver-specific initialization */
     Board_initGPIO();
     Board_initPWM();
-    Board_initPower();
+//    Board_initPower();
 }

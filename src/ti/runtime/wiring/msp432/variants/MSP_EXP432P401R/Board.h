@@ -45,6 +45,10 @@
 #ifndef __Board_H
 #define __Board_H
 
+#include <ti/drivers/UART.h>
+#include <ti/drivers/I2C.h>
+#include <ti/drivers/SPI.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -146,107 +150,6 @@ typedef enum Board_WiFiName {
 
     Board_WIFICOUNT
 } Board_WiFiName;
-
-/*!
- *  @brief  Initialize the general board specific settings
- *
- *  This function initializes the general board specific settings. This include
- *     - Enable clock sources for peripherals
- */
-extern void Board_initGeneral(void);
-
-/*!
- *  @brief  Initialize all the board specific drivers used by the application
- */
-extern void Board_init(void);
-
-/*!
- *  @brief  Initialize board specific GPIO settings
- *
- *  This function initializes the board specific GPIO settings and
- *  then calls the GPIO_init API to initialize the GPIO module.
- *
- *  The GPIOs controlled by the GPIO module are determined by the GPIO_config
- *  variable.
- */
-extern void Board_initGPIO(void);
-
-/*!
- *  @brief  Initialize board specific I2C settings
- *
- *  This function initializes the board specific I2C settings and then calls
- *  the I2C_init API to initialize the I2C module.
- *
- *  The I2C peripherals controlled by the I2C module are determined by the
- *  I2C_config variable.
- */
-extern void Board_initI2C(void);
-
-/*!
- *  @brief  Initialize board specific PWM settings
- *
- *  This function initializes the board specific PWM settings and then calls
- *  the PWM_init API to initialize the PWM module.
- *
- *  The PWM peripherals controlled by the PWM module are determined by the
- *  PWM_config variable.
- */
-extern void Board_initPWM(void);
-
-/*!
- *  @brief  Initialize board specific SDSPI settings
- *
- *  This function initializes the board specific SDSPI settings and then calls
- *  the SDSPI_init API to initialize the SDSPI module.
- *
- *  The SDSPI peripherals controlled by the SDSPI module are determined by the
- *  SDSPI_config variable.
- */
-extern void Board_initSDSPI(void);
-
-/*!
- *  @brief  Initialize board specific SPI settings
- *
- *  This function initializes the board specific SPI settings and then calls
- *  the SPI_init API to initialize the SPI module.
- *
- *  The SPI peripherals controlled by the SPI module are determined by the
- *  SPI_config variable.
- */
-extern void Board_initSPI(void);
-
-/*!
- *  @brief  Initialize board specific UART settings
- *
- *  This function initializes the board specific UART settings and then calls
- *  the UART_init API to initialize the UART module.
- *
- *  The UART peripherals controlled by the UART module are determined by the
- *  UART_config variable.
- */
-extern void Board_initUART(void);
-
-/*!
- *  @brief  Initialize board specific Watchdog settings
- *
- *  This function initializes the board specific Watchdog settings and then
- *  calls the Watchdog_init API to initialize the Watchdog module.
- *
- *  The Watchdog peripherals controlled by the Watchdog module are determined
- *  by the Watchdog_config variable.
- */
-extern void Board_initWatchdog(void);
-
-/*!
- *  @brief  Initialize board specific WiFi settings
- *
- *  This function initializes the board specific WiFi settings and then calls
- *  the WiFi_init API to initialize the WiFi module.
- *
- *  The hardware resources controlled by the WiFi module are determined by the
- *  WiFi_config variable.
- */
-extern void Board_initWiFi(void);
 
 /* Board specific I2C addresses */
 #define Board_TMP006_ADDR           (0x40)

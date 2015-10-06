@@ -33,6 +33,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+
 #include "wiring_private.h"
 #include "HardwareSerial.h"
 
@@ -79,8 +82,6 @@ void HardwareSerial::begin(unsigned long baud)
 
     Semaphore_construct(&rxSemaphore, 0, NULL);
 
-    Board_initUART();
-
     baudRate = baud;
 
     UART_Params_init(&uartParams);
@@ -92,7 +93,7 @@ void HardwareSerial::begin(unsigned long baud)
     uartParams.readEcho = UART_ECHO_OFF;
     uartParams.baudRate = baud;
 
-    uart = UART_open(uartModule, &uartParams);
+    uart = Board_openUART(uartModule, &uartParams);
 
     if (uart != NULL) {
         GateMutex_construct(&gate, NULL);

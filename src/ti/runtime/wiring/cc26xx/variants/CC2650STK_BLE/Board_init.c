@@ -258,6 +258,32 @@ const UART_Config UART_config[] = {
     { &UARTCC26XX_fxnTable, &uartCC26XXObjects[0], &uartCC26XXHWAttrs[0] },
     { NULL, NULL, NULL }
 };
+
+/*
+ *  ======== Board_openUART ========
+ *  Initialize the UART driver.
+ *  Initialize the UART port's pins.
+ *  Open the UART port.
+ */
+UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
+{
+    /* Initialize the UART driver */
+    /* By design, UART_init() is idempotent */
+    UART_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(uartPortIndex) {
+        case 0:
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the UART */
+    return (UART_open(uartPortIndex, uartParams));
+}
+
 /*
  *  ============================= UART end =====================================
 */
@@ -349,6 +375,30 @@ const SPI_Config SPI_config[] = {
     {&SPICC26XXDMA_fxnTable, &spiCC26XXDMAObjects[1], &spiCC26XXDMAHWAttrs[1]},
     {NULL, NULL, NULL},
 };
+
+/*
+ *  ======== Board_openSPI ========
+ */
+SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
+{
+    /* Initialize the SPI driver */
+    /* By design, SPI_init() is idempotent */
+    SPI_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(spiPortIndex) {
+        case 0:
+        case 1:
+            break;
+
+        default:
+            return(NULL);
+    }
+
+    /* open the SPI port */
+    return (SPI_open(spiPortIndex, spiParams));
+}
+
 /*
  *  ========================== SPI DMA end =====================================
 */
@@ -393,6 +443,33 @@ const I2C_Config I2C_config[] = {
     {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[1], &i2cCC26xxHWAttrs[1]},
     {NULL, NULL, NULL}
 };
+
+/*
+ *  ======== Board_openI2C ========
+ *  Initialize the I2C driver.
+ *  Initialize the I2C port's pins.
+ *  Open the I2C port.
+ */
+I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
+{
+    
+    /* Initialize the I2C driver */
+    /* By design, I2C_init() is idempotent */
+    I2C_init();
+    
+    /* initialize the pins associated with the respective I2C */
+    switch(i2cPortIndex) {
+        case 0:
+        case 1:
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the I2C */
+    return (I2C_open(i2cPortIndex, i2cParams));
+}
 
 /*
  *  ========================== I2C end =========================================
@@ -468,21 +545,6 @@ const PWM_Config PWM_config[] = {
 void Board_initPWM(void)
 {
     PWM_init();
-}
-
-void Board_initI2C()
-{
-    I2C_init();
-}
-
-void Board_initSPI()
-{
-    SPI_init();
-}
-
-void Board_initUART()
-{
-    UART_init();
 }
 
 void Board_initPIN()

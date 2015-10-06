@@ -117,13 +117,11 @@ void TwoWire::begin(void)
     /* return if I2C already started */
     if (begun == TRUE) return;
 
-    Board_initI2C();
-
     I2C_Params_init(&params);
     params.transferMode = I2C_MODE_BLOCKING;
     params.bitRate = I2C_400kHz;
 
-    i2c = I2C_open(i2cModule, &params);
+    i2c = Board_openI2C(i2cModule, &params);
 
     if (i2c != NULL) {
         GateMutex_construct(&gate, NULL);

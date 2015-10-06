@@ -122,7 +122,7 @@ void Board_initGeneral(void)
 
     /*
      * ======== Enable Peripheral Clocks ========
-     * Enable all clocks (because wiring can use any pin for in any mode
+     * Enable all clocks (because wiring can use any pin in any mode
      * at runtime)
      */
     MAP_PRCMPeripheralClkEnable(PRCM_CAMERA, PRCM_RUN_MODE_CLK);
@@ -139,85 +139,6 @@ void Board_initGeneral(void)
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA1, PRCM_RUN_MODE_CLK);
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA2, PRCM_RUN_MODE_CLK);
     MAP_PRCMPeripheralClkEnable(PRCM_TIMERA3, PRCM_RUN_MODE_CLK);
-
-    MAP_PRCMPeripheralClkEnable(PRCM_UARTA0, PRCM_RUN_MODE_CLK);
-    MAP_PRCMPeripheralClkEnable(PRCM_UARTA1, PRCM_RUN_MODE_CLK);
-
-
-    /* ======== UART Pin Configuration ======== */
-
-    /* Serial */
-
-    /*
-     * Configure LaunchPad P2.9 as a UART1: UART1 TX (via USB port)
-     *     device pin: 55 (UART0_TX)
-     *     Wiring id : 12
-     */
-    MAP_PinTypeUART(PIN_55, PIN_MODE_6);
-
-    /*
-     * Configure LaunchPad P3.3 as a UART1: UART1 RX (via USB port)
-     *     device pin: 57 (UART0_RX)
-     *     Wiring id : 23
-     */
-    MAP_PinTypeUART(PIN_57, PIN_MODE_6);
-
-    /* Serial1 */
-
-    /*
-     * Configure LaunchPad P1.4 as a UART0: UART0 TX
-     *     device pin: 3 (UART0_TX)
-     *     Wiring id : 4
-     */
-    MAP_PinTypeUART(PIN_03, PIN_MODE_7);
-
-    /*
-     * Configure LaunchPad P1.3 as a UART0: UART0 RX
-     *     device pin: 4 (UART0_RX)
-     *     Wiring id : 3
-     */
-    MAP_PinTypeUART(PIN_04, PIN_MODE_7);
-
-
-    /* ======== SPI Pin Configuration ======== */
-
-    /*
-     * Configure LaunchPad P1.7 as a SPI pin: SPI CLK
-     *     device pin: 5 (GSPI_CLK)
-     *     Wiring id : 7
-     */
-    MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
-
-    /*
-     * Configure LaunchPad P2.6 as a SPI pin: SPI MOSI
-     *     device pin: 7 (GSPI_MOSI)
-     *     Wiring id : 15
-     */
-    MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
-
-    /*
-     * Configure LaunchPad P2.7 as a SPI pin: SPI MISO
-     *     device pin: 6 (GSPI_MISO)
-     *     Wiring id : 14
-     */
-    MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
-
-
-    /* ======== I2C Pin Configuration ======== */
-
-    /*
-     * Configure LaunchPad P1.9 as a I2C pin: LaunchPad Sensor Data (via I2C)
-     *     device pin: 1 (I2C_SCL)
-     *     Wiring id : 9
-     */
-    MAP_PinTypeI2C(PIN_01, PIN_MODE_1);
-
-    /*
-     * Configure LaunchPad P1.10 as a I2C pin: LaunchPad Sensor Data (via I2C)
-     *     device pin: 2 (I2C_SDA)
-     *     Wiring id : 10
-     */
-    MAP_PinTypeI2C(PIN_02, PIN_MODE_1);
 }
 
 /*
@@ -385,11 +306,42 @@ const I2C_Config I2C_config[] = {
 };
 
 /*
- *  ======== Board_initI2C ========
+ *  ======== Board_openI2C ========
+ *  Initialize the I2C driver.
+ *  Initialize the I2C port's pins.
+ *  Open the I2C port.
  */
-void Board_initI2C(void)
+I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 {
+    
+    /* Initialize the I2C driver */
+    /* By design, I2C_init() is idempotent */
     I2C_init();
+    
+    /* initialize the pins associated with the respective I2C */
+    switch(i2cPortIndex) {
+        case 0:
+            /*
+             * Configure LaunchPad P1.9 as a I2C pin: LaunchPad Sensor Data (via I2C)
+             *     device pin: 1 (I2C_SCL)
+             *     Wiring id : 9
+             */
+            MAP_PinTypeI2C(PIN_01, PIN_MODE_1);
+
+            /*
+             * Configure LaunchPad P1.10 as a I2C pin: LaunchPad Sensor Data (via I2C)
+             *     device pin: 2 (I2C_SDA)
+             *     Wiring id : 10
+             */
+            MAP_PinTypeI2C(PIN_02, PIN_MODE_1);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the I2C */
+    return (I2C_open(i2cPortIndex, i2cParams));
 }
 
 /*
@@ -474,12 +426,54 @@ const SPI_Config SPI_config[] = {
 };
 
 /*
- *  ======== Board_initSPI ========
+ *  ======== Board_openSPI ========
  */
-void Board_initSPI(void)
+SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 {
-    Board_initDMA();
+    /* Initialize the SPI driver */
+    /* By design, SPI_init() is idempotent */
     SPI_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(spiPortIndex) {
+        /*
+         * NOTE: TI-RTOS examples configure EUSCIB0 as either SPI or I2C.  Thus,
+         * a conflict occurs when the I2C & SPI drivers are used simultaneously in
+         * an application.  Modify the pin mux settings in this file and resolve the
+         * conflict before running your the application.
+         */
+
+        case 0:
+            /*
+             * Configure LaunchPad P1.7 as a SPI pin: SPI CLK
+             *     device pin: 5 (GSPI_CLK)
+             *     Wiring id : 7
+             */
+            MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
+
+            /*
+             * Configure LaunchPad P2.6 as a SPI pin: SPI MOSI
+             *     device pin: 7 (GSPI_MOSI)
+             *     Wiring id : 15
+             */
+            MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
+
+            /*
+             * Configure LaunchPad P2.7 as a SPI pin: SPI MISO
+             *     device pin: 6 (GSPI_MISO)
+             *     Wiring id : 14
+             */
+            MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
+            break;
+            
+        default:
+            return(NULL);
+    }
+    
+    Board_initDMA();
+
+    /* open the SPI port */
+    return (SPI_open(spiPortIndex, spiParams));
 }
 
 /*
@@ -529,11 +523,65 @@ const UART_Config UART_config[] = {
 };
 
 /*
- *  ======== Board_initUART ========
+ *  ======== Board_openUART ========
+ *  Initialize the UART driver.
+ *  Initialize the UART port's pins.
+ *  Open the UART port.
  */
-void Board_initUART(void)
+UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 {
+    /* Initialize the UART driver */
+    /* By design, UART_init() is idempotent */
     UART_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(uartPortIndex) {
+        case 0:
+            /* Serial */
+            /* enable UART1 clock */
+            MAP_PRCMPeripheralClkEnable(PRCM_UARTA1, PRCM_RUN_MODE_CLK);
+
+            /*
+             * Configure LaunchPad P2.9 as a UART1: UART1 TX (via USB port)
+             *     device pin: 55 (UART1_TX)
+             *     Wiring id : 12
+             */
+            MAP_PinTypeUART(PIN_55, PIN_MODE_6);
+
+            /*
+             * Configure LaunchPad P3.3 as a UART1: UART1 RX (via USB port)
+             *     device pin: 57 (UART1_RX)
+             *     Wiring id : 23
+             */
+            MAP_PinTypeUART(PIN_57, PIN_MODE_6);
+            break;
+
+        case 1:
+            /* Serial1 */
+            /* enable UART0 clock */
+            MAP_PRCMPeripheralClkEnable(PRCM_UARTA0, PRCM_RUN_MODE_CLK);
+
+            /*
+             * Configure LaunchPad P1.4 as a UART0: UART0 TX
+             *     device pin: 3 (UART0_TX)
+             *     Wiring id : 4
+             */
+            MAP_PinTypeUART(PIN_03, PIN_MODE_7);
+
+            /*
+             * Configure LaunchPad P1.3 as a UART0: UART0 RX
+             *     device pin: 4 (UART0_RX)
+             *     Wiring id : 3
+             */
+            MAP_PinTypeUART(PIN_04, PIN_MODE_7);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the UART */
+    return (UART_open(uartPortIndex, uartParams));
 }
 
 /* 

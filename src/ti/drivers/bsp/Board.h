@@ -44,6 +44,10 @@
 #ifndef __ti_drivers_bsp_Board_H
 #define __ti_drivers_bsp_Board_H
 
+#include <ti/drivers/UART.h>
+#include <ti/drivers/I2C.h>
+#include <ti/drivers/SPI.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -94,17 +98,6 @@ extern void Board_initGeneral(void);
 extern void Board_initGPIO(void);
 
 /*!
- *  @brief  Initialize board specific I2C settings
- *
- *  This function initializes the board specific I2C settings and then calls
- *  the I2C_init API to initialize the I2C module.
- *
- *  The I2C peripherals controlled by the I2C module are determined by the
- *  I2C_config variable.
- */
-extern void Board_initI2C(void);
-
-/*!
  *  @brief  Initialize board specific SDSPI settings
  *
  *  This function initializes the board specific SDSPI settings and then calls
@@ -114,28 +107,6 @@ extern void Board_initI2C(void);
  *  SDSPI_config variable.
  */
 extern void Board_initSDSPI(void);
-
-/*!
- *  @brief  Initialize board specific SPI settings
- *
- *  This function initializes the board specific SPI settings and then calls
- *  the SPI_init API to initialize the SPI module.
- *
- *  The SPI peripherals controlled by the SPI module are determined by the
- *  SPI_config variable.
- */
-extern void Board_initSPI(void);
-
-/*!
- *  @brief  Initialize board specific UART settings
- *
- *  This function initializes the board specific UART settings and then calls
- *  the UART_init API to initialize the UART module.
- *
- *  The UART peripherals controlled by the UART module are determined by the
- *  UART_config variable.
- */
-extern void Board_initUART(void);
 
 /*!
  *  @brief  Initialize board specific Watchdog settings
@@ -166,6 +137,39 @@ extern void Board_initWiFi(void);
  *  functions; e.g., driver initializtion, device pin configuration, ...
  */
 extern void Board_init(void);
+
+/*!
+ *  @brief  Board specific I2C open function
+ *
+ *  This function initializes the board specific I2C driver, the port specific
+ *  I2C pins, and then calls I2C_open() to return a I2C handle.
+ *
+ *  The I2C peripherals controlled by the I2C module are determined by the
+ *  I2C_config variable.
+ */
+extern I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams);
+
+/*!
+ *  @brief  Board specific SPI open function
+ *
+ *  This function initializes the board specific SPI driver, the port specific
+ *  SPI pins, and then calls SPI_open() to return a SPI handle.
+ *
+ *  The SPI peripherals controlled by the SPI module are determined by the
+ *  SPI_config variable.
+ */
+extern SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams);
+
+/*!
+ *  @brief  Board specific UART open function
+ *
+ *  This function initializes the board specific UART driver, the port specific
+ *  UART pins, and then calls UART_open() to return a UART handle.
+ *
+ *  The UART peripherals controlled by the UART module are determined by the
+ *  UART_config variable.
+ */
+extern UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams);
 
 #ifdef __cplusplus
 }

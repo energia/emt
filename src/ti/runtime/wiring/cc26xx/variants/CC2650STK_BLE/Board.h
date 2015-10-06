@@ -46,6 +46,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <ti/drivers/UART.h>
+#include <ti/drivers/I2C.h>
+#include <ti/drivers/SPI.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

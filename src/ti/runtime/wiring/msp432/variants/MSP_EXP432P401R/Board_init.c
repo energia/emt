@@ -403,17 +403,33 @@ const I2C_Config I2C_config[] = {
 };
 
 /*
- *  ======== Board_initI2C ========
+ *  ======== Board_openI2C ========
+ *  Initialize the I2C driver.
+ *  Initialize the I2C port's pins.
+ *  Open the I2C port.
  */
-void Board_initI2C(void)
+I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 {
-    /* Configure Pins 6.4 & 6.5 as SDA & SCL, respectively. */
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
-                                                   GPIO_PIN4 | GPIO_PIN5,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
+    
     /* Initialize the I2C driver */
+    /* By design, I2C_init() is idempotent */
     I2C_init();
+    
+    /* initialize the pins associated with the respective I2C */
+    switch(i2cPortIndex) {
+        case 0:
+            /* Configure Pins 6.4 & 6.5 as SDA & SCL, respectively. */
+            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
+                                                           GPIO_PIN4 | GPIO_PIN5,
+                                                           GPIO_PRIMARY_MODULE_FUNCTION);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the I2C */
+    return (I2C_open(i2cPortIndex, i2cParams));
 }
 
 /*
@@ -448,19 +464,19 @@ const PWMTimerMSP432_HWAttrs pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     },
     {
-        .baseAddr = TIMER_A1_BASE,
+        .baseAddr = TIMER_A2_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
     },
     {
-        .baseAddr = TIMER_A1_BASE,
+        .baseAddr = TIMER_A2_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2
     },
     {
-        .baseAddr = TIMER_A1_BASE,
+        .baseAddr = TIMER_A2_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3
     },
     {
-        .baseAddr = TIMER_A1_BASE,
+        .baseAddr = TIMER_A2_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     }
 };
@@ -632,34 +648,45 @@ const SPI_Config SPI_config[] = {
 };
 
 /*
- *  ======== Board_initSPI ========
+ *  ======== Board_openSPI ========
  */
-void Board_initSPI(void)
+SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 {
-    /*
-     * NOTE: TI-RTOS examples configure EUSCIB0 as either SPI or I2C.  Thus,
-     * a conflict occurs when the I2C & SPI drivers are used simultaneously in
-     * an application.  Modify the pin mux settings in this file and resolve the
-     * conflict before running your the application.
-     */
-    /* Configure CLK, MOSI & MISO for SPI0 (EUSCI_B0) */
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1,
-                                                    GPIO_PIN5 | GPIO_PIN6,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                                   GPIO_PIN7,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
-    /* Configure CLK, MOSI & MISO for SPI1 (EUSCI_B2) */
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P3,
-                                                    GPIO_PIN5 | GPIO_PIN6,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
-                                                   GPIO_PIN7,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
-    Board_initDMA();
+    /* Initialize the SPI driver */
+    /* By design, SPI_init() is idempotent */
     SPI_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(spiPortIndex) {
+        case 0:
+
+            /* Configure CLK, MOSI & MISO for SPI0 (EUSCI_B0) */
+            MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1,
+                                                            GPIO_PIN5 | GPIO_PIN6,
+                                                            GPIO_PRIMARY_MODULE_FUNCTION);
+            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
+                                                           GPIO_PIN7,
+                                                           GPIO_PRIMARY_MODULE_FUNCTION);
+            break;
+            
+        case 1:
+            /* Configure CLK, MOSI & MISO for SPI1 (EUSCI_B2) */
+            MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P3,
+                                                            GPIO_PIN5 | GPIO_PIN6,
+                                                            GPIO_PRIMARY_MODULE_FUNCTION);
+            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
+                                                           GPIO_PIN7,
+                                                           GPIO_PRIMARY_MODULE_FUNCTION);
+            break;
+
+        default:
+            return(NULL);
+    }
+    
+    Board_initDMA();
+
+    /* open the SPI port */
+    return (SPI_open(spiPortIndex, spiParams));
 }
 
 /*
@@ -739,22 +766,39 @@ const UART_Config UART_config[] = {
 };
 
 /*
- *  ======== Board_initUART ========
+ *  ======== Board_openUART ========
+ *  Initialize the UART driver.
+ *  Initialize the UART port's pins.
+ *  Open the UART port.
  */
-void Board_initUART(void)
+UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 {
-    /* Set P1.2 & P1.3 in UART mode */
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                                   GPIO_PIN2 | GPIO_PIN3,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
-    /* Set P3.2 & P3.3 in UART mode */
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
-                                                   GPIO_PIN2 | GPIO_PIN3,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
     /* Initialize the UART driver */
+    /* By design, UART_init() is idempotent */
     UART_init();
+
+    /* initialize the pins associated with the respective UART */
+    switch(uartPortIndex) {
+        case 0:
+            /* Set P1.2 & P1.3 in UART mode */
+            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
+                                                   GPIO_PIN2 | GPIO_PIN3,
+                                                   GPIO_PRIMARY_MODULE_FUNCTION);
+            break;
+
+        case 1:
+            /* Set P3.2 & P3.3 in UART mode */
+            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
+                                                   GPIO_PIN2 | GPIO_PIN3,
+                                                   GPIO_PRIMARY_MODULE_FUNCTION);
+            break;
+
+        default:
+            return (NULL);
+    }
+
+    /* open the UART */
+    return (UART_open(uartPortIndex, uartParams));
 }
 
 /*

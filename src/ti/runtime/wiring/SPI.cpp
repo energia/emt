@@ -30,6 +30,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+
 #include "wiring_private.h"
 #include "SPI.h"
 
@@ -68,8 +70,6 @@ void SPIClass::begin(uint8_t ssPin)
         return;
     }
 
-    Board_initSPI();
-
     SPI_Params_init(&params);
 
     params.bitRate = SPI_CLOCK_MAX / clockDivider;
@@ -77,7 +77,7 @@ void SPIClass::begin(uint8_t ssPin)
     params.transferMode = SPI_MODE_CALLBACK;
     params.transferCallbackFxn = spiTransferCallback;
 
-    spi = SPI_open(spiModule, &params);
+    spi = Board_openSPI(spiModule, &params);
 
     if (spi != NULL) {
 	/* 6/18/2015 no support for pin profiles, just save for now */
