@@ -426,9 +426,10 @@ uint16_t analogRead(uint8_t pin)
         status = MAP_ADC14_getInterruptStatus();
     }
 
+    sample = MAP_ADC14_getResult(adcMem);
+
     /* clear out last sample */
     MAP_ADC14_clearInterruptFlag(adcInt);
-    sample = MAP_ADC14_getResult(adcMem);
 
     Hwi_restore(hwiKey);
 
