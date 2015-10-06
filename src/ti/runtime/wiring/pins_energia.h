@@ -7,6 +7,8 @@
 #include <ti/runtime/wiring/cc3200/variants/CC3200STK_WIFI/pins_energia.h>
 #elif defined(BOARD_RedBearLab_CC3200)
 #include <ti/runtime/wiring/cc3200/variants/RedBearLab_CC3200/pins_energia.h>
+#elif defined(BOARD_RedBearLab_WiFi_Micro)
+#include <ti/runtime/wiring/cc3200/variants/RedBearLab_WiFi_Micro/pins_energia.h>
 #elif defined(BOARD_RedBearLab_WiFi_Mini)
 #include <ti/runtime/wiring/cc3200/variants/RedBearLab_WiFi_Mini/pins_energia.h>
 #elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
