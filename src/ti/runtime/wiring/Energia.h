@@ -50,7 +50,6 @@
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/gates/GateMutex.h>
-#include <ti/sysbios/family/arm/m3/Hwi.h>
 
 #include <ti/drivers/bsp/Board.h>
 
@@ -70,6 +69,15 @@ extern "C" {
 #define OUTPUT          0x1
 #define INPUT_PULLUP    0x2
 #define INPUT_PULLDOWN  0x3
+
+/* analogReference() stuff */
+#define DEFAULT         1
+#define INTERNAL        2
+#define EXTERNAL        3
+
+#define INTERNAL1V2     4
+#define INTERNAL1V45    5
+#define INTERNAL2V5     6
 
 /* SPI stuff */
 #define SPI_LAST 0

@@ -31,6 +31,7 @@
  */
 
 #include "Energia.h"
+#include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/drivers/GPIO.h>
 
 void interrupts(void)
