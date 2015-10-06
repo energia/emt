@@ -40,8 +40,16 @@ static const uint8_t RED_LED = 29;
 static const uint8_t GREEN_LED = 10;
 static const uint8_t BLUE_LED = 10; /* mapped to same as GREEN_LED */
 static const uint8_t YELLOW_LED = 9;
+
 static const uint8_t PUSH1 = 3;
 static const uint8_t PUSH2 = 11;
+
+static const uint8_t SDA = 10;
+static const uint8_t SCL = 9;
+
+static const uint8_t MOSI = 15;
+static const uint8_t MISO = 14;
+static const uint8_t SCK  = 7;
 
 static const uint8_t A0 = 23;
 static const uint8_t A1 = 2;
