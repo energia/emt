@@ -142,6 +142,15 @@ void stopAnalogWrite(uint8_t pin)
 static int8_t analogReadShift = 4;
 
 /*
+ * \brief           configure the A/D reference voltage
+ * \param mode      DEFAULT, INTERNAL, EXTERNAL, ...
+ * \return          void
+ */
+void analogReference(uint16_t mode)
+{
+}
+
+/*
  * \brief           Reads an analog value from the pin specified.
  * \param[in] pin   The pin number to read from.
  * \return          A 16-bit integer containing a 12-bit sample from the ADC.
