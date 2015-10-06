@@ -295,7 +295,7 @@ void GPIO_init()
 
     gpioPinHandle = PIN_open(&gpioPinState, gpioPinTable);
 
-    /* install our Hwi callback function */    
+    /* install our Hwi callback function */
     PIN_registerIntCb(gpioPinHandle, GPIO_hwiIntFxn);
 
     for (i = 0; i < NUM_PINS_PER_PORT; i++) {
@@ -414,8 +414,10 @@ void GPIO_setConfig(unsigned int index, GPIO_PinConfig pinConfig)
         }
 
         /* Update pinConfig with the latest GPIO configuration */
+
+        /* remove INT_ONLY bit from stored config data */
         gpioPinConfig = GPIOCC26XX_config.pinConfigs[index];
-        gpioPinConfig &= ~GPIO_CFG_IO_MASK;
+        gpioPinConfig &= ~(GPIO_CFG_IO_MASK + GPIO_CFG_IN_INT_ONLY);
         gpioPinConfig |= (pinConfig & GPIO_CFG_IO_MASK);
         GPIOCC26XX_config.pinConfigs[index] = gpioPinConfig;
 
@@ -428,19 +430,18 @@ void GPIO_setConfig(unsigned int index, GPIO_PinConfig pinConfig)
 
         /* Update pinConfig with the latest interrupt configuration */
         gpioPinConfig = GPIOCC26XX_config.pinConfigs[index];
-        gpioPinConfig &= ~GPIO_CFG_INT_MASK;
+        gpioPinConfig &= ~(GPIO_CFG_INT_MASK + GPIO_CFG_IN_INT_ONLY);
         gpioPinConfig |= (pinConfig & GPIO_CFG_INT_MASK);
         GPIOCC26XX_config.pinConfigs[index] = gpioPinConfig;
 
         pinPinConfig |= interruptType[(pinConfig & GPIO_CFG_INT_MASK) >>
                         GPIO_CFG_INT_LSB];
-                        
         Hwi_restore(key);
     }
-    
+
     /* or in the pin ID */
     pinPinConfig |= config->ioid;
-    
+
     if (config->added == 0) {
         PIN_add(gpioPinHandle, pinPinConfig);
         config->added = 1;
@@ -559,7 +560,6 @@ void GPIOCC26xx_release(int index)
 
         PIN_remove(gpioPinHandle, config->ioid);
     }
-    
+
     Hwi_restore(key);
 }
-
