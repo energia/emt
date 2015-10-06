@@ -49,6 +49,16 @@ extern "C" {
 #define NOT_ON_ADC      0xff
 #define NOT_MAPPABLE    0xffff
 
+#define PWM_FIXED_INDEX_0   0
+#define PWM_FIXED_INDEX_1   1
+#define PWM_FIXED_INDEX_2   2
+#define PWM_FIXED_INDEX_3   3
+#define PWM_FIXED_INDEX_4   4
+#define PWM_FIXED_INDEX_5   5
+#define PWM_FIXED_INDEX_6   6
+#define PWM_FIXED_INDEX_7   7
+#define PWM_AVAILABLE_PWMS  8
+
 extern void stopAnalogWrite(uint8_t pin);
 extern void stopAnalogRead(uint8_t pin);
 

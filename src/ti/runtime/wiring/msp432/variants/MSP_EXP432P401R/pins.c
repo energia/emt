@@ -131,9 +131,10 @@ uint8_t digital_pin_to_pin_function[] = {
 
 /*
  * Prior to a pin being used for analogWrite(), this table
- * contains the PIN IDs for achievable dynamic PWM mappings.
+ * contains either the PIN IDs for achievable dynamic PWM mappings.
+ * or the index (0-7) of a PWM resource for static PWM mappings.
  *
- * While in use, those PIN IDs are replaced with the
+ * While in use, the mappable PIN IDs are replaced with the
  * corresponding index of the PWM resource that was mapped
  * to the pin.
  */
@@ -156,7 +157,7 @@ uint16_t digital_pin_to_pwm_index[] = {
     NOT_MAPPABLE,       /*  14 - P1.7_SPIMISO */
     NOT_MAPPABLE,       /*  15 - P1.6_SPIMOSI */
     NOT_MAPPABLE,       /*  16 - RESET */
-    NOT_MAPPABLE,       /*  17 - P5.7_IO */
+    PWM_FIXED_INDEX_5,  /*  17 - P5.7_IO */
     GPIOMSP432_P3_0,    /*  18 - P3.0_IO */
     GPIOMSP432_P2_5,    /*  19 - P2.5_IO_PWM */
     NOT_MAPPABLE,       /*  20 - GND */
@@ -176,9 +177,9 @@ uint16_t digital_pin_to_pwm_index[] = {
     GPIOMSP432_P3_5,    /*  32 - P3.5_IO */
     NOT_MAPPABLE,       /*  33 - P5.1_IO */
     GPIOMSP432_P2_3,    /*  34 - P2.3_IO */
-    NOT_MAPPABLE,       /*  35 - P6.7_IO_CAPT */
-    NOT_MAPPABLE,       /*  36 - P6.6_IO_CAPT */
-    NOT_MAPPABLE,       /*  37 - P5.6_PWM */
+    PWM_FIXED_INDEX_7,  /*  35 - P6.7_IO_CAPT */
+    PWM_FIXED_INDEX_6,  /*  36 - P6.6_IO_CAPT */
+    PWM_FIXED_INDEX_4,  /*  37 - P5.6_PWM */
     GPIOMSP432_P2_4,    /*  38 - P2.4_PWM */
     GPIOMSP432_P2_6,    /*  39 - P2.6_PWM */
     GPIOMSP432_P2_7,    /*  40 - P2.7_PWM */
