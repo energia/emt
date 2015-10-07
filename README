@@ -1,4 +1,4 @@
-				emt-a58
+				emt-a59
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -106,7 +106,7 @@ Librarian releases
     cd emt.git; git fetch; cd ..
 
     # clone the tree and merge/review user content
-    ggentree emt.git/
+    ggentree -u karl@ti.com emt.git/
     cd emt-a??
     git merge origin/dr
 
@@ -119,23 +119,37 @@ Librarian releases
     git commit -a -m emt-a??
 
     # release the tree
-    greltree -u dr -m "something brief and meaningful"
+    greltree -m "something brief and meaningful"
 
 ========================================================================
 
 ADDITIONS
 
+ti/runtime/wiring/cc3200/variants/RedBearLab_WiFi_Micro
+    Added RedBearLabs WiFi Micro support
+
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.cc3200/libraries/WiFi
-  - Enhance startSmartConfig() to be optionally non-blocking.
-  - Store connection info in a profile after successful SmartConfig.
-  - Add begin() without parameter to connect to a stored profile.
-  - Copy BSSID into bssid user supplied argument rather than returning a 
-    pointer.
-  - Enhance scanNetworks() to allow reconnecting to the previous AP after
-    a scan.
+ti/runtime/wiring/*
+    Added functional analogReference() API to MSP432. Added dummy
+    analogReference() APIs to CC3200 and CC2650.
+
+    Added the 4 fixed mapped PWM pins to the MSP432 analogWrite() function.
+
+ti/drivers/bsp
+ti/runtime/wiring/*/variants/*
+    Refactored how the SPI, UART, and I2C ports are initialized by 
+    SPI/Serial/Wire.open() so that only the pins associated with the
+    associated peripheral port are initialized.
+
+ti/runtime/wiring/cc26xx/tests/*
+    Switched to using the CC2650 ROM. This defeats the Load module, which
+    currently defeats the 'stats' the command in the monitor program. 
+    However, it saves 10K of flash space...
+
+ti/runtime/wiring
+    Moved the #include of m3/Hwi.h out of Energia.h.
 
 MRS
