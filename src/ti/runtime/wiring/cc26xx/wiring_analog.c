@@ -35,6 +35,7 @@
 #include "wiring_private.h"
 
 #include <ti/sysbios/family/arm/cc26xx/Power.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
 
 #include <driverlib/ioc.h>
 #include <driverlib/aux_adc.h>

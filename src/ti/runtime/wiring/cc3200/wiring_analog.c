@@ -42,6 +42,7 @@
 #include <driverlib/adc.h>
 
 #include <ti/drivers/PWM.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
 
 /*
  * analogWrite() support
