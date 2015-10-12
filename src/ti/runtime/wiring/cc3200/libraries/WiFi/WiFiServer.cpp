@@ -69,7 +69,7 @@ void WiFiServer::begin()
     SlSockAddrIn_t portAddress;
     portAddress.sin_family = SL_AF_INET;
     portAddress.sin_port = sl_Htons(_port);
-    portAddress.sin_addr.s_addr = 0;
+    portAddress.sin_addr.s_addr = SL_INADDR_ANY;
     int enableOption = 1;
 
     sl_SetSockOpt(socketHandle, SL_SOL_SOCKET, SL_SO_NONBLOCKING, &enableOption, sizeof(enableOption));
@@ -190,6 +190,10 @@ size_t WiFiServer::write(uint8_t b)
 }
 
 //!! With this implementation, only 1 server can run on each cc3200 !!//
+// TODO:
+//     o enable multiple servers per app
+//     o serialize access to the server's client handles
+//
 size_t WiFiServer::write(const uint8_t *buffer, size_t size)
 {
     //

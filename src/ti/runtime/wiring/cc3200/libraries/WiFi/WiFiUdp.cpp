@@ -71,7 +71,7 @@ uint8_t WiFiUDP::begin(uint16_t port)
     SlSockAddrIn_t portAddress;
     portAddress.sin_family = SL_AF_INET;
     portAddress.sin_port = sl_Htons(port);
-    portAddress.sin_addr.s_addr = 0;
+    portAddress.sin_addr.s_addr = SL_INADDR_ANY;
     int iRet = sl_Bind(socketHandle, (SlSockAddr_t*)&portAddress, sizeof(portAddress));
     if (iRet < 0) {
         sl_Close(socketHandle);
@@ -257,14 +257,23 @@ int WiFiUDP::parsePacket()
     if (_socketIndex == NO_SOCKET_AVAIL) {
         return 0;
     }
-    
+
+    // TODO: sl_Select can't be called by separate threads EVEN if they
+    // reference different sockets, so it's necessary to serialize access to
+    // sl_Select().  One way is to
+    //     o create a "select mutex" in WiFiUDP(),
+    //     o "wrap" all calls to sl_Select with this mutex, and
+    //     o use a sl_Select timeout of zero (rather than 10000) so
+    //       sl_Select never blocks, and delays on one socket don't interfere
+    //       with another socket's operation
+
     //
     //the sl_select command blocks until something interesting happens or
     //it times out (current timeout set for 10 ms, the minimum)
     //
     SlTimeval_t timeout;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 10000;
+    timeout.tv_usec = 10000;  /* why not == 0 ? */
     
     int socketHandle = WiFiClass::_handleArray[_socketIndex];
     
@@ -276,8 +285,10 @@ int WiFiUDP::parsePacket()
     
     int iRet = sl_Select(socketHandle+1, &readSocketHandles, NULL, &errorSocketHandles, &timeout);
     if (iRet <= 0) {
-        return 0;
+        return 0; /* do nothing if timeout expires or select fails */
     }
+
+    /* otherwise, iRet == 1, no point in calling SL_FD_ISSET() */
 
     //
     //Since we've reached this point, the sl_select command has indicated
@@ -372,7 +383,7 @@ void WiFiUDP::flush()
 IPAddress WiFiUDP::remoteIP()
 {
     //
-    //this value is maintained by ParsePacket method
+    //this value is maintained by parsePacket method
     //
     IPAddress retIP;
     retIP = _remoteIP;
@@ -383,9 +394,8 @@ IPAddress WiFiUDP::remoteIP()
 uint16_t WiFiUDP::remotePort()
 {
     //
-    //this value is maintained by ParsePacket method
+    //this value is maintained by parsePacket method
     //
-    uint16_t retPort = _remotePort;
-    return retPort;
+    return _remotePort;
 }
 
