@@ -38,6 +38,7 @@
 
 static const uint8_t RED_LED = 13;
 static const uint8_t GREEN_LED = 13;
+static const uint8_t BLUE_LED = 13; /* mapped to same as GREEN_LED */
 static const uint8_t YELLOW_LED = 13;
 
 static const uint8_t PUSH1 = 20;
