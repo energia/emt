@@ -6,19 +6,22 @@ Pkg.attrs.exportAll = true;
 
 Pkg.attrs.profile = "debug";
 
-Pkg.makeEpilogue = "include custom.mak";
+Pkg.makeEpilogue = "include custom.mak"; /* rules for zumo.bin flash image */
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt3200:RedBearLab_CC3200";
+var VARIANT = "RedBearLab_CC3200";
 
-var SRCS = getSources(".");
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_RedBearLab_CC3200";
+var PLATFORM = "ti.platforms.emt3200:" + VARIANT;
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_" + VARIANT;
+
 var MAIN = "main.cpp";
+var SRCS = getSources(".");
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
 
+    /* C++ specific options */
     var cxxopts = targ.$name.indexOf("gnu.targets") == 0 ? "-fno-rtti" : "";
 
     var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});

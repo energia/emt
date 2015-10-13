@@ -117,6 +117,6 @@ tiTargets.M3.platform =  "ti.platforms.emt26xx";
 /* For now, the default is to export everthing */
 Pkg.attrs.exportAll = true;
 
-Pkg.releasePrefix = "^/../exports/"; /* export to the exports directoy */
+Pkg.releasePrefix = "^/../exports/"; /* export to the exports directory */
 Pkg.attrs.archiver = "zip";          /* export .zip files (not .tar) */
 Pkg.producerId = xdc.csd();          /* tag pkgs as coming from this dir */

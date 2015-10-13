@@ -18,7 +18,7 @@
 static const char ssid[] = "zumoAP";
 static const char wifipw[] = "password";
 
-/* the port number of the server listening for command at 192.168.1.1 */
+/* port number of the server listening for commands at 192.168.1.1 */
 #define PORTNUM 8080
 
 /* create data server on port PORTNUM */
