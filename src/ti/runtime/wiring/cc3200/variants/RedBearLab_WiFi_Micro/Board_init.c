@@ -122,7 +122,7 @@ void Board_initGeneral(void)
 
     /*
      * ======== Enable Peripheral Clocks ========
-     * Enable all clocks (because wiring can use any pin for in any mode
+     * Enable all clocks (because wiring can use any pin in any mode
      * at runtime)
      */
     MAP_PRCMPeripheralClkEnable(PRCM_CAMERA, PRCM_RUN_MODE_CLK);
@@ -271,7 +271,7 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
     I2C_init();
     
     /* initialize the pins associated with the respective I2C */
-    switch(i2cPortIndex) {
+    switch (i2cPortIndex) {
         case 0:
             /*
              * Configure pin as a I2C pin: LaunchPad Sensor Data (via I2C)
@@ -559,17 +559,17 @@ const PowerCC3200_Config PowerCC3200_config = {
                                /* ramRetentionMaskLPDS */
 };
 
-#define SPI_RATE_13M                        13000000
+#define SPI_RATE_13M                    13000000
 #define SPI_RATE_20M                    20000000
 
-uint32_t wakeupcalled = 0;
+//uint32_t wakeupcalled = 0;
 
 void simpleLinkWakupCallback()
 {
     unsigned long ulBase;
     unsigned long ulSpiBitRate = 0;
 
-wakeupcalled++;
+//wakeupcalled++;
 
     //NWP master interface
     ulBase = LSPI_BASE;
@@ -585,23 +585,19 @@ wakeupcalled++;
                      SPI_WL_32));
 }
 
-Power_NotifyObj slNotify;
+//static Power_NotifyObj slNotify;
 
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
-
     Power_setConstraint(PowerCC3200_DISALLOW_DEEPSLEEP);
     Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
 
 //    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS|PowerCC3200_AWAKE_DEEPSLEEP, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
     Power_init();
 }
-
-#include <ti/sysbios/family/arm/m3/Hwi.h>
-#include <ti/sysbios/interfaces/IHwi.h>
 
 /*
  *  ======== Board_init ========
