@@ -1,0 +1,35 @@
+Pkg.releasePrefix = "^/../../exports/"; /* export to the tree's exports directory */
+Pkg.releasePrefix = ""; /* keep release zip local */
+
+/* create a repository for all packages in this bundle */
+var repository = Pkg.addRepository("emt", {search: true});
+
+/* put the default release in the exports sub-directory */
+Pkg.defaultRelease = Pkg.addRelease(Pkg.name, {relScript: "purec.rel"});
+
+/* compute the set of pkgs to put in this repository from the requires list */
+var imports = [];       /* array of release archives to add to ./packages */
+
+for (var i = 0; i < Pkg.imports.length; i++) {
+    var pname = Pkg.imports[i].split('{')[0];
+    
+    /* if pname starts with a '*', it's an "internal requires" package */
+    if (pname[0] == '*') {
+        pname = pname.substring(1);
+
+        /* get list of all releases supported by package pname */
+        var rels = Build.getReleaseDescs(pname);
+        for (var j = 0; j < rels.length; j++) {
+            var rel = rels[j];
+    
+            /* use the default release */
+            if (rel.label == "default") {
+                imports.push(pname + ':' + rel.name);
+                break;
+            }
+        }
+    }
+}
+
+/* add the selected releases of the packages to the repository */
+repository.addPackages(imports);

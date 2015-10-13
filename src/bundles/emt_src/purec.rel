@@ -1,0 +1,29 @@
+/*
+ *  ======== main ========
+ *  Define a release that removes everything except *.[ch] or simple*.mak files
+ */
+
+Manifest.getAllFiles([]);
+
+/* create an array of files to include in the package */
+var files = [];
+for (var i = 0; i < Manifest.files.length; i++) {
+    var fname = Manifest.files[i];
+
+    if (fname.match(/\.[ch]$/) != null
+        || fname.match(/\.cpp$/) != null
+        || fname.match(/simple.*\.mak$/) != null
+        || fname.match(/package\.xdc$/) != null
+        || fname.match(/\.rel\.xml$/) != null) {
+        if (fname.match(/package\/package_.+\.c$/) == null) {
+            files.push(fname);
+        }
+    }
+    else {
+        /* remove everything that's not added above */
+        //print("removing " + fname + " ...");
+    }
+}
+
+/* include ONLY those files named in the files array */
+Manifest.files = files;

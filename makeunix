@@ -25,12 +25,13 @@ JOBS = --jobs=4
 # Builds all packages and release archives
 .exports: .local-release
 
-
 # ======== .local-release ========
 # Builds all packages and releases
 .local-release: .local-all imports.mak
 	@echo making energia closures ...
 	make -C src/bundles/energia all msp432/closure.zip cc3200/closure.zip cc26xx/closure.zip
+	@echo making emt_src bundle ...
+	make -C src/bundles/emt_src release
 
 # ======== .local-all ========
 # Builds all packages
@@ -59,3 +60,4 @@ JOBS = --jobs=4
 	-rm -rf exports/
 	-$(MYXDC) --jobs=4 clean -Pr ./src
 	-make -C src/bundles/energia clean
+	-make -C src/bundles/emt_src clean
