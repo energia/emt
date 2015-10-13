@@ -2,7 +2,7 @@
  *  ======== mapsum.xs ========
  */
 
-var usage = "usage: xs -c mapsum.xs [-t <toolchain>] [-v] [-f <object>] mapfile";
+var usage = "usage: xs -c mapsum.xs [-e <executable>] [-t <toolchain>] [-v] [-f <object>] mapfile";
 
 var symbolNamesGnu = {
     __UNUSED_SRAM_start__: "SRAM_UNUSED_start",
@@ -17,6 +17,8 @@ var symbolNamesGnu = {
 var symbolTable = {};
 var objectTable = {};
 var toolChain = null;
+var executable = null;
+var exeAttrs = {};
 
 var verbose = 0;
 
@@ -41,6 +43,15 @@ function main(arguments)
                     return;
                 }
                 toolChain = arguments[1];
+                arguments.shift();
+                break;
+            }
+            case 'e': {
+                if (arguments[1] == null) {
+                    print(usage);
+                    return;
+                }
+                executable = arguments[1];
                 arguments.shift();
                 break;
             }
@@ -70,7 +81,7 @@ function main(arguments)
 	symbolTable = {};
 	objectTable = {};
         var mfile = arguments[i];
-	var carray = parse(mfile, toolChain);
+	var carray = parse(mfile, executable);
 	sums[mfile] = carray;
 
 	print((i > 0 ? "\n" : "") + mfile + " summary:");
@@ -137,6 +148,25 @@ function getToolChain(fileName)
 }
 
 /*
+ *  ======== getExeAttrs ========
+ */
+function getExeAttrs(exeFileName)
+{
+    var attrs = {};
+
+    var what = String(Packages.xdc.services.global.What.getWhatString(exeFileName));
+    var lines = what.split('\n');
+    for (var i = 0; i < lines.length; i++) {
+	var tokens = lines[i].split(/[ =]+/);
+	if (tokens != null && tokens.length == 2) {
+	    attrs[tokens[0].trim()] = tokens[1];
+	}
+    }
+
+    return (attrs);
+}
+
+/*
  *  ======== parse ========
  *  Return sorted array of "containers": objects with a total size
  *  and a hash of contributing sections and their size.
@@ -149,12 +179,23 @@ function getToolChain(fileName)
  *                 <size of this contained section>}
  *   } 
  */
-function parse(fileName, tools)
+function parse(fileName, executable)
 {
     var result = null;
 
-    /* if toolchain is not specified, try to figure it out from the map file */
-    if (tools == null) {
+    /* if toolchain is not specified, try to figure it out from the executable file */
+    if (toolChain == null) {
+	if (executable != null) {
+	    exeAttrs = getExeAttrs(executable);
+	    var target = exeAttrs.__TARG__;
+	    if (target != null) {
+		toolChain = target.split('.')[0];
+	    }
+	}
+    }
+
+    /* if toolchain is still not specified, try to figure it out from the map file */
+    if (toolChain == null) {
 	toolChain = getToolChain(fileName);
     }
 
@@ -737,7 +778,10 @@ function display(carray, fileName, verbose)
     }
 
     var len = String(total).length;
-    print("  " + pad.substring(len) + total + " TOTAL: " + fileName);
+    var suffix = exeAttrs.__TARG__ == null 
+	? "" 
+	: (" (" + exeAttrs.__TARG__ + ", " + exeAttrs.__PLAT__ + ")");
+    print("  " + pad.substring(len) + total + " TOTAL: " + fileName + suffix);
 
     var targ = getTargetSuffix(carray);
     
@@ -807,7 +851,11 @@ function displayDiffs(basename, sums)
 function displayMem(name, fileName, targ)
 {
     var pad = "       ";
-    targ = (targ == null) ? "" : (", targ = " + targ);
+    targ = (targ == null) ? "" : (" (targ.suffix: " + targ + ")");
+    if (exeAttrs.__TARG__ != null) {
+	targ = " (" + exeAttrs.__TARG__ 
+	    + ", " + exeAttrs.__PLAT__ + ")";
+    }
     
     /* display unused memory named 'name' */
     var start = symbolTable[name + "_UNUSED_start"];
@@ -819,11 +867,11 @@ function displayMem(name, fileName, targ)
         if (len != null) {
 	    var percent = len == 0 ? 100 : (unused / len) * 100;
 	    suffix = " (" + percent.toFixed(0)
-                      + "%, used = " + (len - unused) + targ + ")";
+                      + "%, used = " + (len - unused) + ")";
         }
 
         len = String(unused).length;
         print("  " + pad.substring(len) + unused + " UNUSED "
-              + name + suffix + ": " + fileName);
+              + name + suffix + ": " + fileName + targ);
     }
 }
