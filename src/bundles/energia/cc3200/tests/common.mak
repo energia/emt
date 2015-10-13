@@ -64,7 +64,7 @@ ifeq (,$(OBJTOOL))
 endif
 
 ifeq (sh.exe,$(SHELL))
-    RM := cmd.exe /c DEL /F
+    RM := cmd.exe /c DEL /F/Q
     RMDIR := cmd.exe /c RMDIR /S/Q
 else
     RM := rm -f
