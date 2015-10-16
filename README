@@ -1,4 +1,4 @@
-				emt-a59
+				emt-a60
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,31 +125,23 @@ Librarian releases
 
 ADDITIONS
 
-ti/runtime/wiring/cc3200/variants/RedBearLab_WiFi_Micro
-    Added RedBearLabs WiFi Micro support
+bundles/emt_src
+	added generation of the ti.runtime.wiring source bundle
 
 DELETIONS
 
 CHANGES
 
-ti/runtime/wiring/*
-    Added functional analogReference() API to MSP432. Added dummy
-    analogReference() APIs to CC3200 and CC2650.
+./makeunix
+	added build of emt_src.zip
 
-    Added the 4 fixed mapped PWM pins to the MSP432 analogWrite() function.
+./.reltreerc
+	removed automatic push to Energia
 
-ti/drivers/bsp
-ti/runtime/wiring/*/variants/*
-    Refactored how the SPI, UART, and I2C ports are initialized by 
-    SPI/Serial/Wire.open() so that only the pins associated with the
-    associated peripheral port are initialized.
+ti.runtime.wiring/cc3200/variants
+	added BLUE_LED to all boards to reduce build errors from RedBear boards
 
-ti/runtime/wiring/cc26xx/tests/*
-    Switched to using the CC2650 ROM. This defeats the Load module, which
-    currently defeats the 'stats' the command in the monitor program. 
-    However, it saves 10K of flash space...
-
-ti/runtime/wiring
-    Moved the #include of m3/Hwi.h out of Energia.h.
+ti.runtime.wiring/cc3200/libraries/WiFi
+	minor cleanup
 
 MRS
