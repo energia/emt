@@ -72,6 +72,13 @@ SECTIONS {
 %var _utils = xdc.loadCapsule("gnu/targets/linkUtils.xs");
     `_utils.genSections(Program)`
 
+%   if (!Program.cpu.deviceName.match("ROM")) {
+    .data : {
+         *(.data*)
+    } > REGION_DATA AT> REGION_TEXT
+    __data_end__ = __data_start__ + SIZEOF(.data);
+
+%   }
     /*
      * Linker command file contributions from all loaded packages:
      */

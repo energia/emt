@@ -39,6 +39,13 @@ SECTIONS {
         KEEP (*(.vtable))
     } > REGION_DATA
 
+    _rom_data_start = 0x20000100;
+    _rom_data_size = DEFINED(ti_sysbios_rom_ROM_ti_sysbios_family_arm_cc26xx_Timer_getCount64__E) ? 0x104 : 0;
+
+    .rom_data_reserve (_rom_data_start): {
+        . += _rom_data_size;
+    } > REGION_DATA
+
     /* these hard-coded addrs are needed by the TI-RTOS SPICC26XXDMA driver
      * and must match appropriate offsets from UDMACC26XX_CONFIG_BASE defined
      * by ti/drivers/dma/UDMACC26XX.h
@@ -55,10 +62,12 @@ SECTIONS {
     UDMACC26XX_dmaTxControlTableEntry1_is_placed = 0;
     .dmaTxControlTableEntry1 0x20000510 : AT (0x20000510) {*(.dmaTxControlTableEntry1)} > REGION_DATA
 
-    /* remove unnecessary sections included in some TI object files */
-    /DISCARD/ : {
-        *(__TI_ICODE)
-    }
+    _rom_rodata_start = 0x100;
+    _rom_rodata_size = DEFINED(ti_sysbios_rom_ROM_ti_sysbios_family_arm_cc26xx_Timer_getCount64__E) ? 0x500 : 0;
+
+    .rom_rodata_reserve (_rom_rodata_start): {
+        . += _rom_rodata_size;
+    } > REGION_TEXT AT> REGION_TEXT
 
     .text : {
         CREATE_OBJECT_SYMBOLS
@@ -82,14 +91,14 @@ SECTIONS {
 
     .rodata : {
         *(.rodata)
-        *(.rodata*)
+        *(.rodata.*)
     } > REGION_TEXT AT> REGION_TEXT
 
     .data : ALIGN (4) {
         __data_load__ = LOADADDR (.data);
         __data_start__ = .;
         *(.data)
-        *(.data*)
+        *(.data.*)
         . = ALIGN (4);
         __data_end__ = .;
     } > REGION_DATA AT> REGION_TEXT
@@ -133,5 +142,4 @@ SECTIONS {
         __stack = .;
         KEEP(*(.stack))
     } > REGION_STACK AT> REGION_STACK
-
 }
