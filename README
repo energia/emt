@@ -1,4 +1,4 @@
-				emt-a60
+				emt-a61
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,23 +125,16 @@ Librarian releases
 
 ADDITIONS
 
-bundles/emt_src
-	added generation of the ti.runtime.wiring source bundle
-
 DELETIONS
 
 CHANGES
 
-./makeunix
-	added build of emt_src.zip
+ti.platforms.emt26xx
+ti.platforms.launchpad
+	Rework ordering of section placements to not cause resetting of
+        "." after DMA descriptors are placed.
 
-./.reltreerc
-	removed automatic push to Energia
-
-ti.runtime.wiring/cc3200/variants
-	added BLUE_LED to all boards to reduce build errors from RedBear boards
-
-ti.runtime.wiring/cc3200/libraries/WiFi
-	minor cleanup
+	Allow either linker command file to be used for ROM or non ROM build
+	flows.
 
 MRS
